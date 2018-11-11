@@ -390,6 +390,9 @@
     <ClInclude Include="auxiliary\shaderCompiler.h">
       <Filter>Header Files\auxiliary</Filter>
     </ClInclude>
+    <ClInclude Include="auxiliary\managedDescriptorSet.h">
+      <Filter>Header Files\auxiliary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="objects\commandBuffer.inl">
@@ -668,6 +671,9 @@
       <Filter>Source Files\auxiliary</Filter>
     </ClCompile>
     <ClCompile Include="auxiliary\shaderCompiler.cpp">
+      <Filter>Source Files\auxiliary</Filter>
+    </ClCompile>
+    <ClCompile Include="auxiliary\managedDescriptorSet.cpp">
       <Filter>Source Files\auxiliary</Filter>
     </ClCompile>
   </ItemGroup>

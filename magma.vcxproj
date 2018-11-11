@@ -139,6 +139,7 @@
     <ClInclude Include="auxiliary\blitRectangle.h" />
     <ClInclude Include="auxiliary\framebuffers.h" />
     <ClInclude Include="auxiliary\immediateRender.h" />
+    <ClInclude Include="auxiliary\managedDescriptorSet.h" />
     <ClInclude Include="auxiliary\shaderCompiler.h" />
     <ClInclude Include="barriers\bufferMemoryBarrier.h" />
     <ClInclude Include="barriers\imageMemoryBarrier.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="auxiliary\blitRectangle.cpp" />
     <ClCompile Include="auxiliary\framebuffers.cpp" />
     <ClCompile Include="auxiliary\immediateRender.cpp" />
+    <ClCompile Include="auxiliary\managedDescriptorSet.cpp" />
     <ClCompile Include="auxiliary\shaderCompiler.cpp" />
     <ClCompile Include="barriers\bufferMemoryBarrier.cpp" />
     <ClCompile Include="barriers\imageMemoryBarrier.cpp" />
