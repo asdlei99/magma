@@ -21,6 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/device.h"
 #include "../objects/buffer.h"
 #include "../objects/bufferView.h"
+#include "../objects/uniformBuffer.h"
 #include "../objects/image.h"
 #include "../objects/imageView.h"
 #include "../objects/sampler.h"
@@ -71,6 +72,10 @@ void ManagedDescriptorSet::ShaderStageBindings::bindBuffer(uint32_t binding, std
     writeDescriptor.dstBinding = binding;
     writeDescriptor.dstArrayElement = 0;
     writeDescriptor.descriptorCount = 1;
+    bool isDynamic = false;
+    auto bufferTrait = std::dynamic_pointer_cast<const BufferDynamicTrait>(buffer);
+    if (bufferTrait)
+        isDynamic = bufferTrait->isDynamic();
     switch (buffer->getUsage())
     {
     case VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT:
@@ -80,13 +85,13 @@ void ManagedDescriptorSet::ShaderStageBindings::bindBuffer(uint32_t binding, std
         writeDescriptor.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
         break;
     case VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT:
-        writeDescriptor.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        writeDescriptor.descriptorType = isDynamic ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+                                                   : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         break;
     case VK_BUFFER_USAGE_STORAGE_BUFFER_BIT:
-        writeDescriptor.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        writeDescriptor.descriptorType = isDynamic ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
+                                                   : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         break;
-    //VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC?
-    //VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC?
     default:
         MAGMA_THROW("unknown buffer usage");
     }
