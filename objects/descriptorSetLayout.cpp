@@ -66,7 +66,7 @@ DescriptorSetLayout::DescriptorSetLayout(std::shared_ptr<Device> device, const B
     bindings.push_back(binding);
 }
 
-DescriptorSetLayout::DescriptorSetLayout(std::shared_ptr<Device> device, const std::initializer_list<Binding>& bindings,
+DescriptorSetLayout::DescriptorSetLayout(std::shared_ptr<Device> device, const std::vector<Binding>& bindings,
     VkDescriptorSetLayoutCreateFlags flags /* 0 */,
     std::shared_ptr<IAllocator> allocator /* nullptr */):
     NonDispatchable(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, std::move(device), std::move(allocator)),
@@ -77,7 +77,7 @@ DescriptorSetLayout::DescriptorSetLayout(std::shared_ptr<Device> device, const s
     info.pNext = nullptr;
     info.flags = flags;
     info.bindingCount = MAGMA_COUNT(bindings);
-    info.pBindings = bindings.begin();
+    info.pBindings = bindings.data();
     const VkResult create = vkCreateDescriptorSetLayout(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create descriptor set layout");
 }
