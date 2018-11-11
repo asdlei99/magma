@@ -45,7 +45,6 @@ namespace magma
             class ShaderStageBindings
             {
             public:
-                ShaderStageBindings() {}
                 void bindImageView(uint32_t binding,
                     std::shared_ptr<const ImageView> imageView,
                     std::shared_ptr<const Sampler> sampler);
