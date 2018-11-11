@@ -67,9 +67,17 @@ namespace magma
                 stack[pos++] = elem;
                 return pos;
             }
-            // Do not store or pass stack pointer anywhere, use inside function scope only
-            operator Type *() noexcept { return stack; }
-            operator const Type *() const noexcept { return stack; }
+            // Access last added element
+            Type& last() noexcept
+            {
+                MAGMA_ASSERT(pos > 0);
+                return stack[pos ? pos - 1 : 0];
+            }
+            const Type& last() const noexcept
+            {
+                MAGMA_ASSERT(pos > 0);
+                return stack[pos ? pos - 1 : 0];
+            }
             Type& operator[](int i) noexcept
             {
                 MAGMA_ASSERT(stack);
@@ -82,6 +90,9 @@ namespace magma
                 MAGMA_ASSERT(i < static_cast<int>(count));
                 return stack[i];
             }
+            // Do not store or pass stack pointer anywhere, use inside function scope only
+            operator Type *() noexcept { return stack; }
+            operator const Type *() const noexcept { return stack; }
 
         private:
             Type *const stack;
