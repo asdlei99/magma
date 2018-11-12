@@ -124,7 +124,14 @@ ManagedDescriptorSet::ManagedDescriptorSet(std::shared_ptr<Device> device,
     device(device),
     pool(pool),
     allocator(allocator)
-{}
+{
+    stages[ShaderStage::Vertex] = std::make_shared<ShaderStageBindings>(VK_SHADER_STAGE_VERTEX_BIT);
+    stages[ShaderStage::TessControl] = std::make_shared<ShaderStageBindings>(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT);
+    stages[ShaderStage::TessEvaluation] = std::make_shared<ShaderStageBindings>(VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT);
+    stages[ShaderStage::Geometry] = std::make_shared<ShaderStageBindings>(VK_SHADER_STAGE_GEOMETRY_BIT);
+    stages[ShaderStage::Fragment] = std::make_shared<ShaderStageBindings>(VK_SHADER_STAGE_FRAGMENT_BIT);
+    stages[ShaderStage::Compute] = std::make_shared<ShaderStageBindings>(VK_SHADER_STAGE_COMPUTE_BIT);
+}
 
 void ManagedDescriptorSet::finalize()
 {
@@ -134,7 +141,7 @@ void ManagedDescriptorSet::finalize()
         std::unordered_map<VkDescriptorType, uint32_t> descriptorCounts;
         for (const auto& stage : stages)
         {   // Count number of descriptors of corresponding type
-            for (const auto& write : stage.second.descriptorWrites)
+            for (const auto& write : stage->descriptorWrites)
             {
                 const VkWriteDescriptorSet& writeDescriptor = write.second;
                 descriptorCounts[writeDescriptor.descriptorType] += writeDescriptor.descriptorCount;
@@ -156,14 +163,14 @@ void ManagedDescriptorSet::finalize()
     bindings.reserve(numDescriptorWrites);
     for (const auto& stage : stages)
     {
-        for (const auto& write : stage.second.descriptorWrites)
+        for (const auto& write : stage->descriptorWrites)
         {
             const VkWriteDescriptorSet& writeDescriptor = write.second;
             if (uniqueBindings.find(writeDescriptor.dstBinding) != uniqueBindings.end())
                 MAGMA_THROW("descriptor binding should be unique across pipeline");
             uniqueBindings.insert(writeDescriptor.dstBinding);
             const Descriptor descriptor(writeDescriptor.descriptorType, writeDescriptor.descriptorCount);
-            const VkShaderStageFlagBits stageFlags = stage.first; // TODO: combine flags from different stages?
+            const VkShaderStageFlagBits stageFlags = stage->getStage(); // TODO: combine flags from different stages?
             bindings.emplace_back(writeDescriptor.dstBinding, descriptor, stageFlags);
         }
     }
@@ -175,17 +182,16 @@ void ManagedDescriptorSet::finalize()
     MAGMA_STACK_ARRAY(VkWriteDescriptorSet, descriptorWrites, numDescriptorWrites);
     for (auto& stage : stages)
     {
-        for (const auto& write : stage.second.descriptorWrites)
+        for (const auto& write : stage->descriptorWrites)
         {
             descriptorWrites.put(write.second);
             descriptorWrites.last().dstSet = MAGMA_HANDLE(set); // Assing newly created handle
         }
+        stage->updated = false;
     }
     // Write all descriptors
     vkUpdateDescriptorSets(MAGMA_HANDLE(device), MAGMA_COUNT(descriptorWrites), descriptorWrites,
         0, nullptr);
-    for (auto& stage : stages)
-        stage.second.updated = false;
 }
 
 std::shared_ptr<DescriptorSetLayout> ManagedDescriptorSet::getLayout()

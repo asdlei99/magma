@@ -40,19 +40,28 @@ namespace magma
 
         class ManagedDescriptorSet : public sys::NonCopyable
         {
-        public:
-            class ShaderStageBindings;
+            enum ShaderStage : uint32_t {
+                Vertex = 0, TessControl, TessEvaluation,
+                Geometry, Fragment, Compute, Count
+            };
 
         public:
-            ManagedDescriptorSet(std::shared_ptr<Device> device,
+            class ShaderStageBindings;
+            explicit ManagedDescriptorSet(std::shared_ptr<Device> device,
                 std::shared_ptr<DescriptorPool> pool = nullptr,
                 std::shared_ptr<IAllocator> allocator = nullptr);
-            ShaderStageBindings& vertexStage() { return stages[VK_SHADER_STAGE_VERTEX_BIT]; }
-            ShaderStageBindings& tessControlStage() { return stages[VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT]; }
-            ShaderStageBindings& tessEvaluationStage() { return stages[VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT]; }
-            ShaderStageBindings& geometryStage() { return stages[VK_SHADER_STAGE_GEOMETRY_BIT]; }
-            ShaderStageBindings& fragmentStage() { return stages[VK_SHADER_STAGE_FRAGMENT_BIT]; }
-            ShaderStageBindings& computeStage() { return stages[VK_SHADER_STAGE_COMPUTE_BIT]; }
+            std::shared_ptr<ShaderStageBindings>& vertexStage() noexcept
+                { return stages[ShaderStage::Vertex]; }
+            std::shared_ptr<ShaderStageBindings>& tessControlStage() noexcept
+                { return stages[ShaderStage::TessControl]; }
+            std::shared_ptr<ShaderStageBindings>& tessEvaluationStage() noexcept
+                { return stages[ShaderStage::TessEvaluation]; }
+            std::shared_ptr<ShaderStageBindings>& geometryStage() noexcept
+                { return stages[ShaderStage::Geometry]; }
+            std::shared_ptr<ShaderStageBindings>& fragmentStage() noexcept
+                { return stages[ShaderStage::Fragment]; }
+            std::shared_ptr<ShaderStageBindings>& computeStage() noexcept
+                { return stages[ShaderStage::Compute]; }
             void finalize();
             std::shared_ptr<DescriptorSetLayout> getLayout();
             std::shared_ptr<DescriptorSet> getDescriptorSet();
@@ -63,7 +72,7 @@ namespace magma
             std::shared_ptr<DescriptorPool> pool;
             std::shared_ptr<DescriptorSetLayout> layout;
             std::shared_ptr<DescriptorSet> set;
-            std::unordered_map<VkShaderStageFlagBits, ShaderStageBindings> stages;
+            std::shared_ptr<ShaderStageBindings> stages[ShaderStage::Count];
         };
 
         /* */
@@ -72,6 +81,7 @@ namespace magma
         class ManagedDescriptorSet::ShaderStageBindings
         {
         public:
+            explicit ShaderStageBindings(VkShaderStageFlagBits stage): stage(stage) {}
             void bindImageView(uint32_t binding,
                 std::shared_ptr<const ImageView> imageView,
                 std::shared_ptr<const Sampler> sampler);
@@ -81,8 +91,10 @@ namespace magma
                 VkDeviceSize range = VK_WHOLE_SIZE);
             void bindTexelBufferView(uint32_t binding,
                 std::shared_ptr<const BufferView> texelBufferView);
+            VkShaderStageFlagBits getStage() const noexcept { return stage; }
 
         private:
+            VkShaderStageFlagBits stage;
             std::unordered_map<uint32_t, VkWriteDescriptorSet> descriptorWrites;
             std::list<VkDescriptorImageInfo> imageInfos;
             std::list<VkDescriptorBufferInfo> bufferInfos;
