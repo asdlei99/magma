@@ -64,4 +64,13 @@ namespace magma
         VkBufferUsageFlags usage;
         std::shared_ptr<DeviceMemory> memory;
     };
+
+    /* Allows to query dynamic property of uniform or storage buffer.
+       Used to dinstinguish dynamic buffer descriptor type from regular one. */
+
+    class IDynamicBufferTrait
+    {
+    public:
+        virtual bool isDynamic() const noexcept = 0;
+    };
 } // namespace magma

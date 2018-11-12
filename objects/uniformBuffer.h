@@ -25,21 +25,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 namespace magma
 {
-    /* Allows to query dynamic property of uniform buffer. Can be used
-       to dinstinguish dynamic buffer descriptor type from regular one. */
-
-    class BufferDynamicTrait
-    {
-    public:
-        virtual bool isDynamic() const noexcept = 0;
-    };
-
     /* An array of uniform values that are used in various shader stages.
        It is host visible so can be mapped by user to write uniform values. */
 
     template<typename Block>
     class UniformBuffer : public Buffer,
-        public BufferDynamicTrait
+        public IDynamicBufferTrait
     {
     public:
         explicit UniformBuffer(std::shared_ptr<Device> device,

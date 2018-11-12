@@ -60,6 +60,8 @@ void ManagedDescriptorSet::ShaderStageBindings::bindImageView(uint32_t binding, 
 void ManagedDescriptorSet::ShaderStageBindings::bindBuffer(uint32_t binding, std::shared_ptr<const Buffer> buffer,
     VkDeviceSize offset /* 0 */, VkDeviceSize range /* VK_WHOLE_SIZE */)
 {
+    auto bufferTrait = std::dynamic_pointer_cast<const IDynamicBufferTrait>(buffer);
+    const bool dynamic = bufferTrait ? bufferTrait->isDynamic() : false;
     VkDescriptorBufferInfo bufferInfo;
     bufferInfo.buffer = *buffer;
     bufferInfo.offset = offset;
@@ -72,10 +74,6 @@ void ManagedDescriptorSet::ShaderStageBindings::bindBuffer(uint32_t binding, std
     writeDescriptor.dstBinding = binding;
     writeDescriptor.dstArrayElement = 0;
     writeDescriptor.descriptorCount = 1;
-    bool isDynamic = false;
-    auto bufferTrait = std::dynamic_pointer_cast<const BufferDynamicTrait>(buffer);
-    if (bufferTrait)
-        isDynamic = bufferTrait->isDynamic();
     switch (buffer->getUsage())
     {
     case VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT:
@@ -85,15 +83,15 @@ void ManagedDescriptorSet::ShaderStageBindings::bindBuffer(uint32_t binding, std
         writeDescriptor.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
         break;
     case VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT:
-        writeDescriptor.descriptorType = isDynamic ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-                                                   : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        writeDescriptor.descriptorType = dynamic ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+                                                 : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         break;
     case VK_BUFFER_USAGE_STORAGE_BUFFER_BIT:
-        writeDescriptor.descriptorType = isDynamic ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
-                                                   : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        writeDescriptor.descriptorType = dynamic ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
+                                                 : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         break;
     default:
-        MAGMA_THROW("unknown buffer usage");
+        MAGMA_THROW_NOT_IMPLEMENTED;
     }
     writeDescriptor.pImageInfo = nullptr;
     writeDescriptor.pBufferInfo = &bufferInfos.back();
