@@ -44,6 +44,7 @@ ValidationCache::ValidationCache(std::shared_ptr<Device> device,
     info.flags = 0;
     info.initialDataSize = dataSize;
     info.pInitialData = cacheData;
+    MAGMA_PROFILE_ENTRY(vkCreateValidationCacheEXT);
     const VkResult create = vkCreateValidationCacheEXT(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create validation cache");
 }
@@ -51,6 +52,7 @@ ValidationCache::ValidationCache(std::shared_ptr<Device> device,
 ValidationCache::~ValidationCache()
 {
     MAGMA_DEVICE_EXTENSION(vkDestroyValidationCacheEXT, VK_EXT_VALIDATION_CACHE_EXTENSION_NAME);
+    MAGMA_PROFILE_ENTRY(vkDestroyValidationCacheEXT);
     vkDestroyValidationCacheEXT(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
@@ -61,6 +63,7 @@ std::vector<uint8_t> ValidationCache::getData() const
     const VkResult getSize = vkGetValidationCacheDataEXT(MAGMA_HANDLE(device), handle, &dataSize, nullptr);
     MAGMA_THROW_FAILURE(getSize, "failed to get validation cache size");
     std::vector<uint8_t> data(dataSize);
+    MAGMA_PROFILE_ENTRY(vkGetValidationCacheDataEXT);
     const VkResult getData = vkGetValidationCacheDataEXT(MAGMA_HANDLE(device), handle, &dataSize, data.data());
     MAGMA_THROW_FAILURE(getData, "failed to get validation cache data");
     return data;
@@ -72,6 +75,7 @@ void ValidationCache::mergeCaches(const std::vector<std::shared_ptr<const Valida
     MAGMA_STACK_ARRAY(VkValidationCacheEXT, dereferencedCaches, caches.size());
     for (const auto& cache : caches)
         dereferencedCaches.put(*cache);
+    MAGMA_PROFILE_ENTRY(vkMergeValidationCachesEXT);
     const VkResult merge = vkMergeValidationCachesEXT(MAGMA_HANDLE(device), handle, MAGMA_COUNT(dereferencedCaches), dereferencedCaches);
     MAGMA_THROW_FAILURE(merge, "failed to merge validation caches");
 }
