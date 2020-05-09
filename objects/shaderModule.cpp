@@ -82,6 +82,7 @@ ShaderModule::~ShaderModule()
 
 std::size_t ShaderModule::getHash() noexcept
 {
+    MAGMA_PROFILE_METHOD
     if (!bytecode.empty())
     {   // Compute complex hash on demand, may take time for large shaders
         core::hashCombine(hash, core::hashVector(bytecode));

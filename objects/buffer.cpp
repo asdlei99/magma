@@ -117,6 +117,7 @@ VkDescriptorBufferInfo Buffer::getDescriptor() const noexcept
 
 void Buffer::copyHost(const void *data, CopyMemoryFunction copyFn) noexcept
 {
+    MAGMA_PROFILE_METHOD
     void *buffer = memory->map();
     if (buffer)
     {
@@ -131,6 +132,7 @@ void Buffer::copyTransfer(std::shared_ptr<CommandBuffer> copyCmdBuffer,
     std::shared_ptr<SrcTransferBuffer> srcBuffer,
     VkDeviceSize srcOffset /* 0 */)
 {
+    MAGMA_PROFILE_METHOD
     copyCmdBuffer->begin();
     {
         VkBufferCopy region;

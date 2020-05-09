@@ -322,6 +322,7 @@ std::shared_ptr<Device> PhysicalDevice::createDefaultDevice() const
 
 bool PhysicalDevice::checkExtensionSupport(const char *extensionName) const
 {
+    MAGMA_PROFILE_METHOD
     MAGMA_ASSERT(extensionName);
     if (!extensionName || !strlen(extensionName))
         return false;

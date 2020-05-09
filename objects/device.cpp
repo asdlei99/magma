@@ -97,6 +97,7 @@ Device::~Device()
 
 std::shared_ptr<Queue> Device::getQueue(VkQueueFlagBits flags, uint32_t queueIndex) const
 {
+    MAGMA_PROFILE_METHOD
     const DeviceQueueDescriptor queueDesc(physicalDevice, flags);
     for (auto& pair : queues)
     {   // Check if queue family is present, otherwise vkGetDeviceQueue() throws an exception

@@ -118,6 +118,7 @@ bool DeviceMemory::invalidateMappedRange(
 
 uint32_t DeviceMemory::getTypeIndex(VkMemoryPropertyFlags flags) const
 {
+    MAGMA_PROFILE_METHOD
     const VkPhysicalDeviceMemoryProperties& properties = this->device->getPhysicalDevice()->getMemoryProperties();
     for (uint32_t memTypeIndex = 0; memTypeIndex < properties.memoryTypeCount; ++memTypeIndex)
     {   // Try exact match

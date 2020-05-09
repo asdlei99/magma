@@ -38,6 +38,7 @@ void IndirectBuffer::writeDrawCommand(uint32_t vertexCount,
     uint32_t firstVertex /* 0 */,
     uint32_t cmdIndex /* 0 */) noexcept
 {
+    MAGMA_PROFILE_METHOD
     const VkDeviceSize offset = cmdIndex * sizeof(VkDrawIndirectCommand);
     if (auto *drawCmd = memory->map<VkDrawIndirectCommand>(offset, sizeof(VkDrawIndirectCommand)))
     {
@@ -52,6 +53,7 @@ void IndirectBuffer::writeDrawCommand(uint32_t vertexCount,
 void IndirectBuffer::writeDrawCommand(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance,
     uint32_t cmdIndex /* 0 */) noexcept
 {
+    MAGMA_PROFILE_METHOD
     const VkDeviceSize offset = cmdIndex * sizeof(VkDrawIndirectCommand);
     if (auto *drawCmd = memory->map<VkDrawIndirectCommand>(offset, sizeof(VkDrawIndirectCommand)))
     {
@@ -66,6 +68,7 @@ void IndirectBuffer::writeDrawCommand(uint32_t vertexCount, uint32_t instanceCou
 void IndirectBuffer::writeDrawCommand(const VkDrawIndirectCommand& drawCmd,
     uint32_t cmdIndex /* 0 */) noexcept
 {
+    MAGMA_PROFILE_METHOD
     const VkDeviceSize offset = cmdIndex * sizeof(VkDrawIndirectCommand);
     if (void *buffer = memory->map(offset, sizeof(VkDrawIndirectCommand)))
     {
@@ -76,6 +79,7 @@ void IndirectBuffer::writeDrawCommand(const VkDrawIndirectCommand& drawCmd,
 
 void IndirectBuffer::writeDrawCommands(const std::vector<VkDrawIndirectCommand>& drawCmdList) noexcept
 {
+    MAGMA_PROFILE_METHOD
     const VkDeviceSize size = sizeof(VkDrawIndirectCommand) * drawCmdList.size();
     if (auto *drawCmdArray = memory->map<VkDrawIndirectCommand>(0, size))
     {
@@ -87,6 +91,7 @@ void IndirectBuffer::writeDrawCommands(const std::vector<VkDrawIndirectCommand>&
 
 void IndirectBuffer::writeDrawCommands(const std::list<VkDrawIndirectCommand>& drawCmdList) noexcept
 {
+    MAGMA_PROFILE_METHOD
     const VkDeviceSize size = sizeof(VkDrawIndirectCommand) * drawCmdList.size();
     if (auto *drawCmdArray = memory->map<VkDrawIndirectCommand>(0, size))
     {

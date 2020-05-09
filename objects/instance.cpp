@@ -165,6 +165,7 @@ std::vector<VkExtensionProperties> Instance::enumerateExtensions(const char *lay
 
 bool Instance::checkExtensionSupport(const char *extensionName) const
 {
+    MAGMA_PROFILE_METHOD
     MAGMA_ASSERT(extensionName);
     if (!extensionName || !strlen(extensionName))
         return false;

@@ -214,6 +214,7 @@ void Image::copyMipLevel(uint32_t level, std::shared_ptr<Buffer> buffer, VkDevic
     VkPipelineStageFlags barrierDstStageMask /* VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT */,
     bool flush /* true */)
 {
+    MAGMA_PROFILE_METHOD
     VkImageSubresourceRange subresourceRange;
     subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     subresourceRange.baseMipLevel = level;
@@ -254,6 +255,7 @@ void Image::copyMipLevel(uint32_t level, std::shared_ptr<Buffer> buffer, VkDevic
 
 ImageMipmapLayout Image::buildMipOffsets(const ImageMipmapLayout& mipSizes, VkDeviceSize& bufferSize) const noexcept
 {
+    MAGMA_PROFILE_METHOD
     const uint32_t mipCount = MAGMA_COUNT(mipSizes);
     MAGMA_ASSERT(mipCount > 0);
     MAGMA_ASSERT(mipCount <= mipLevels * arrayLayers);
@@ -279,6 +281,7 @@ ImageMipmapLayout Image::buildMipOffsets(const ImageMipmapLayout& mipSizes, VkDe
 
 std::vector<VkBufferImageCopy> Image::buildCopyRegions(const ImageMipmapLayout& mipOffsets, VkDeviceSize bufferOffset) const noexcept
 {
+    MAGMA_PROFILE_METHOD
     const uint32_t mipCount = MAGMA_COUNT(mipOffsets);
     MAGMA_ASSERT(mipCount > 0);
     MAGMA_ASSERT(mipCount <= mipLevels * arrayLayers);
@@ -304,6 +307,7 @@ std::vector<VkBufferImageCopy> Image::buildCopyRegions(const ImageMipmapLayout& 
 void Image::copyFromBuffer(std::shared_ptr<Buffer> buffer, const std::vector<VkBufferImageCopy>& copyRegions,
     std::shared_ptr<CommandBuffer> cmdBuffer, bool flush /* true */)
 {
+    MAGMA_PROFILE_METHOD
     // Define array layers to copy
     VkImageSubresourceRange subresourceRange;
     subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
