@@ -45,14 +45,18 @@ CommandPool::CommandPool(std::shared_ptr<Device> device,
     if (resetCommandBuffer)
         info.flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     info.queueFamilyIndex = queueFamilyIndex;
-    const VkResult create = vkCreateCommandPool(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create command pool");
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateCommandPool);
+        const VkResult create = vkCreateCommandPool(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create command pool");
+    }
     if (!getOverridenAllocator())
         pool = std::make_unique<memory::LinearPlacementPool>(sizeof(CommandBuffer), poolCommandBufferCount);
 }
 
 CommandPool::~CommandPool()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyCommandPool);
     vkDestroyCommandPool(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
@@ -61,6 +65,7 @@ bool CommandPool::reset(bool releaseResources) noexcept
     VkCommandPoolResetFlags flags = 0;
     if (releaseResources)
         flags |= VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT;
+    MAGMA_PROFILE_ENTRY(vkResetCommandPool);
     const VkResult reset = vkResetCommandPool(MAGMA_HANDLE(device), handle, flags);
     return (VK_SUCCESS == reset);
 }
@@ -74,8 +79,11 @@ std::vector<std::shared_ptr<CommandBuffer>> CommandPool::allocateCommandBuffers(
     info.level = primaryLevel ? VK_COMMAND_BUFFER_LEVEL_PRIMARY : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
     info.commandBufferCount = commandBufferCount;
     MAGMA_STACK_ARRAY(VkCommandBuffer, cmdBufferHandles, commandBufferCount);
-    const VkResult alloc = vkAllocateCommandBuffers(MAGMA_HANDLE(device), &info, cmdBufferHandles);
-    MAGMA_THROW_FAILURE(alloc, "failed to allocate command buffers");
+    {
+        MAGMA_PROFILE_ENTRY(vkAllocateCommandBuffers);
+        const VkResult alloc = vkAllocateCommandBuffers(MAGMA_HANDLE(device), &info, cmdBufferHandles);
+        MAGMA_THROW_FAILURE(alloc, "failed to allocate command buffers");
+    }
     std::vector<std::shared_ptr<CommandBuffer>> commandBuffers;
     for (const VkCommandBuffer handle : cmdBufferHandles)
     {
@@ -109,6 +117,7 @@ void CommandPool::freeCommandBuffers(std::vector<std::shared_ptr<CommandBuffer>>
     MAGMA_STACK_ARRAY(VkCommandBuffer, dereferencedCommandBuffers, commandBuffers.size());
     for (const auto& buffer : commandBuffers)
         dereferencedCommandBuffers.put(*buffer);
+    MAGMA_PROFILE_ENTRY(vkFreeCommandBuffers);
     vkFreeCommandBuffers(MAGMA_HANDLE(device), handle, dereferencedCommandBuffers.size(), dereferencedCommandBuffers);
     for (auto& buffer : commandBuffers)
         buffer->handle = VK_NULL_HANDLE; // Do not call vkFreeCommandBuffers() in destructor
@@ -119,6 +128,7 @@ void CommandPool::freeCommandBuffers(std::vector<std::shared_ptr<CommandBuffer>>
 void CommandPool::trim(VkCommandPoolTrimFlagsKHR flags /* 0 */)
 {
     MAGMA_DEVICE_EXTENSION(vkTrimCommandPoolKHR, VK_KHR_MAINTENANCE1_EXTENSION_NAME);
+    MAGMA_PROFILE_ENTRY(vkTrimCommandPoolKHR);
     vkTrimCommandPoolKHR(MAGMA_HANDLE(device), handle, flags);
 }
 #endif // VK_KHR_maintenance1
