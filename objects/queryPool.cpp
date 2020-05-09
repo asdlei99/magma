@@ -37,12 +37,14 @@ QueryPool::QueryPool(VkQueryType queryType, std::shared_ptr<Device> device, uint
     info.queryType = queryType;
     info.queryCount = queryCount;
     info.pipelineStatistics = pipelineStatistics;
+    MAGMA_PROFILE_ENTRY(vkCreateQueryPool);
     const VkResult create = vkCreateQueryPool(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create query pool");
 }
 
 QueryPool::~QueryPool()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyQueryPool);
     vkDestroyQueryPool(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
@@ -56,6 +58,7 @@ std::vector<uint64_t> QueryPool::getResults(uint32_t firstQuery, uint32_t queryC
     // TODO: VK_QUERY_RESULT_PARTIAL_BIT
     const VkDeviceSize stride = sizeof(uint64_t);
     std::vector<uint64_t> results(queryCount);
+    MAGMA_PROFILE_ENTRY(vkGetQueryPoolResults);
     const VkResult get = vkGetQueryPoolResults(MAGMA_HANDLE(device), handle,
         firstQuery, queryCount,
         sizeof(uint64_t) * results.size(), results.data(), stride,
