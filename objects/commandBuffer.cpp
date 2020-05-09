@@ -48,6 +48,7 @@ CommandBuffer::CommandBuffer(VkCommandBufferLevel level, std::shared_ptr<Command
     info.commandPool = MAGMA_HANDLE(pool);
     info.level = level;
     info.commandBufferCount = 1;
+    MAGMA_PROFILE_ENTRY(vkAllocateCommandBuffers);
     const VkResult alloc = vkAllocateCommandBuffers(MAGMA_HANDLE(device), &info, &handle);
     MAGMA_THROW_FAILURE(alloc, "failed to allocate primary command buffer");
 }
@@ -61,8 +62,11 @@ CommandBuffer::CommandBuffer(VkCommandBufferLevel level, VkCommandBuffer handle,
 
 CommandBuffer::~CommandBuffer()
 {
-    if (handle) // Release if not freed through command pool
+    if (handle)
+    {   // Release if not freed through command pool
+        MAGMA_PROFILE_ENTRY(vkFreeCommandBuffers);
         vkFreeCommandBuffers(MAGMA_HANDLE(device), MAGMA_HANDLE(pool), 1, &handle);
+    }
 }
 
 bool CommandBuffer::begin(VkCommandBufferUsageFlags flags /* 0 */) noexcept
@@ -72,6 +76,7 @@ bool CommandBuffer::begin(VkCommandBufferUsageFlags flags /* 0 */) noexcept
     beginInfo.pNext = nullptr;
     beginInfo.flags = flags;
     beginInfo.pInheritanceInfo = nullptr;
+    MAGMA_PROFILE_ENTRY(vkBeginCommandBuffer);
     const VkResult begin = vkBeginCommandBuffer(handle, &beginInfo);
     MAGMA_ASSERT(VK_SUCCESS == begin);
 #ifdef MAGMA_DEBUG_LABEL
@@ -107,6 +112,7 @@ bool CommandBuffer::beginInherited(const std::shared_ptr<RenderPass>& renderPass
     beginInfo.pNext = nullptr;
     beginInfo.flags = flags | VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
     beginInfo.pInheritanceInfo = &inheritanceInfo;
+    MAGMA_PROFILE_ENTRY(vkBeginCommandBuffer);
     const VkResult begin = vkBeginCommandBuffer(handle, &beginInfo);
     MAGMA_ASSERT(VK_SUCCESS == begin);
 #ifdef MAGMA_DEBUG_LABEL
@@ -128,6 +134,7 @@ void CommandBuffer::end()
        If a run time error occurs in such commands, the implementation will defer
        reporting the error until a specified point. For commands that record
        into command buffers (vkCmd*), run time errors are reported by vkEndCommandBuffer. */
+    MAGMA_PROFILE_ENTRY(vkEndCommandBuffer);
     const VkResult result = vkEndCommandBuffer(handle);
     /* This is the only place where command buffer may throw and exception. */
     MAGMA_THROW_FAILURE(result, "failed to record command buffer");
@@ -138,6 +145,7 @@ bool CommandBuffer::reset(bool releaseResources) noexcept
     VkCommandBufferResetFlags flags = 0;
     if (releaseResources)
         flags |= VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT;
+    MAGMA_PROFILE_ENTRY(vkResetCommandBuffer);
     const VkResult reset = vkResetCommandBuffer(handle, flags);
     MAGMA_ASSERT(VK_SUCCESS == reset);
     return (VK_SUCCESS == reset);
@@ -177,41 +185,49 @@ void CommandBuffer::copyBuffer(const std::shared_ptr<Buffer>& srcBuffer, const s
         region.size = dstBuffer->getMemory()->getSize();
     else
         region.size = size;
+    MAGMA_PROFILE_ENTRY(vkCmdCopyBuffer);
     vkCmdCopyBuffer(handle, *srcBuffer, *dstBuffer, 1, &region);
 }
 
 void CommandBuffer::copyBuffer(const std::shared_ptr<Buffer>& srcBuffer, const std::shared_ptr<Buffer>& dstBuffer, const VkBufferCopy& region) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdCopyBuffer);
     vkCmdCopyBuffer(handle, *srcBuffer, *dstBuffer, 1, &region);
 }
 
 void CommandBuffer::copyImage(const std::shared_ptr<Image>& srcImage, const std::shared_ptr<Image>& dstImage, const VkImageCopy& region) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdCopyImage);
     vkCmdCopyImage(handle, *srcImage, srcImage->getLayout(), *dstImage, dstImage->getLayout(), 1, &region);
 }
 
 void CommandBuffer::blitImage(const std::shared_ptr<Image>& srcImage, const std::shared_ptr<Image>& dstImage, const VkImageBlit& region, VkFilter filter) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdBlitImage);
     vkCmdBlitImage(handle, *srcImage, srcImage->getLayout(), *dstImage, dstImage->getLayout(), 1, &region, filter);
 }
 
 void CommandBuffer::copyBufferToImage(const std::shared_ptr<Buffer>& srcBuffer, const std::shared_ptr<Image>& dstImage, const VkBufferImageCopy& region) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdCopyBufferToImage);
     vkCmdCopyBufferToImage(handle, *srcBuffer, *dstImage, dstImage->getLayout(), 1, &region);
 }
 
 void CommandBuffer::copyBufferToImage(const std::shared_ptr<Buffer>& srcBuffer, const std::shared_ptr<Image>& dstImage, const std::vector<VkBufferImageCopy>& regions) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdCopyBufferToImage);
     vkCmdCopyBufferToImage(handle, *srcBuffer, *dstImage, dstImage->getLayout(), MAGMA_COUNT(regions), regions.data());
 }
 
 void CommandBuffer::copyImageToBuffer(const std::shared_ptr<Image>& srcImage, const std::shared_ptr<Buffer>& dstBuffer, const VkBufferImageCopy& region) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdCopyImageToBuffer);
     vkCmdCopyImageToBuffer(handle, *srcImage, srcImage->getLayout(), *dstBuffer, 1, &region);
 }
 
 void CommandBuffer::copyImageToBuffer(const std::shared_ptr<Image>& srcImage, const std::shared_ptr<Buffer>& dstBuffer, const std::vector<VkBufferImageCopy>& regions) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdCopyImageToBuffer);
     vkCmdCopyImageToBuffer(handle, *srcImage, srcImage->getLayout(), *dstBuffer, MAGMA_COUNT(regions), regions.data());
 }
 
@@ -223,6 +239,7 @@ void CommandBuffer::updateBuffer(const std::shared_ptr<Buffer>& buffer, VkDevice
        (which requires additional storage and may incur an additional allocation),
        and then copy the data from the command buffer into dstBuffer
        when the command is executed on a device. */
+    MAGMA_PROFILE_ENTRY(vkCmdUpdateBuffer);
     vkCmdUpdateBuffer(handle, *buffer, offset, dataSize,
         (const uint32_t *)data); // Compatibility with old SDK
 }
@@ -233,40 +250,47 @@ void CommandBuffer::fillBuffer(const std::shared_ptr<Buffer>& buffer, uint32_t v
 {
     if (0 == size)
         size = buffer->getMemory()->getSize();
+    MAGMA_PROFILE_ENTRY(vkCmdFillBuffer);
     vkCmdFillBuffer(handle, *buffer, offset, size, value);
 }
 
 void CommandBuffer::clearColorImage(const std::shared_ptr<Image>& image, const ClearColor& color, const VkImageSubresourceRange& range) const noexcept
 {
     const VkClearColorValue& clearColor = static_cast<const VkClearValue&>(color).color;
+    MAGMA_PROFILE_ENTRY(vkCmdClearColorImage);
     vkCmdClearColorImage(handle, *image, VK_IMAGE_LAYOUT_GENERAL, &clearColor, 1, &range);
 }
 
 void CommandBuffer::clearDepthStencilImage(const std::shared_ptr<Image>& image, const ClearDepthStencil& depthStencil, const VkImageSubresourceRange& range) const noexcept
 {
     const VkClearDepthStencilValue& clearDepthStencil = static_cast<const VkClearValue&>(depthStencil).depthStencil;
+    MAGMA_PROFILE_ENTRY(vkCmdClearDepthStencilImage);
     vkCmdClearDepthStencilImage(handle, *image, VK_IMAGE_LAYOUT_GENERAL, &clearDepthStencil, 1, &range);
 }
 
 void CommandBuffer::clearAttachments(const std::initializer_list<ClearAttachment>& attachments, const VkClearRect& clearRect) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdClearAttachments);
     vkCmdClearAttachments(handle, MAGMA_COUNT(attachments), attachments.begin(), 1, &clearRect);
 }
 
 void CommandBuffer::resolveImage(const std::shared_ptr<Image>& srcImage, const std::shared_ptr<Image>& dstImage, const VkImageResolve& region) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdResolveImage);
     vkCmdResolveImage(handle, *srcImage, srcImage->getLayout(), *dstImage, dstImage->getLayout(), 1, &region);
 }
 
 void CommandBuffer::setEvent(const std::shared_ptr<Event>& event, VkPipelineStageFlags stageMask) noexcept
 {
     MAGMA_ASSERT(!(stageMask & VK_PIPELINE_STAGE_HOST_BIT));
+    MAGMA_PROFILE_ENTRY(vkCmdSetEvent);
     vkCmdSetEvent(handle, *event, stageMask);
 }
 
 void CommandBuffer::resetEvent(const std::shared_ptr<Event>& event, VkPipelineStageFlags stageMask) noexcept
 {
     MAGMA_ASSERT(!(stageMask & VK_PIPELINE_STAGE_HOST_BIT));
+    MAGMA_PROFILE_ENTRY(vkCmdResetEvent);
     vkCmdResetEvent(handle, *event, stageMask);
 }
 
@@ -281,6 +305,7 @@ void CommandBuffer::waitEvent(const std::shared_ptr<Event>& event, VkPipelineSta
     MAGMA_STACK_ARRAY(VkImageMemoryBarrier, dereferencedImageMemoryBarriers, imageMemoryBarriers.size());
     for (const auto& barrier : imageMemoryBarriers)
         dereferencedImageMemoryBarriers.put(barrier);
+    MAGMA_PROFILE_ENTRY(vkCmdWaitEvents);
     vkCmdWaitEvents(handle, 1, dereferencedEvents, srcStageMask, dstStageMask,
         MAGMA_COUNT(memoryBarriers),
         memoryBarriers.data(),
@@ -303,6 +328,7 @@ void CommandBuffer::waitEvents(const std::vector<std::shared_ptr<Event>>& events
     MAGMA_STACK_ARRAY(VkImageMemoryBarrier, dereferencedImageMemoryBarriers, imageMemoryBarriers.size());
     for (const auto& barrier : imageMemoryBarriers)
         dereferencedImageMemoryBarriers.put(barrier);
+    MAGMA_PROFILE_ENTRY(vkCmdWaitEvents);
     vkCmdWaitEvents(handle, dereferencedEvents.size(), dereferencedEvents, srcStageMask, dstStageMask,
         MAGMA_COUNT(memoryBarriers),
         memoryBarriers.data(),
@@ -315,6 +341,7 @@ void CommandBuffer::waitEvents(const std::vector<std::shared_ptr<Event>>& events
 void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, const MemoryBarrier& barrier,
     VkDependencyFlags dependencyFlags /* 0 */) noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdPipelineBarrier);
     vkCmdPipelineBarrier(handle, srcStageMask, dstStageMask, dependencyFlags,
         1, &barrier,
         0, nullptr,
@@ -324,6 +351,7 @@ void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelin
 void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, const BufferMemoryBarrier& barrier,
     VkDependencyFlags dependencyFlags /* 0 */) noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdPipelineBarrier);
     vkCmdPipelineBarrier(handle, srcStageMask, dstStageMask, dependencyFlags,
         0, nullptr,
         1, &barrier,
@@ -333,6 +361,7 @@ void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelin
 void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, const ImageMemoryBarrier& imageMemoryBarrier,
     VkDependencyFlags dependencyFlags /* 0 */) noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdPipelineBarrier);
     vkCmdPipelineBarrier(handle, srcStageMask, dstStageMask, dependencyFlags,
         0, nullptr,
         0, nullptr,
@@ -348,13 +377,15 @@ void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelin
 {
     MAGMA_STACK_ARRAY(VkImageMemoryBarrier, dereferencedImageMemoryBarriers, imageMemoryBarriers.size());
     for (const auto& barrier : imageMemoryBarriers)
+    {
         dereferencedImageMemoryBarriers.put(barrier);
+        barrier.resource->setLayout(barrier.newLayout);
+    }
+    MAGMA_PROFILE_ENTRY(vkCmdPipelineBarrier);
     vkCmdPipelineBarrier(handle, srcStageMask, dstStageMask, dependencyFlags,
         MAGMA_COUNT(memoryBarriers), memoryBarriers.data(),
         MAGMA_COUNT(bufferMemoryBarriers), bufferMemoryBarriers.data(),
         MAGMA_COUNT(imageMemoryBarriers), dereferencedImageMemoryBarriers);
-    for (const auto& barrier : imageMemoryBarriers)
-        barrier.resource->setLayout(barrier.newLayout);
 }
 
 void CommandBuffer::beginQuery(const std::shared_ptr<QueryPool>& queryPool, uint32_t queryIndex, bool precise) noexcept
@@ -363,22 +394,26 @@ void CommandBuffer::beginQuery(const std::shared_ptr<QueryPool>& queryPool, uint
     VkQueryControlFlags flags = 0;
     if (precise)
         flags |= VK_QUERY_CONTROL_PRECISE_BIT;
+    MAGMA_PROFILE_ENTRY(vkCmdBeginQuery);
     vkCmdBeginQuery(handle, *queryPool, queryIndex, flags);
 }
 
 void CommandBuffer::endQuery(const std::shared_ptr<QueryPool>& queryPool, uint32_t queryIndex) noexcept
 {
     MAGMA_ASSERT(queryIndex < queryPool->getQueryCount());
+    MAGMA_PROFILE_ENTRY(vkCmdEndQuery);
     vkCmdEndQuery(handle, *queryPool, queryIndex);
 }
 
 void CommandBuffer::resetQueryPool(const std::shared_ptr<QueryPool>& queryPool) noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdResetQueryPool);
     vkCmdResetQueryPool(handle, *queryPool, 0, queryPool->getQueryCount());
 }
 
 void CommandBuffer::writeTimestamp(VkPipelineStageFlagBits pipelineStage, const std::shared_ptr<QueryPool>& queryPool, uint32_t queryIndex) noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkCmdWriteTimestamp);
     vkCmdWriteTimestamp(handle, pipelineStage, *queryPool, queryIndex);
 }
 
@@ -399,6 +434,7 @@ void CommandBuffer::copyQueryResults(const std::shared_ptr<QueryPool>& queryPool
         flags |= VK_QUERY_RESULT_WITH_AVAILABILITY_BIT;
     // TODO: VK_QUERY_RESULT_PARTIAL_BIT
     const VkDeviceSize stride = write64Bit ? sizeof(uint64_t) : sizeof(uint32_t);
+    MAGMA_PROFILE_ENTRY(vkCmdCopyQueryPoolResults);
     vkCmdCopyQueryPoolResults(handle, *queryPool, firstQuery, queryCount, *buffer, dstOffset, stride, flags);
 }
 
@@ -423,6 +459,7 @@ void CommandBuffer::beginRenderPass(const std::shared_ptr<RenderPass>& renderPas
     beginInfo.clearValueCount = MAGMA_COUNT(clearValues);
     beginInfo.pClearValues = reinterpret_cast<const VkClearValue *>(clearValues.data());
     static_assert(sizeof(VkClearValue) == sizeof(ClearValue), "size of ClearValue must be equal to size of VkClearValue");
+    MAGMA_PROFILE_ENTRY(vkCmdBeginRenderPass);
     vkCmdBeginRenderPass(handle, &beginInfo, contents);
 #ifdef MAGMA_DEBUG_LABEL
     beginRenderPassMarked = VK_FALSE;
@@ -437,6 +474,7 @@ void CommandBuffer::executeCommands(const std::vector<std::shared_ptr<CommandBuf
     MAGMA_STACK_ARRAY(VkCommandBuffer, dereferencedCommandBuffers, commandBuffers.size());
     for (const auto& commandBuffer : commandBuffers)
         dereferencedCommandBuffers.put(*commandBuffer);
+    MAGMA_PROFILE_ENTRY(vkCmdExecuteCommands);
     vkCmdExecuteCommands(handle, dereferencedCommandBuffers.size(), dereferencedCommandBuffers);
 }
 
@@ -447,6 +485,7 @@ void CommandBuffer::setDeviceMask(uint32_t deviceMask) noexcept
     if (vkCmdSetDeviceMaskKHR)
     {
         MAGMA_ASSERT(deviceMask);
+        MAGMA_PROFILE_ENTRY(vkCmdSetDeviceMaskKHR);
         vkCmdSetDeviceMaskKHR(handle, deviceMask);
         this->deviceMask = deviceMask;
     }
@@ -464,6 +503,7 @@ bool CommandBuffer::beginDeviceGroup(uint32_t deviceMask,
     beginInfo.pNext = &deviceGroupBeginInfo;
     beginInfo.flags = flags;
     beginInfo.pInheritanceInfo = nullptr;
+    MAGMA_PROFILE_ENTRY(vkBeginCommandBuffer);
     const VkResult begin = vkBeginCommandBuffer(handle, &beginInfo);
     MAGMA_ASSERT(VK_SUCCESS == begin);
 #ifdef MAGMA_DEBUG
@@ -494,6 +534,7 @@ void CommandBuffer::beginDeviceGroupRenderPass(uint32_t deviceMask,
     beginInfo.clearValueCount = MAGMA_COUNT(clearValues);
     beginInfo.pClearValues = reinterpret_cast<const VkClearValue *>(clearValues.data());
     static_assert(sizeof(VkClearValue) == sizeof(ClearValue), "size of ClearValue must be equal to size of VkClearValue");
+    MAGMA_PROFILE_ENTRY(vkCmdBeginRenderPass);
     vkCmdBeginRenderPass(handle, &beginInfo, contents);
 #ifdef MAGMA_DEBUG
     beginRenderPassMarked = VK_FALSE;
@@ -505,7 +546,10 @@ void CommandBuffer::dispatchBase(uint32_t baseGroupX, uint32_t baseGroupY, uint3
 {
     MAGMA_OPTIONAL_DEVICE_EXTENSION(vkCmdDispatchBaseKHR);
     if (vkCmdDispatchBaseKHR)
+    {
+        MAGMA_PROFILE_ENTRY(vkCmdDispatchBaseKHR);
         vkCmdDispatchBaseKHR(handle, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+    }
 }
 #endif // VK_KHR_device_group
 
@@ -527,6 +571,7 @@ void CommandBuffer::beginConditionalRendering(const std::shared_ptr<Buffer>& buf
         beginInfo.flags = 0;
         if (inverted)
             beginInfo.flags |= VK_CONDITIONAL_RENDERING_INVERTED_BIT_EXT;
+        MAGMA_PROFILE_ENTRY(vkCmdBeginConditionalRenderingEXT);
         vkCmdBeginConditionalRenderingEXT(handle, &beginInfo);
     }
 }
@@ -535,7 +580,10 @@ void CommandBuffer::endConditionalRendering() noexcept
 {
     MAGMA_OPTIONAL_DEVICE_EXTENSION(vkCmdEndConditionalRenderingEXT);
     if (vkCmdEndConditionalRenderingEXT)
+    {
+        MAGMA_PROFILE_ENTRY(vkCmdEndConditionalRenderingEXT);
         vkCmdEndConditionalRenderingEXT(handle);
+    }
 }
 #endif // VK_EXT_conditional_rendering
 
@@ -547,6 +595,7 @@ void CommandBuffer::buildAccelerationStructure(const std::shared_ptr<Buffer>& in
     MAGMA_OPTIONAL_DEVICE_EXTENSION(vkCmdBuildAccelerationStructureNV);
     if (vkCmdBuildAccelerationStructureNV)
     {
+        MAGMA_PROFILE_ENTRY(vkCmdBuildAccelerationStructureNV);
         vkCmdBuildAccelerationStructureNV(handle,
             &dst->getInfo(),
             MAGMA_OPTIONAL_HANDLE(instanceData),
@@ -564,6 +613,7 @@ void CommandBuffer::copyAccelerationStructure(const std::shared_ptr<Acceleration
     if (vkCmdCopyAccelerationStructureNV)
     {
         const VkCopyAccelerationStructureModeNV mode = clone ? VK_COPY_ACCELERATION_STRUCTURE_MODE_CLONE_NV : VK_COPY_ACCELERATION_STRUCTURE_MODE_COMPACT_NV;
+        MAGMA_PROFILE_ENTRY(vkCmdCopyAccelerationStructureNV);
         vkCmdCopyAccelerationStructureNV(handle, *dst, *src, mode);
     }
 }
@@ -576,6 +626,7 @@ void CommandBuffer::writeAccelerationStructureProperties(const std::shared_ptr<A
     if (vkCmdWriteAccelerationStructuresPropertiesNV)
     {
         const VkAccelerationStructureNV dereferencedAccelerationStructure = *accelerationStructure;
+        MAGMA_PROFILE_ENTRY(vkCmdWriteAccelerationStructuresPropertiesNV);
         vkCmdWriteAccelerationStructuresPropertiesNV(handle, 1, &dereferencedAccelerationStructure, queryPool->getType(), *queryPool, firstQuery);
     }
 }
@@ -591,6 +642,7 @@ void CommandBuffer::traceRays(const std::shared_ptr<Buffer>& raygenShaderBinding
     MAGMA_OPTIONAL_DEVICE_EXTENSION(vkCmdTraceRaysNV);
     if (vkCmdTraceRaysNV)
     {
+        MAGMA_PROFILE_ENTRY(vkCmdTraceRaysNV);
         vkCmdTraceRaysNV(handle,
             *raygenShaderBindingTableBuffer, raygenShaderBindingOffset,
             *missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride,

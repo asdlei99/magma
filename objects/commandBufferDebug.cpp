@@ -41,6 +41,7 @@ void CommandBuffer::beginDebugMarker(const char *name, uint32_t color) noexcept
         info.color[1] = ((color >> 16) & 0xFF) / 255.f; // G
         info.color[2] = ((color >> 8) & 0xFF) / 255.f; // B
         info.color[3] = (color & 0xFF) / 255.f; // A
+        MAGMA_PROFILE_DEBUG_ENTRY(vkCmdDebugMarkerBeginEXT);
         vkCmdDebugMarkerBeginEXT(handle, &info);
     }
 #else
@@ -54,7 +55,10 @@ void CommandBuffer::endDebugMarker() noexcept
 #ifdef MAGMA_DEBUG
     MAGMA_OPTIONAL_DEVICE_EXTENSION(vkCmdDebugMarkerEndEXT);
     if (vkCmdDebugMarkerEndEXT)
+    {
+        MAGMA_PROFILE_DEBUG_ENTRY(vkCmdDebugMarkerEndEXT);
         vkCmdDebugMarkerEndEXT(handle);
+    }
 #endif // MAGMA_DEBUG
 }
 
@@ -75,6 +79,7 @@ void CommandBuffer::insertDebugMarker(const char *name, uint32_t color) noexcept
         info.color[1] = ((color >> 16) & 0xFF) / 255.f; // G
         info.color[2] = ((color >> 8) & 0xFF) / 255.f; // B
         info.color[3] = (color & 0xFF) / 255.f; // A
+        MAGMA_PROFILE_DEBUG_ENTRY(vkCmdDebugMarkerInsertEXT);
         vkCmdDebugMarkerInsertEXT(handle, &info);
     }
 #else
@@ -102,6 +107,7 @@ void CommandBuffer::beginDebugLabel(const char *name, uint32_t color) noexcept
         info.color[1] = ((color >> 16) & 0xFF) / 255.f; // G
         info.color[2] = ((color >> 8) & 0xFF) / 255.f; // B
         info.color[3] = (color & 0xFF) / 255.f; // A
+        MAGMA_PROFILE_DEBUG_ENTRY(vkCmdBeginDebugUtilsLabelEXT);
         vkCmdBeginDebugUtilsLabelEXT(handle, &info);
     }
 #else
@@ -114,7 +120,10 @@ void CommandBuffer::endDebugLabel() noexcept
 {
     MAGMA_OPTIONAL_DEVICE_EXTENSION(vkCmdEndDebugUtilsLabelEXT);
     if (vkCmdEndDebugUtilsLabelEXT)
+    {
+        MAGMA_PROFILE_DEBUG_ENTRY(vkCmdEndDebugUtilsLabelEXT);
         vkCmdEndDebugUtilsLabelEXT(handle);
+    }
 }
 
 void CommandBuffer::insertDebugLabel(const char *name, uint32_t color) noexcept
@@ -134,6 +143,7 @@ void CommandBuffer::insertDebugLabel(const char *name, uint32_t color) noexcept
         info.color[1] = ((color >> 16) & 0xFF) / 255.f; // G
         info.color[2] = ((color >> 8) & 0xFF) / 255.f; // B
         info.color[3] = (color & 0xFF) / 255.f; // A
+        MAGMA_PROFILE_DEBUG_ENTRY(vkCmdInsertDebugUtilsLabelEXT);
         vkCmdInsertDebugUtilsLabelEXT(handle, &info);
     }
 #else
