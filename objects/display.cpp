@@ -42,6 +42,7 @@ std::vector<VkDisplayModePropertiesKHR> Display::getModeProperties() const
     std::vector<VkDisplayModePropertiesKHR> displayModeProperties(propertyCount);
     if (propertyCount > 0)
     {
+        MAGMA_PROFILE_ENTRY(vkGetDisplayModePropertiesKHR);
         const VkResult get = vkGetDisplayModePropertiesKHR(MAGMA_HANDLE(physicalDevice), handle, &propertyCount, displayModeProperties.data());
         MAGMA_THROW_FAILURE(get, "failed to get display mode properties");
     }
