@@ -53,8 +53,11 @@ ShaderModule::ShaderModule(std::shared_ptr<Device> device, const SpirvWord *byte
     MAGMA_ASSERT(0 == bytecodeSize % sizeof(SpirvWord)); // A module is defined as a stream of words, not a stream of bytes
     info.codeSize = bytecodeSize;
     info.pCode = bytecode;
-    const VkResult create = vkCreateShaderModule(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create shader module");
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateShaderModule);
+        const VkResult create = vkCreateShaderModule(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create shader module");
+    }
     this->bytecode.resize(info.codeSize); // codeSize is the size, in bytes, of the code pointed to by pCode
     memcpy(this->bytecode.data(), info.pCode, info.codeSize);
     hash = core::hashArgs(
@@ -73,6 +76,7 @@ ShaderModule::ShaderModule(std::shared_ptr<Device> device, const std::vector<Spi
 
 ShaderModule::~ShaderModule()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyShaderModule);
     vkDestroyShaderModule(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
