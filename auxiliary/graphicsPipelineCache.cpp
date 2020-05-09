@@ -62,6 +62,7 @@ std::shared_ptr<GraphicsPipeline> GraphicsPipelineCache::lookupPipeline(
     uint32_t subpass /* 0 */,
     VkPipelineCreateFlags flags /* 0 */)
 {   // Compute hash of graphics pipeline object
+    MAGMA_PROFILE_FUNCTION
     VkGraphicsPipelineCreateInfo info;
     info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     info.pNext = nullptr;
@@ -131,6 +132,7 @@ std::shared_ptr<GraphicsPipeline> GraphicsPipelineCache::lookupBasePipeline(
     const ColorBlendState& colorBlendState,
     const std::initializer_list<VkDynamicState>& dynamicStates /* {} */) const noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     if (!basePipelines.empty())
     {   // Compute hash of render and dynamic states
         std::size_t hash = core::hashCombineList({

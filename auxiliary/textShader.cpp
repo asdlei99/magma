@@ -226,6 +226,7 @@ void TextShader::begin()
 
 void TextShader::end()
 {
+    MAGMA_PROFILE_FUNCTION
     helpers::mapScoped<Uniforms>(uniforms, [this](auto *constants)
     {   // Globals
         constants->stringCount = MAGMA_COUNT(strings);
@@ -243,6 +244,7 @@ void TextShader::end()
 
 void TextShader::print(uint32_t x, uint32_t y, uint32_t color, const char *format, ...)
 {
+    MAGMA_PROFILE_FUNCTION
     char sz[MAGMA_MAX_STRING];
     va_list args;
     va_start(args, format);

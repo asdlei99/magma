@@ -48,6 +48,7 @@ bool MipmapGenerator::checkFormatSupport(VkFormat format) const noexcept
 bool MipmapGenerator::generateMipmap(std::shared_ptr<Image> image, uint32_t baseLevel, VkFilter filter,
     std::shared_ptr<CommandBuffer> cmdBuffer, bool flushCmdBuffer) const noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     if (flushCmdBuffer)
         cmdBuffer->begin();
     VkExtent3D prevMipExtent = image->getMipExtent(baseLevel);

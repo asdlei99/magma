@@ -63,6 +63,7 @@ bool ImmediateRender::beginPrimitive(VkPrimitiveTopology topology,
     const char *labelName /* nullptr */,
     uint32_t labelColor /* 0xFFFFFFFF */)
 {
+    MAGMA_PROFILE_FUNCTION
     MAGMA_ASSERT(!insidePrimitive);
     if (insidePrimitive)
         return false;
@@ -92,6 +93,7 @@ bool ImmediateRender::beginPrimitive(VkPrimitiveTopology topology,
 
 bool ImmediateRender::endPrimitive(bool loop /* false */) noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     MAGMA_ASSERT(insidePrimitive);
     if (!insidePrimitive)
         return false;
@@ -109,6 +111,7 @@ bool ImmediateRender::endPrimitive(bool loop /* false */) noexcept
 bool ImmediateRender::commitPrimitives(std::shared_ptr<CommandBuffer> cmdBuffer,
     bool freePrimitiveList /* true */) noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     MAGMA_ASSERT(!insidePrimitive);
     if (insidePrimitive || primitives.empty())
         return false;
@@ -182,6 +185,7 @@ std::shared_ptr<GraphicsPipeline> ImmediateRender::lookupPipeline(VkPrimitiveTop
         &renderstates::triangleListWithAdjacency,
         &renderstates::triangleStripWithAdjacency,
         &renderstates::patchList};
+    MAGMA_PROFILE_FUNCTION
     // Create new or grab existing graphics pipeline
     return pipelineCache->lookupPipeline({vertexShader, fragmentShader},
         vertexInputState, *inputAssemblyStates[topology],

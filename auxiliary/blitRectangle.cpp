@@ -108,6 +108,7 @@ void BlitRectangle::blit(std::shared_ptr<Framebuffer> bltDst, std::shared_ptr<co
     bool negativeViewportHeight /* false */, const char *labelName /* nullptr */,
     uint32_t labelColor /* 0xFFFFFFFF */) const noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     MAGMA_ASSERT(bltDst);
     MAGMA_ASSERT(bltSrc);
     MAGMA_ASSERT(cmdBuffer);
