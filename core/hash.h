@@ -25,6 +25,7 @@ namespace core
 template<typename Type>
 constexpr std::size_t hash(const Type& arg) noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     std::hash<Type> hasher;
     return hasher(arg);
 }
@@ -45,6 +46,7 @@ constexpr void hashNext(std::size_t& seed, const Type& arg, Args... args) noexce
 template<typename Type, typename... Args>
 constexpr std::size_t hashArgs(const Type& arg, Args... args) noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     std::size_t value = hash(arg);
     hashNext(value, args...);
     return value;
@@ -53,6 +55,7 @@ constexpr std::size_t hashArgs(const Type& arg, Args... args) noexcept
 template<typename Type>
 inline std::size_t hashArray(const Type *const arr, std::size_t count) noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     std::hash<Type> hasher;
     std::size_t value = 0;
     for (std::size_t i = 0; i < count; ++i)
@@ -63,6 +66,7 @@ inline std::size_t hashArray(const Type *const arr, std::size_t count) noexcept
 template<typename Type>
 inline std::size_t hashVector(const std::vector<Type>& v) noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     std::hash<Type> hasher;
     std::size_t value = 0;
     for (const auto& it : v)
@@ -73,6 +77,7 @@ inline std::size_t hashVector(const std::vector<Type>& v) noexcept
 template<typename Type>
 inline std::size_t hashList(const std::list<Type>& ls) noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     std::hash<Type> hasher;
     std::size_t value = 0;
     for (const auto& it : ls)
@@ -83,6 +88,7 @@ inline std::size_t hashList(const std::list<Type>& ls) noexcept
 template<typename Type>
 inline std::size_t hashString(const std::basic_string<Type>& str) noexcept
 {
+    MAGMA_PROFILE_FUNCTION
     std::hash<std::basic_string<Type>> hasher;
     return hasher(str);
 }
