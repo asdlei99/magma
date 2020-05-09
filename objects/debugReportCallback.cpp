@@ -48,6 +48,7 @@ DebugReportCallback::DebugReportCallback(std::shared_ptr<const Instance> instanc
         info.flags = flags;
         info.pfnCallback = userCallback;
         info.pUserData = userData;
+        MAGMA_PROFILE_DEBUG_ENTRY(vkCreateDebugReportCallbackEXT);
         const VkResult create = vkCreateDebugReportCallbackEXT(MAGMA_HANDLE(instance), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
         MAGMA_THROW_FAILURE(create, "failed to create debug report callback");
     }
@@ -57,7 +58,10 @@ DebugReportCallback::~DebugReportCallback()
 {
     MAGMA_OPTIONAL_INSTANCE_EXTENSION(vkDestroyDebugReportCallbackEXT);
     if (vkDestroyDebugReportCallbackEXT)
+    {
+        MAGMA_PROFILE_DEBUG_ENTRY(vkDestroyDebugReportCallbackEXT);
         vkDestroyDebugReportCallbackEXT(MAGMA_HANDLE(instance), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
+    }
 }
 
 void DebugReportCallback::message(VkDebugReportFlagsEXT flags, VkObjectType objectType,
@@ -78,6 +82,7 @@ void DebugReportCallback::message(VkDebugReportFlagsEXT flags, VkObjectType obje
 #endif
         va_end(args);
         const VkDebugReportObjectTypeEXT debugObjectType = helpers::castToDebugReportType(objectType);
+        MAGMA_PROFILE_DEBUG_ENTRY(vkDebugReportMessageEXT);
         vkDebugReportMessageEXT(MAGMA_HANDLE(instance), flags, debugObjectType, object, location, messageCode, layerPrefix, message);
     }
 }
