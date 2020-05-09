@@ -32,22 +32,26 @@ Event::Event(std::shared_ptr<Device> device,
     info.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
     info.pNext = nullptr;
     info.flags = 0;
+    MAGMA_PROFILE_ENTRY(vkCreateEvent);
     const VkResult create = vkCreateEvent(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create event");
 }
 
 Event::~Event()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyEvent);
     vkDestroyEvent(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
 VkResult Event::getStatus() const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkGetEventStatus);
     return vkGetEventStatus(MAGMA_HANDLE(device), handle);
 }
 
 bool Event::set() noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkSetEvent);
     const VkResult set = vkSetEvent(MAGMA_HANDLE(device), handle);
     MAGMA_ASSERT(VK_SUCCESS == set);
     return (VK_SUCCESS == set);
@@ -55,6 +59,7 @@ bool Event::set() noexcept
 
 bool Event::reset() noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkResetEvent);
     const VkResult reset = vkResetEvent(MAGMA_HANDLE(device), handle);
     MAGMA_ASSERT(VK_SUCCESS == reset);
     return (VK_SUCCESS == reset);

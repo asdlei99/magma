@@ -35,17 +35,20 @@ Fence::Fence(std::shared_ptr<Device> device,
     info.flags = 0;
     if (signaled)
         info.flags |= VK_FENCE_CREATE_SIGNALED_BIT;
+    MAGMA_PROFILE_ENTRY(vkCreateFence);
     const VkResult create = vkCreateFence(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create fence");
 }
 
 Fence::~Fence()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyFence);
     vkDestroyFence(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
 bool Fence::reset() noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkResetFences);
     const VkResult reset = vkResetFences(MAGMA_HANDLE(device), 1, &handle);
     MAGMA_ASSERT(VK_SUCCESS == reset);
     return (VK_SUCCESS == reset);
@@ -53,11 +56,13 @@ bool Fence::reset() noexcept
 
 VkResult Fence::getStatus() const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkGetFenceStatus);
     return vkGetFenceStatus(MAGMA_HANDLE(device), handle);
 }
 
 bool Fence::wait(uint64_t timeout /* UINT64_MAX */) const noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkWaitForFences);
     const VkResult wait = vkWaitForFences(MAGMA_HANDLE(device), 1, &handle, VK_TRUE, timeout);
     return (VK_SUCCESS == wait) || (VK_TIMEOUT == wait);
 }
