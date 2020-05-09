@@ -47,6 +47,7 @@ Framebuffer::Framebuffer(std::shared_ptr<const RenderPass> renderPass, std::shar
     info.width = extent.width;
     info.height = extent.height;
     info.layers = 1;
+    MAGMA_PROFILE_ENTRY(vkCreateFramebuffer);
     const VkResult create = vkCreateFramebuffer(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create framebuffer");
 }
@@ -72,12 +73,14 @@ Framebuffer::Framebuffer(std::shared_ptr<const RenderPass> renderPass, const std
     info.width = extent.width;
     info.height = extent.height;
     info.layers = 1;
+    MAGMA_PROFILE_ENTRY(vkCreateFramebuffer);
     const VkResult create = vkCreateFramebuffer(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create framebuffer");
 }
 
 Framebuffer::~Framebuffer()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyFramebuffer);
     vkDestroyFramebuffer(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 } // namespace magma
