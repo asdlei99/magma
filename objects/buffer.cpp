@@ -46,8 +46,11 @@ Buffer::Buffer(std::shared_ptr<Device> device, VkDeviceSize size,
     info.sharingMode = sharing.getMode();
     info.queueFamilyIndexCount = sharing.getQueueFamiliesCount();
     info.pQueueFamilyIndices = sharing.getQueueFamilyIndices().data();
-    const VkResult create = vkCreateBuffer(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create buffer");
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateBuffer);
+        const VkResult create = vkCreateBuffer(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create buffer");
+    }
     VkMemoryRequirements memRequirements;
     vkGetBufferMemoryRequirements(MAGMA_HANDLE(device), handle, &memRequirements);
     std::shared_ptr<DeviceMemory> memory(std::make_shared<DeviceMemory>(
@@ -57,12 +60,14 @@ Buffer::Buffer(std::shared_ptr<Device> device, VkDeviceSize size,
 
 Buffer::~Buffer()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyBuffer);
     vkDestroyBuffer(*device, handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
 void Buffer::bindMemory(std::shared_ptr<DeviceMemory> memory,
     VkDeviceSize offset /* 0 */)
 {
+    MAGMA_PROFILE_ENTRY(vkBindBufferMemory);
     const VkResult bind = vkBindBufferMemory(MAGMA_HANDLE(device), handle, *memory, offset);
     MAGMA_THROW_FAILURE(bind, "failed to bind buffer memory");
     this->offset = offset;
@@ -86,6 +91,7 @@ void Buffer::bindMemoryDeviceGroup(std::shared_ptr<DeviceMemory> memory,
     bindInfo.memory = *memory;
     bindInfo.memoryOffset = offset;
     MAGMA_DEVICE_EXTENSION(vkBindBufferMemory2KHR, VK_KHR_BIND_MEMORY_2_EXTENSION_NAME);
+    MAGMA_PROFILE_ENTRY(vkBindBufferMemory2KHR);
     const VkResult bind = vkBindBufferMemory2KHR(MAGMA_HANDLE(device), 1, &bindInfo);
     MAGMA_THROW_FAILURE(bind, "failed to bind buffer memory within device group");
     this->memory = std::move(memory);
@@ -95,6 +101,7 @@ void Buffer::bindMemoryDeviceGroup(std::shared_ptr<DeviceMemory> memory,
 VkMemoryRequirements Buffer::getMemoryRequirements() const noexcept
 {
     VkMemoryRequirements memRequirements;
+    MAGMA_PROFILE_ENTRY(vkGetBufferMemoryRequirements);
     vkGetBufferMemoryRequirements(MAGMA_HANDLE(device), handle, &memRequirements);
     return memRequirements;
 }
@@ -130,6 +137,7 @@ void Buffer::copyTransfer(std::shared_ptr<CommandBuffer> copyCmdBuffer,
         region.srcOffset = srcOffset;
         region.dstOffset = 0;
         region.size = srcBuffer->getMemory()->getSize();
+        MAGMA_PROFILE_ENTRY(vkCmdCopyBuffer);
         vkCmdCopyBuffer(*copyCmdBuffer, *srcBuffer, handle, 1, &region);
     }
     copyCmdBuffer->end();

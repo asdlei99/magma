@@ -74,8 +74,11 @@ Image::Image(std::shared_ptr<Device> device, VkImageType imageType, VkFormat for
     info.queueFamilyIndexCount = sharing.getQueueFamiliesCount();
     info.pQueueFamilyIndices = sharing.getQueueFamilyIndices().data();
     info.initialLayout = layout;
-    const VkResult create = vkCreateImage(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create image");
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateImage);
+        const VkResult create = vkCreateImage(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create image");
+    }
     VkMemoryRequirements memoryRequirements;
     vkGetImageMemoryRequirements(MAGMA_HANDLE(device), handle, &memoryRequirements);
     size = memoryRequirements.size;
@@ -105,6 +108,7 @@ Image::Image(std::shared_ptr<Device> device, VkImage handle, VkImageType imageTy
 
 Image::~Image()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyImage);
     vkDestroyImage(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
@@ -142,6 +146,7 @@ VkSubresourceLayout Image::getSubresourceLayout(uint32_t mipLevel, uint32_t arra
     subresource.mipLevel = mipLevel;
     subresource.arrayLayer = this->arrayLayers > 1 ? arrayLayer : 0; // Ignore for non-arrays
     VkSubresourceLayout subresourceLayout;
+    MAGMA_PROFILE_ENTRY(vkGetImageSubresourceLayout);
     vkGetImageSubresourceLayout(MAGMA_HANDLE(device), handle, &subresource, &subresourceLayout);
     return subresourceLayout;
 }
@@ -149,6 +154,7 @@ VkSubresourceLayout Image::getSubresourceLayout(uint32_t mipLevel, uint32_t arra
 VkMemoryRequirements Image::getMemoryRequirements() const noexcept
 {
     VkMemoryRequirements memoryRequirements;
+    MAGMA_PROFILE_ENTRY(vkGetImageMemoryRequirements);
     vkGetImageMemoryRequirements(MAGMA_HANDLE(device), handle, &memoryRequirements);
     return memoryRequirements;
 }
@@ -159,13 +165,17 @@ std::vector<VkSparseImageMemoryRequirements> Image::getSparseMemoryRequirements(
     vkGetImageSparseMemoryRequirements(MAGMA_HANDLE(device), handle, &sparseMemoryRequirementCount, nullptr);
     std::vector<VkSparseImageMemoryRequirements> sparseMemoryRequirements(sparseMemoryRequirementCount);
     if (sparseMemoryRequirementCount > 0)
+    {
+        MAGMA_PROFILE_ENTRY(vkGetImageSparseMemoryRequirements);
         vkGetImageSparseMemoryRequirements(MAGMA_HANDLE(device), handle, &sparseMemoryRequirementCount, sparseMemoryRequirements.data());
+    }
     return sparseMemoryRequirements;
 }
 
 void Image::bindMemory(std::shared_ptr<DeviceMemory> memory,
     VkDeviceSize offset /* 0 */)
 {
+    MAGMA_PROFILE_ENTRY(vkBindImageMemory);
     const VkResult bind = vkBindImageMemory(MAGMA_HANDLE(device), handle, *memory, offset);
     MAGMA_THROW_FAILURE(bind, "failed to bind image memory");
     this->offset = offset;
@@ -191,6 +201,7 @@ void Image::bindMemoryDeviceGroup(std::shared_ptr<DeviceMemory> memory,
     bindInfo.memory = *memory;
     bindInfo.memoryOffset = offset;
     MAGMA_DEVICE_EXTENSION(vkBindImageMemory2KHR, VK_KHR_BIND_MEMORY_2_EXTENSION_NAME);
+    MAGMA_PROFILE_ENTRY(vkBindImageMemory2KHR);
     const VkResult bind = vkBindImageMemory2KHR(MAGMA_HANDLE(device), 1, &bindInfo);
     MAGMA_THROW_FAILURE(bind, "failed to bind image memory within device group");
     this->offset = offset;

@@ -96,12 +96,14 @@ ImageView::ImageView(std::shared_ptr<Image> resource,
     info.subresourceRange.levelCount = levelCount;
     info.subresourceRange.baseArrayLayer = baseArrayLayer;
     info.subresourceRange.layerCount = layerCount;
+    MAGMA_PROFILE_ENTRY(vkCreateImageView);
     const VkResult create = vkCreateImageView(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create image view");
 }
 
 ImageView::~ImageView()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyImageView);
     vkDestroyImageView(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 } // namespace magma

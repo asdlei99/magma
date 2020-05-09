@@ -36,6 +36,7 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device, VkDeviceSize size, Vk
     info.pNext = nullptr;
     info.allocationSize = size;
     info.memoryTypeIndex = getTypeIndex(flags);
+    MAGMA_PROFILE_ENTRY(vkAllocateMemory);
     const VkResult allocate = vkAllocateMemory(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(allocate, "failed to allocate memory");
 }
@@ -56,6 +57,7 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device, uint32_t deviceMask, 
     info.pNext = &flagsInfo;
     info.allocationSize = size;
     info.memoryTypeIndex = getTypeIndex(flags);
+    MAGMA_PROFILE_ENTRY(vkAllocateMemory);
     const VkResult allocate = vkAllocateMemory(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(allocate, "failed to allocate memory");
 }
@@ -63,6 +65,7 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device, uint32_t deviceMask, 
 
 DeviceMemory::~DeviceMemory()
 {
+    MAGMA_PROFILE_ENTRY(vkFreeMemory);
     vkFreeMemory(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
@@ -72,12 +75,14 @@ void *DeviceMemory::map(
     VkMemoryMapFlags flags /* 0 */) noexcept
 {
     void *data;
+    MAGMA_PROFILE_ENTRY(vkMapMemory);
     const VkResult map = vkMapMemory(MAGMA_HANDLE(device), handle, offset, size, flags, &data);
     return (VK_SUCCESS == map) ? data : nullptr;
 }
 
 void DeviceMemory::unmap() noexcept
 {
+    MAGMA_PROFILE_ENTRY(vkUnmapMemory);
     vkUnmapMemory(*device, handle);
 }
 
@@ -91,6 +96,7 @@ bool DeviceMemory::flushMappedRange(
     memRange.memory = handle;
     memRange.offset = offset;
     memRange.size = size;
+    MAGMA_PROFILE_ENTRY(vkFlushMappedMemoryRanges);
     const VkResult flush = vkFlushMappedMemoryRanges(MAGMA_HANDLE(device), 1, &memRange);
     return (VK_SUCCESS == flush);
 }
@@ -105,6 +111,7 @@ bool DeviceMemory::invalidateMappedRange(
     memRange.memory = handle;
     memRange.offset = offset;
     memRange.size = size;
+    MAGMA_PROFILE_ENTRY(vkInvalidateMappedMemoryRanges);
     const VkResult invalidate = vkInvalidateMappedMemoryRanges(MAGMA_HANDLE(device), 1, &memRange);
     return (VK_SUCCESS == invalidate);
 }
