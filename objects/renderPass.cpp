@@ -115,9 +115,12 @@ RenderPass::RenderPass(std::shared_ptr<Device> device,
     info.pSubpasses = &subpass;
     info.dependencyCount = 2;
     info.pDependencies = dependencies;
-    const VkResult create = vkCreateRenderPass(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create render pass");
-     hash = core::hashArgs(
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateRenderPass);
+        const VkResult create = vkCreateRenderPass(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create render pass");
+    }
+    hash = core::hashArgs(
         info.sType,
         info.flags,
         info.attachmentCount,
@@ -147,8 +150,11 @@ RenderPass::RenderPass(std::shared_ptr<Device> device,
     info.pSubpasses = subpasses.begin();
     info.dependencyCount = MAGMA_COUNT(dependencies);
     info.pDependencies = dependencies.begin();
-    const VkResult create = vkCreateRenderPass(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create render pass");
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateRenderPass);
+        const VkResult create = vkCreateRenderPass(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create render pass");
+    }
     hash = core::hashArgs(
         info.sType,
         info.flags,
@@ -165,6 +171,7 @@ RenderPass::RenderPass(std::shared_ptr<Device> device,
 
 RenderPass::~RenderPass()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyRenderPass);
     vkDestroyRenderPass(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
