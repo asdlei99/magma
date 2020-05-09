@@ -54,12 +54,14 @@ Sampler::Sampler(std::shared_ptr<Device> device, const SamplerState& state,
     info.maxLod = std::numeric_limits<float>::max();
     info.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
     info.unnormalizedCoordinates = VK_FALSE;
+    MAGMA_PROFILE_ENTRY(vkCreateSampler);
     const VkResult create = vkCreateSampler(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create sampler");
 }
 
 Sampler::~Sampler()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroySampler);
     vkDestroySampler(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
@@ -91,6 +93,7 @@ LodSampler::LodSampler(std::shared_ptr<Device> device, const SamplerState& state
     info.maxLod = maxLod;
     info.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
     info.unnormalizedCoordinates = VK_FALSE;
+    MAGMA_PROFILE_ENTRY(vkCreateSampler);
     const VkResult create = vkCreateSampler(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create LOD sampler");
 }
@@ -118,6 +121,7 @@ DepthSampler::DepthSampler(std::shared_ptr<Device> device, const DepthSamplerSta
     info.maxLod = std::numeric_limits<float>::max();
     info.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
     info.unnormalizedCoordinates = VK_FALSE;
+    MAGMA_PROFILE_ENTRY(vkCreateSampler);
     const VkResult create = vkCreateSampler(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create depth sampler");
 }
@@ -145,6 +149,7 @@ UnnormalizedSampler::UnnormalizedSampler(std::shared_ptr<Device> device, bool li
     info.maxLod = 0.f;
     info.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
     info.unnormalizedCoordinates = VK_TRUE;
+    MAGMA_PROFILE_ENTRY(vkCreateSampler);
     const VkResult create = vkCreateSampler(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create unnormalized sampler");
 }
