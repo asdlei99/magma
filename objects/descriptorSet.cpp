@@ -54,6 +54,7 @@ void DescriptorSet::update(uint32_t index, std::shared_ptr<const Buffer> buffer)
     descriptorWrite.pImageInfo = nullptr;
     descriptorWrite.pBufferInfo = &info;
     descriptorWrite.pTexelBufferView = nullptr;
+    MAGMA_PROFILE_ENTRY(vkUpdateDescriptorSets);
     vkUpdateDescriptorSets(MAGMA_HANDLE(device), 1, &descriptorWrite, 0, nullptr);
 }
 
@@ -89,6 +90,7 @@ void DescriptorSet::update(uint32_t index, std::shared_ptr<const ImageView> imag
     descriptorWrite.pImageInfo = &info;
     descriptorWrite.pBufferInfo = nullptr;
     descriptorWrite.pTexelBufferView = nullptr;
+    MAGMA_PROFILE_ENTRY(vkUpdateDescriptorSets);
     vkUpdateDescriptorSets(MAGMA_HANDLE(device), 1, &descriptorWrite, 0, nullptr);
 }
 
@@ -108,6 +110,7 @@ void DescriptorSet::update(uint32_t index, std::shared_ptr<const BufferView> tex
     descriptorWrite.pImageInfo = nullptr;
     descriptorWrite.pBufferInfo = nullptr;
     descriptorWrite.pTexelBufferView = bufferViews;
+    MAGMA_PROFILE_ENTRY(vkUpdateDescriptorSets);
     vkUpdateDescriptorSets(MAGMA_HANDLE(device), 1, &descriptorWrite, 0, nullptr);
 }
 } // namespace magma
