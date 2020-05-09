@@ -59,6 +59,7 @@ Instance::Instance(const char *applicationName, const char *engineName, uint32_t
     createInfo.ppEnabledLayerNames = layerNames.data();
     createInfo.enabledExtensionCount = MAGMA_COUNT(extensionNames);
     createInfo.ppEnabledExtensionNames = extensionNames.data();
+    MAGMA_PROFILE_ENTRY(vkCreateInstance);
     const VkResult create = vkCreateInstance(&createInfo, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create Vulkan instance");
 #ifdef MAGMA_DEBUG
@@ -68,6 +69,7 @@ Instance::Instance(const char *applicationName, const char *engineName, uint32_t
 
 Instance::~Instance()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyInstance);
     vkDestroyInstance(handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 #ifdef MAGMA_DEBUG
     _refCountChecker.release();
@@ -77,6 +79,7 @@ Instance::~Instance()
 uint32_t Instance::countPhysicalDevices() const
 {
     uint32_t physicalDeviceCount = 0;
+    MAGMA_PROFILE_ENTRY(vkEnumeratePhysicalDevices);
     const VkResult enumerate = vkEnumeratePhysicalDevices(handle, &physicalDeviceCount, nullptr);
     MAGMA_THROW_FAILURE(enumerate, "failed to count physical devices");
     return physicalDeviceCount;
@@ -88,8 +91,11 @@ std::shared_ptr<PhysicalDevice> Instance::getPhysicalDevice(uint32_t deviceId)
     if (deviceId >= physicalDeviceCount)
         MAGMA_THROW("invalid parameter <deviceId>");
     MAGMA_STACK_ARRAY(VkPhysicalDevice, physicalDevices, physicalDeviceCount);
-    const VkResult enumerate = vkEnumeratePhysicalDevices(handle, &physicalDeviceCount, physicalDevices);
-    MAGMA_THROW_FAILURE(enumerate, "failed to enumerate physical devices");
+    {
+        MAGMA_PROFILE_ENTRY(vkEnumeratePhysicalDevices);
+        const VkResult enumerate = vkEnumeratePhysicalDevices(handle, &physicalDeviceCount, physicalDevices);
+        MAGMA_THROW_FAILURE(enumerate, "failed to enumerate physical devices");
+    }
     VkPhysicalDevice physicalDevice = physicalDevices[deviceId];
     return std::shared_ptr<PhysicalDevice>(new PhysicalDevice(shared_from_this(), physicalDevice, allocator));
 }
@@ -104,6 +110,7 @@ std::vector<VkPhysicalDeviceGroupPropertiesKHR> Instance::enumeratePhysicalDevic
     std::vector<VkPhysicalDeviceGroupPropertiesKHR> physicalDeviceGroups(physicalDeviceGroupCount);
     if (physicalDeviceGroupCount > 0)
     {
+        MAGMA_PROFILE_ENTRY(vkEnumeratePhysicalDeviceGroupsKHR);
         const VkResult enumerate = vkEnumeratePhysicalDeviceGroupsKHR(handle, &physicalDeviceGroupCount, physicalDeviceGroups.data());
         MAGMA_THROW_FAILURE(enumerate, "failed to enumerate groups of physical devices");
     }
@@ -134,6 +141,7 @@ std::vector<VkLayerProperties> Instance::enumerateLayers()
     std::vector<VkLayerProperties> layers(propertyCount);
     if (propertyCount > 0)
     {
+        MAGMA_PROFILE_ENTRY(vkEnumerateInstanceLayerProperties);
         const VkResult enumerate = vkEnumerateInstanceLayerProperties(&propertyCount, layers.data());
         MAGMA_THROW_FAILURE(enumerate, "failed to enumerate instance layers");
     }
@@ -148,6 +156,7 @@ std::vector<VkExtensionProperties> Instance::enumerateExtensions(const char *lay
     std::vector<VkExtensionProperties> extensions(propertyCount);
     if (propertyCount > 0)
     {
+        MAGMA_PROFILE_ENTRY(vkEnumerateInstanceExtensionProperties);
         const VkResult enumerate = vkEnumerateInstanceExtensionProperties(layerName, &propertyCount, extensions.data());
         MAGMA_THROW_FAILURE(enumerate, "failed to enumerate instance extensions");
     }

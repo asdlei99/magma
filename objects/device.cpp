@@ -79,8 +79,11 @@ Device::Device(std::shared_ptr<PhysicalDevice> physicalDevice,
     info.enabledExtensionCount = MAGMA_COUNT(extensions);
     info.ppEnabledExtensionNames = extensions.data();
     info.pEnabledFeatures = extendedDeviceFeatures.empty() ? &deviceFeatures : nullptr;
-    const VkResult create = vkCreateDevice(MAGMA_HANDLE(physicalDevice), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create logical device");
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateDevice);
+        const VkResult create = vkCreateDevice(MAGMA_HANDLE(physicalDevice), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create logical device");
+    }
     queues.reserve(queueDescriptors.size());
     for (const auto& desc : queueDescriptors)
         queues.emplace_back(desc, std::weak_ptr<Queue>());
@@ -88,6 +91,7 @@ Device::Device(std::shared_ptr<PhysicalDevice> physicalDevice,
 
 Device::~Device()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyDevice);
     vkDestroyDevice(handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
@@ -102,7 +106,10 @@ std::shared_ptr<Queue> Device::getQueue(VkQueueFlagBits flags, uint32_t queueInd
                 return pair.second.lock();
             // Get queue that supports specified flags
             VkQueue queue = VK_NULL_HANDLE;
-            vkGetDeviceQueue(handle, queueDesc.queueFamilyIndex, queueIndex, &queue);
+            {
+                MAGMA_PROFILE_ENTRY(vkGetDeviceQueue);
+                vkGetDeviceQueue(handle, queueDesc.queueFamilyIndex, queueIndex, &queue);
+            }
             if (VK_NULL_HANDLE == queue)
                 MAGMA_THROW("failed to get device queue");
             auto queueObj = std::shared_ptr<Queue>(new Queue(queue,
@@ -127,6 +134,7 @@ bool Device::resetFences(std::vector<std::shared_ptr<Fence>>& fences) const noex
     MAGMA_STACK_ARRAY(VkFence, dereferencedFences, fences.size());
     for (const auto& fence : fences)
         dereferencedFences.put(*fence);
+    MAGMA_PROFILE_ENTRY(vkResetFences);
     const VkResult reset = vkResetFences(handle, dereferencedFences.size(), dereferencedFences);
     return (VK_SUCCESS == reset);
 }
@@ -137,6 +145,7 @@ bool Device::waitForFences(std::vector<std::shared_ptr<Fence>>& fences, bool wai
     MAGMA_STACK_ARRAY(VkFence, dereferencedFences, fences.size());
     for (const auto& fence : fences)
         dereferencedFences.put(*fence);
+    MAGMA_PROFILE_ENTRY(vkWaitForFences);
     const VkResult wait = vkWaitForFences(handle, dereferencedFences.size(), dereferencedFences,
         MAGMA_BOOLEAN(waitAll), timeout);
     return (VK_SUCCESS == wait) || (VK_TIMEOUT == wait);
@@ -148,7 +157,10 @@ VkPeerMemoryFeatureFlags Device::getGroupPeerMemoryFeatures(uint32_t heapIndex, 
     VkPeerMemoryFeatureFlags peerMemoryFeatures = 0;
     MAGMA_OPTIONAL_DEVICE_EXTENSION(vkGetDeviceGroupPeerMemoryFeaturesKHR);
     if (vkGetDeviceGroupPeerMemoryFeaturesKHR)
+    {
+        MAGMA_PROFILE_ENTRY(vkGetDeviceGroupPeerMemoryFeaturesKHR);
         vkGetDeviceGroupPeerMemoryFeaturesKHR(handle, heapIndex, localDeviceIndex, remoteDeviceIndex, &peerMemoryFeatures);
+    }
     return peerMemoryFeatures;
 }
 #endif // VK_KHR_device_group
