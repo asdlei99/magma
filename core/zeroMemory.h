@@ -29,6 +29,7 @@ inline void *zeroMemory(void *dst, const std::size_t size)
 {
     MAGMA_ASSERT(dst);
     MAGMA_ASSERT(size > 0);
+    MAGMA_PROFILE_FUNCTION
 #if defined(__x86_64__) || defined(_M_AMD64)
     MAGMA_ASSERT(MAGMA_ALIGNED(dst));
     if (size >= MAGMA_COPY_PAGE_SIZE)

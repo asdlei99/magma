@@ -30,6 +30,7 @@ inline void *copyMemory(void *dst, const void *src, const std::size_t size)
     MAGMA_ASSERT(dst);
     MAGMA_ASSERT(src);
     MAGMA_ASSERT(size > 0);
+    MAGMA_PROFILE_FUNCTION
     /* On x64 platform all allocations should have 16-byte alignment.
        On x86 it's hard to follow this restriction, as standard alignment
        there is 8 bytes: https://msdn.microsoft.com/en-us/library/ycsb6wwf.aspx

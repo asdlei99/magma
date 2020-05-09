@@ -33,6 +33,7 @@ namespace magma
             const std::shared_ptr<Buffer>& buffer,
             std::function<void(Type *data)> fn)
         {
+            MAGMA_PROFILE_FUNCTION
             MAGMA_ASSERT(buffer);
             MAGMA_ASSERT(fn);
             std::shared_ptr<DeviceMemory> memory = buffer->getMemory();
@@ -53,6 +54,7 @@ namespace magma
             bool clearMemory,
             std::function<void(Block *block)> fn)
         {
+            MAGMA_PROFILE_FUNCTION
             MAGMA_ASSERT(buffer);
             MAGMA_ASSERT(fn);
             ZeroMemoryFunction zeroFn = clearMemory ? core::zeroMemory : nullptr;
@@ -70,6 +72,7 @@ namespace magma
             bool clearMemory,
             std::function<void(UniformArray<Type>& array)> fn)
         {
+            MAGMA_PROFILE_FUNCTION
             MAGMA_ASSERT(buffer);
             MAGMA_ASSERT(fn);
             ZeroMemoryFunction zeroFn = clearMemory ? core::zeroMemory : nullptr;
@@ -89,6 +92,7 @@ namespace magma
             bool clearMemory,
             std::function<void(AlignedUniformArray<Type>& array)> fn)
         {
+            MAGMA_PROFILE_FUNCTION
             MAGMA_ASSERT(buffer);
             MAGMA_ASSERT(fn);
             ZeroMemoryFunction zeroFn = clearMemory ? core::zeroMemory : nullptr;
@@ -109,6 +113,7 @@ namespace magma
             VkDeviceSize offset,
             std::function<void(Type *data)> fn)
         {
+            MAGMA_PROFILE_FUNCTION
             MAGMA_ASSERT(image);
             MAGMA_ASSERT(fn);
             std::shared_ptr<DeviceMemory> memory = image->getMemory();
