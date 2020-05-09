@@ -41,6 +41,7 @@ Pipeline::Pipeline(VkPipelineBindPoint bindPoint, std::shared_ptr<Device> device
 
 Pipeline::~Pipeline()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyPipeline);
     vkDestroyPipeline(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 

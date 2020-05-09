@@ -63,8 +63,11 @@ RayTracingPipeline::RayTracingPipeline(std::shared_ptr<Device> device,
     info.basePipelineHandle = MAGMA_OPTIONAL_HANDLE(this->basePipeline);
     info.basePipelineIndex = -1;
     MAGMA_DEVICE_EXTENSION(vkCreateRayTracingPipelinesNV, VK_NV_RAY_TRACING_EXTENSION_NAME);
-    const VkResult create = vkCreateRayTracingPipelinesNV(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(this->pipelineCache), 1, &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create ray tracing pipeline");
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateRayTracingPipelinesNV);
+        const VkResult create = vkCreateRayTracingPipelinesNV(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(this->pipelineCache), 1, &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create ray tracing pipeline");
+    }
     hash = core::hashArgs(
         info.sType,
         info.flags,
@@ -83,6 +86,7 @@ std::vector<VkShaderModule> RayTracingPipeline::getShaderGroupHandles(uint32_t f
     std::vector<VkShaderModule> shaders(groupCount);
     const std::size_t dataSize = sizeof(VkShaderModule) * groupCount;
     MAGMA_DEVICE_EXTENSION(vkGetRayTracingShaderGroupHandlesNV, VK_NV_RAY_TRACING_EXTENSION_NAME);
+    MAGMA_PROFILE_ENTRY(vkGetRayTracingShaderGroupHandlesNV);
     const VkResult get = vkGetRayTracingShaderGroupHandlesNV(MAGMA_HANDLE(device), handle, firstGroup, groupCount, dataSize, shaders.data());
     MAGMA_THROW_FAILURE(get, "failed to get ray tracing shader handles");
     return shaders;
@@ -91,6 +95,7 @@ std::vector<VkShaderModule> RayTracingPipeline::getShaderGroupHandles(uint32_t f
 void RayTracingPipeline::compileDeferred(uint32_t shaderIndex)
 {
     MAGMA_DEVICE_EXTENSION(vkCompileDeferredNV, VK_NV_RAY_TRACING_EXTENSION_NAME);
+    MAGMA_PROFILE_ENTRY(vkCompileDeferredNV);
     const VkResult compile = vkCompileDeferredNV(MAGMA_HANDLE(device), handle, shaderIndex);
     MAGMA_THROW_FAILURE(compile, "failed to compile shader deferred");
 }

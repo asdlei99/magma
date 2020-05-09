@@ -46,8 +46,11 @@ ComputePipeline::ComputePipeline(std::shared_ptr<Device> device,
     info.layout = MAGMA_HANDLE(layout);
     info.basePipelineHandle = MAGMA_OPTIONAL_HANDLE(this->basePipeline);
     info.basePipelineIndex = -1;
-    const VkResult create = vkCreateComputePipelines(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(this->pipelineCache), 1, &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
-    MAGMA_THROW_FAILURE(create, "failed to create compute pipeline");
+    {
+        MAGMA_PROFILE_ENTRY(vkCreateComputePipelines);
+        const VkResult create = vkCreateComputePipelines(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(this->pipelineCache), 1, &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
+        MAGMA_THROW_FAILURE(create, "failed to create compute pipeline");
+    }
     hash = core::hashArgs(
         info.sType,
         info.flags);

@@ -41,12 +41,14 @@ PipelineCache::PipelineCache(std::shared_ptr<Device> device,
     info.flags = 0;
     info.initialDataSize = dataSize;
     info.pInitialData = cacheData;
+    MAGMA_PROFILE_ENTRY(vkCreatePipelineCache);
     const VkResult create = vkCreatePipelineCache(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create pipeline cache");
 }
 
 PipelineCache::~PipelineCache()
 {
+    MAGMA_PROFILE_ENTRY(vkDestroyPipelineCache);
     vkDestroyPipelineCache(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
@@ -56,6 +58,7 @@ std::vector<uint8_t> PipelineCache::getData() const
     const VkResult getSize = vkGetPipelineCacheData(MAGMA_HANDLE(device), handle, &dataSize, nullptr);
     MAGMA_THROW_FAILURE(getSize, "failed to get pipeline cache size");
     std::vector<uint8_t> data(dataSize);
+    MAGMA_PROFILE_ENTRY(vkGetPipelineCacheData);
     const VkResult getData = vkGetPipelineCacheData(MAGMA_HANDLE(device), handle, &dataSize, data.data());
     MAGMA_THROW_FAILURE(getData, "failed to get pipeline cache data");
     return data;
@@ -66,6 +69,7 @@ void PipelineCache::mergeCaches(const std::vector<std::shared_ptr<const Pipeline
     MAGMA_STACK_ARRAY(VkPipelineCache, dereferencedCaches, caches.size());
     for (const auto& cache : caches)
         dereferencedCaches.put(*cache);
+    MAGMA_PROFILE_ENTRY(vkMergePipelineCaches);
     const VkResult merge = vkMergePipelineCaches(MAGMA_HANDLE(device), handle, MAGMA_COUNT(dereferencedCaches), dereferencedCaches);
     MAGMA_THROW_FAILURE(merge, "failed to merge pipeline caches");
 }
