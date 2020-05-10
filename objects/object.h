@@ -18,6 +18,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 #include "objectType.h"
 #include "../allocator/objectAllocator.h"
+#include "../profiler/profiler.h"
 #include "../misc/deviceExtension.h"
 #include "../helpers/castToDebugReport.h"
 
