@@ -24,6 +24,9 @@ namespace magma
 #endif
         };
 
+        /* Base profiler object that is supposed to exists
+           within a scope of block or function. */
+
 #ifdef MAGMA_ENABLE_PROFILING
         class ScopedProfiler : public Profiler
         {
@@ -35,6 +38,11 @@ namespace magma
             const clock::time_point start;
         };
 
+        /* 1. Vulkan function profiler.
+              If function belongs to debugging functionality (e.g. vkSubmitDebugUtilsMessageEXT),
+              then <debugEntry> should be true. This allows to exclude debugging functions
+              from profiling if this isn't neccessary. */
+
         class ScopedEntryProfiler : public ScopedProfiler
         {
         public:
@@ -44,6 +52,10 @@ namespace magma
         private:
             const bool debugEntry;
         };
+
+        /* 2. Method profiler.
+              Supposed to be used within methods of objects that are inherited
+              from base Object class and has associated Vulkan object type. */
 
         class ScopedMethodProfiler : public ScopedProfiler
         {
@@ -57,6 +69,9 @@ namespace magma
             const char *const fileName;
             const long line;
         };
+
+        /* 3. Function profiler.
+              Supposed to be used within non-Object types and standalon functions. */
 
         class ScopedFunctionProfiler : public ScopedProfiler
         {
