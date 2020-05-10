@@ -82,6 +82,12 @@
     <Filter Include="Source Files\core">
       <UniqueIdentifier>{788fe0f5-46b7-45db-86d9-6ca8cc0ff5a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\profiler">
+      <UniqueIdentifier>{8f9f5127-2670-4a25-8475-066069dc6385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\profiler">
+      <UniqueIdentifier>{35320b4d-d934-46b6-bcf3-edf59a713443}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\allocator\allocator.h">
@@ -498,6 +504,9 @@
     <ClInclude Include="..\..\objects\objectType.h">
       <Filter>Header Files\objects</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\profiler\profiler.h">
+      <Filter>Header Files\profiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\allocator\allocator.cpp">
@@ -773,6 +782,9 @@
     <ClCompile Include="..\..\allocator\objectAllocator.cpp">
       <Filter>Source Files\allocator</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\profiler\profiler.cpp">
+      <Filter>Source Files\profiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\auxiliary\immediateRender.inl">
@@ -867,6 +879,9 @@
     </None>
     <None Include="..\..\descriptors\subpassDependency.inl">
       <Filter>Header Files\descriptors</Filter>
+    </None>
+    <None Include="..\..\profiler\scopedProfiler.inl">
+      <Filter>Header Files\profiler</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

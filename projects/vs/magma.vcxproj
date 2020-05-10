@@ -266,6 +266,7 @@
     <ClInclude Include="..\..\objects\uniformTexelBuffer.h" />
     <ClInclude Include="..\..\objects\validationCache.h" />
     <ClInclude Include="..\..\objects\vertexBuffer.h" />
+    <ClInclude Include="..\..\profiler\profiler.h" />
     <ClInclude Include="..\..\shaders\pipelineShaderStage.h" />
     <ClInclude Include="..\..\shaders\rayTracingShaderGroup.h" />
     <ClInclude Include="..\..\shaders\specialization.h" />
@@ -372,6 +373,7 @@
     <ClCompile Include="..\..\objects\uniformTexelBuffer.cpp" />
     <ClCompile Include="..\..\objects\validationCache.cpp" />
     <ClCompile Include="..\..\objects\vertexBuffer.cpp" />
+    <ClCompile Include="..\..\profiler\profiler.cpp" />
     <ClCompile Include="..\..\shaders\pipelineShaderStage.cpp" />
     <ClCompile Include="..\..\shaders\rayTracingShaderGroup.cpp" />
     <ClCompile Include="..\..\shaders\specialization.cpp" />
@@ -483,6 +485,7 @@ $(VK_SDK_PATH)\Bin32\glslangValidator.exe -V -DNV --vn vsBlitNV %(FullPath) -o .
     <None Include="..\..\objects\srcTransferBuffer.inl" />
     <None Include="..\..\objects\storageBuffer.inl" />
     <None Include="..\..\objects\vertexBuffer.inl" />
+    <None Include="..\..\profiler\scopedProfiler.inl" />
     <None Include="..\..\states\colorBlendState.inl" />
     <None Include="..\..\states\colorBlendStateAdvanced.inl" />
     <None Include="..\..\states\depthStencilState.inl" />
