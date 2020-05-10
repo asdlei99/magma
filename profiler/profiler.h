@@ -9,7 +9,7 @@ namespace magma
     {
         class IProfiler;
 
-        /* Base profiler object that holds pointer to profiler instance. */
+        /* Profiler object that holds pointer to profiler instance. */
 
         class Profiler : public core::NonCopyable
         {
