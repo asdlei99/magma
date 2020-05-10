@@ -46,11 +46,11 @@ namespace magma
         class ScopedSampler
         {
         public:
-            ScopedSampler(const Type& description) noexcept;
+            ScopedSampler(const Type& desc) noexcept;
             ~ScopedSampler();
 
         private:
-            const Type& description;
+            const Type& desc;
             const std::chrono::high_resolution_clock::time_point start;
         };
     } // namespace profile

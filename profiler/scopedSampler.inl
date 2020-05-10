@@ -3,8 +3,8 @@ namespace magma
 namespace profile
 {
 template<typename Type>
-inline ScopedSampler<Type>::ScopedSampler(const Type& description) noexcept:
-    description(description),
+inline ScopedSampler<Type>::ScopedSampler(const Type& desc) noexcept:
+    desc(desc),
     start(std::chrono::high_resolution_clock::now())
 {}
 
