@@ -266,6 +266,7 @@
     <ClInclude Include="..\..\objects\uniformTexelBuffer.h" />
     <ClInclude Include="..\..\objects\validationCache.h" />
     <ClInclude Include="..\..\objects\vertexBuffer.h" />
+    <ClInclude Include="..\..\profiler\descriptors.h" />
     <ClInclude Include="..\..\profiler\profiler.h" />
     <ClInclude Include="..\..\shaders\pipelineShaderStage.h" />
     <ClInclude Include="..\..\shaders\rayTracingShaderGroup.h" />

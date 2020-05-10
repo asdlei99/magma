@@ -507,6 +507,9 @@
     <ClInclude Include="..\..\profiler\profiler.h">
       <Filter>Header Files\profiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\profiler\descriptors.h">
+      <Filter>Header Files\profiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\allocator\allocator.cpp">
