@@ -43,10 +43,10 @@ namespace magma
         /* Profiling sampler that is supposed to exists within a scope of block or function. */
 
         template<typename Type>
-        class ScopedSampler
+        class ScopedSampler final
         {
         public:
-            ScopedSampler(const Type& desc) noexcept;
+            explicit ScopedSampler(const Type& desc) noexcept;
             ~ScopedSampler();
 
         private:
