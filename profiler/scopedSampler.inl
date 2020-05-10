@@ -14,6 +14,8 @@ inline ScopedSampler<ApiEntryDescription>::~ScopedSampler()
     const auto end = std::chrono::high_resolution_clock::now();
     if (auto profiler = Profiler::getInstance())
     {
+        const std::chrono::nanoseconds duration = end - start;
+        profiler->profileApiEntry(desc.entryName, desc.flags, duration);
     }
 }
 
@@ -23,6 +25,9 @@ inline ScopedSampler<MethodDescription>::~ScopedSampler()
     const auto end = std::chrono::high_resolution_clock::now();
     if (auto profiler = Profiler::getInstance())
     {
+        const std::chrono::nanoseconds duration = end - start;
+        profiler->profileMethod(desc.methodName, desc.objectType,
+            desc.fileName, desc.line, duration);
     }
 }
 
@@ -32,6 +37,8 @@ inline ScopedSampler<FunctionDescription>::~ScopedSampler()
     const auto end = std::chrono::high_resolution_clock::now();
     if (auto profiler = Profiler::getInstance())
     {
+        const std::chrono::nanoseconds duration = end - start;
+        profiler->profileFunction(desc.functionName, desc.fileName, desc.line, duration);
     }
 }
 } // namespace profile
