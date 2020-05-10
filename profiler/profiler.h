@@ -31,8 +31,8 @@ namespace magma
             ScopedProfiler(const char *functionName) noexcept;
             clock::duration getDuration() const noexcept;
 
-            const char *functionName;
-            clock::time_point start;
+            const char *const functionName;
+            const clock::time_point start;
         };
 
         class ScopedEntryProfiler : public ScopedProfiler
@@ -42,31 +42,31 @@ namespace magma
             ~ScopedEntryProfiler();
 
         private:
-            bool debugEntry;
+            const bool debugEntry;
         };
 
         class ScopedMethodProfiler : public ScopedProfiler
         {
         public:
             ScopedMethodProfiler(VkObjectType objectType, const char *methodName,
-                const char *fileName, int line) noexcept;
+                const char *fileName, long line) noexcept;
             ~ScopedMethodProfiler();
 
         private:
             VkObjectType objectType;
-            const char *fileName;
-            int line;
+            const char *const fileName;
+            const long line;
         };
 
         class ScopedFunctionProfiler : public ScopedProfiler
         {
         public:
-            ScopedFunctionProfiler(const char *functionName, const char *fileName, int line) noexcept;
+            ScopedFunctionProfiler(const char *functionName, const char *fileName, long line) noexcept;
             ~ScopedFunctionProfiler();
 
         private:
-            const char *fileName;
-            int line;
+            const char *const fileName;
+            const long line;
         };
 #endif // MAGMA_ENABLE_PROFILING
     } // namespace profile

@@ -20,7 +20,7 @@ inline ScopedEntryProfiler::~ScopedEntryProfiler()
 {}
 
 inline ScopedMethodProfiler::ScopedMethodProfiler(VkObjectType objectType, const char *methodName,
-    const char *fileName, int line) noexcept:
+    const char *fileName, long line) noexcept:
     ScopedProfiler(methodName), objectType(objectType), fileName(fileName), line(line)
 {}
 
@@ -28,7 +28,7 @@ inline ScopedMethodProfiler::~ScopedMethodProfiler()
 {}
 
 inline ScopedFunctionProfiler::ScopedFunctionProfiler(const char *functionName,
-    const char *fileName, int line) noexcept:
+    const char *fileName, long line) noexcept:
     ScopedProfiler(functionName), fileName(fileName), line(line)
 {}
 
