@@ -7,7 +7,24 @@ namespace magma
 {
     namespace profile
     {
-        class IProfiler;
+        /* Profiler interface. */
+
+        class IProfiler : public core::NonCopyable
+        {
+        public:
+            virtual void profileApiEntry(const char *entryName,
+                uint32_t flags,
+                const std::chrono::nanoseconds& duration) noexcept = 0;
+            virtual void profileMethod(const char *methodName,
+                VkObjectType objectType,
+                const char *fileName,
+                long line,
+                const std::chrono::nanoseconds& duration) noexcept = 0;
+            virtual void profileFunction(const char *functionName,
+                const char *fileName,
+                long line,
+                const std::chrono::nanoseconds& duration) noexcept = 0;
+        };
 
         /* Profiler object that holds pointer to profiler instance. */
 
