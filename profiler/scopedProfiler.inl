@@ -1,3 +1,4 @@
+#ifdef MAGMA_ENABLE_PROFILING
 namespace magma
 {
 namespace profile
@@ -35,3 +36,4 @@ inline ScopedFunctionProfiler::~ScopedFunctionProfiler()
 {}
 } // namespace profile
 } // namespace magma
+#endif // MAGMA_ENABLE_PROFILING

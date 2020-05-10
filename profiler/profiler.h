@@ -24,6 +24,7 @@ namespace magma
 #endif
         };
 
+#ifdef MAGMA_ENABLE_PROFILING
         class ScopedProfiler : public Profiler
         {
         protected:
@@ -67,6 +68,7 @@ namespace magma
             const char *fileName;
             int line;
         };
+#endif // MAGMA_ENABLE_PROFILING
     } // namespace profile
 } // namespace magma
 
