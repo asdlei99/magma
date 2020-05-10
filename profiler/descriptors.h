@@ -23,7 +23,7 @@ namespace magma
         {
             const VkObjectType objectType;
             const char *const methodName;
-            const char *const file;
+            const char *const fileName;
             const long line;
         };
 
@@ -32,7 +32,7 @@ namespace magma
         struct FunctionDescription
         {
             const char *const functionName;
-            const char *const file;
+            const char *const fileName;
             const long line;
         };
     } // namespace profile
