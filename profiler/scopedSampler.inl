@@ -3,34 +3,34 @@ namespace magma
 namespace profile
 {
 template<typename Type>
-inline ScopedProfiler<Type>::ScopedProfiler(const Type& description) noexcept:
+inline ScopedSampler<Type>::ScopedSampler(const Type& description) noexcept:
     description(description),
     start(std::chrono::high_resolution_clock::now())
 {}
 
 template<>
-inline ScopedProfiler<ApiEntryDescription>::~ScopedProfiler()
+inline ScopedSampler<ApiEntryDescription>::~ScopedSampler()
 {
     const auto end = std::chrono::high_resolution_clock::now();
-    if (profiler)
+    if (auto profiler = Profiler::getInstance())
     {
     }
 }
 
 template<>
-inline ScopedProfiler<MethodDescription>::~ScopedProfiler()
+inline ScopedSampler<MethodDescription>::~ScopedSampler()
 {
     const auto end = std::chrono::high_resolution_clock::now();
-    if (profiler)
+    if (auto profiler = Profiler::getInstance())
     {
     }
 }
 
 template<>
-inline ScopedProfiler<FunctionDescription>::~ScopedProfiler()
+inline ScopedSampler<FunctionDescription>::~ScopedSampler()
 {
     const auto end = std::chrono::high_resolution_clock::now();
-    if (profiler)
+    if (auto profiler = Profiler::getInstance())
     {
     }
 }

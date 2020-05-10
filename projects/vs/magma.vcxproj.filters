@@ -883,7 +883,7 @@
     <None Include="..\..\descriptors\subpassDependency.inl">
       <Filter>Header Files\descriptors</Filter>
     </None>
-    <None Include="..\..\profiler\scopedProfiler.inl">
+    <None Include="..\..\profiler\scopedSampler.inl">
       <Filter>Header Files\profiler</Filter>
     </None>
   </ItemGroup>

@@ -23,14 +23,14 @@ namespace magma
 #endif
         };
 
-        /* Scoped profiler that is supposed to exists within a scope of block or function. */
+        /* Profiling sampler that is supposed to exists within a scope of block or function. */
 
         template<typename Type>
-        class ScopedProfiler : public Profiler
+        class ScopedSampler
         {
         public:
-            ScopedProfiler(const Type& description) noexcept;
-            ~ScopedProfiler();
+            ScopedSampler(const Type& description) noexcept;
+            ~ScopedSampler();
 
         private:
             const Type& description;
@@ -39,13 +39,13 @@ namespace magma
     } // namespace profile
 } // namespace magma
 
-#include "scopedProfiler.inl"
+#include "scopedSampler.inl"
 
 #ifdef MAGMA_ENABLE_PROFILING
-#define MAGMA_PROFILE_ENTRY(apiEntry) profile::ScopedProfiler<profile::ApiEntryDescription> entryProfiler({MAGMA_STRINGIZE(apiEntry), false})
-#define MAGMA_PROFILE_DEBUG_ENTRY(apiEntry) profile::ScopedProfiler<profile::ApiEntryDescription> debugEntryProfiler({MAGMA_STRINGIZE(apiEntry), true})
-#define MAGMA_PROFILE_METHOD profile::ScopedProfiler<profile::MethodDescription> methodProfiler({this->getObjectType(), __FUNCTION__, __FILE__, __LINE__});
-#define MAGMA_PROFILE_FUNCTION profile::ScopedProfiler<profile::FunctionDescription> functionProfiler({__FUNCTION__, __FILE__, __LINE__});
+#define MAGMA_PROFILE_ENTRY(apiEntry) profile::ScopedSampler<profile::ApiEntryDescription> entrySampler({MAGMA_STRINGIZE(apiEntry), false})
+#define MAGMA_PROFILE_DEBUG_ENTRY(apiEntry) profile::ScopedSampler<profile::ApiEntryDescription> debugEntrySampler({MAGMA_STRINGIZE(apiEntry), true})
+#define MAGMA_PROFILE_METHOD profile::ScopedSampler<profile::MethodDescription> methodSampler({this->getObjectType(), __FUNCTION__, __FILE__, __LINE__});
+#define MAGMA_PROFILE_FUNCTION profile::ScopedSampler<profile::FunctionDescription> functionSampler({__FUNCTION__, __FILE__, __LINE__});
 #else
 #define MAGMA_PROFILE_ENTRY(apiEntry)
 #define MAGMA_PROFILE_DEBUG_ENTRY(apiEntry)
