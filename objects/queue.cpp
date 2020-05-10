@@ -84,6 +84,7 @@ bool Queue::submit(const std::vector<std::shared_ptr<const CommandBuffer>>& comm
         submitInfo.signalSemaphoreCount = MAGMA_COUNT(dereferencedSignalSemaphores);
         submitInfo.pSignalSemaphores = dereferencedSignalSemaphores;
     }
+    MAGMA_PROFILE_QUEUE_ENTRY(vkQueueSubmit);
     const VkResult submit = vkQueueSubmit(handle, 1, &submitInfo, MAGMA_OPTIONAL_HANDLE(fence));
     return (VK_SUCCESS == submit);
 }
@@ -131,6 +132,7 @@ bool Queue::submitDeviceGroup(const std::vector<std::shared_ptr<const CommandBuf
 
 bool Queue::waitIdle() noexcept
 {
+    MAGMA_PROFILE_QUEUE_ENTRY(vkQueueWaitIdle);
     const VkResult wait = vkQueueWaitIdle(handle);
     return (VK_SUCCESS == wait);
 }
@@ -180,6 +182,7 @@ void Queue::present(std::shared_ptr<const Swapchain> swapchain, uint32_t imageIn
     presentInfo.pSwapchains = &dereferencedSwapchain;
     presentInfo.pImageIndices = &imageIndex;
     presentInfo.pResults = nullptr;
+    MAGMA_PROFILE_QUEUE_ENTRY(vkQueuePresentKHR);
     const VkResult present = vkQueuePresentKHR(handle, &presentInfo);
     MAGMA_THROW_PRESENT_FAILURE(present, "queue present failed");
 }
