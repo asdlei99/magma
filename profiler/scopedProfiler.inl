@@ -1,39 +1,38 @@
-#ifdef MAGMA_ENABLE_PROFILING
 namespace magma
 {
 namespace profile
 {
-inline ScopedProfiler::ScopedProfiler(const char *functionName) noexcept:
-    functionName(functionName), start(clock::now())
+template<typename Type>
+inline ScopedProfiler<Type>::ScopedProfiler(const Type& description) noexcept:
+    description(description),
+    start(std::chrono::high_resolution_clock::now())
 {}
 
-inline ScopedProfiler::clock::duration ScopedProfiler::getDuration() const noexcept
+template<>
+inline ScopedProfiler<ApiEntryDescription>::~ScopedProfiler()
 {
-    return clock::now() - start;
+    const auto end = std::chrono::high_resolution_clock::now();
+    if (profiler)
+    {
+    }
 }
 
-inline ScopedEntryProfiler::ScopedEntryProfiler(const char *entryName, bool debugEntry) noexcept:
-    ScopedProfiler(entryName), debugEntry(debugEntry)
-{}
+template<>
+inline ScopedProfiler<MethodDescription>::~ScopedProfiler()
+{
+    const auto end = std::chrono::high_resolution_clock::now();
+    if (profiler)
+    {
+    }
+}
 
-inline ScopedEntryProfiler::~ScopedEntryProfiler()
-{}
-
-inline ScopedMethodProfiler::ScopedMethodProfiler(VkObjectType objectType, const char *methodName,
-    const char *fileName, long line) noexcept:
-    ScopedProfiler(methodName), objectType(objectType), fileName(fileName), line(line)
-{}
-
-inline ScopedMethodProfiler::~ScopedMethodProfiler()
-{}
-
-inline ScopedFunctionProfiler::ScopedFunctionProfiler(const char *functionName,
-    const char *fileName, long line) noexcept:
-    ScopedProfiler(functionName), fileName(fileName), line(line)
-{}
-
-inline ScopedFunctionProfiler::~ScopedFunctionProfiler()
-{}
+template<>
+inline ScopedProfiler<FunctionDescription>::~ScopedProfiler()
+{
+    const auto end = std::chrono::high_resolution_clock::now();
+    if (profiler)
+    {
+    }
+}
 } // namespace profile
 } // namespace magma
-#endif // MAGMA_ENABLE_PROFILING
