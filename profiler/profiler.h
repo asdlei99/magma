@@ -42,8 +42,8 @@ namespace magma
 #include "scopedSampler.inl"
 
 #ifdef MAGMA_ENABLE_PROFILING
-#define MAGMA_PROFILE_ENTRY(apiEntry) profile::ScopedSampler<profile::ApiEntryDescription> apiEntry##Sampler_({MAGMA_STRINGIZE(apiEntry), false})
-#define MAGMA_PROFILE_DEBUG_ENTRY(apiEntry) profile::ScopedSampler<profile::ApiEntryDescription> apiEntry##Sampler_({MAGMA_STRINGIZE(apiEntry), true})
+#define MAGMA_PROFILE_ENTRY(apiEntry) profile::ScopedSampler<profile::ApiEntryDescription> apiEntry##Sampler_({MAGMA_STRINGIZE(apiEntry), profile::ScopeFlags::None})
+#define MAGMA_PROFILE_DEBUG_ENTRY(apiDebugEntry) profile::ScopedSampler<profile::ApiEntryDescription> apiDebugEntry##Sampler_({MAGMA_STRINGIZE(apiDebugEntry), profile::ScopeFlags::Debug})
 #define MAGMA_PROFILE_METHOD profile::ScopedSampler<profile::MethodDescription> methodSampler_({this->getObjectType(), __FUNCTION__, __FILE__, __LINE__});
 #define MAGMA_PROFILE_FUNCTION profile::ScopedSampler<profile::FunctionDescription> functionSampler_({__FUNCTION__, __FILE__, __LINE__});
 #else
