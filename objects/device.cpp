@@ -23,8 +23,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "fence.h"
 #include "../allocator/allocator.h"
 #include "../misc/deviceExtension.h"
-#include "../misc/resourceCache.h"
 #include "../misc/exception.h"
+#include "../misc/resourcePool.h"
 #include "../helpers/stackArray.h"
 
 namespace magma
@@ -37,7 +37,8 @@ Device::Device(std::shared_ptr<PhysicalDevice> physicalDevice,
     const std::vector<void *>& extendedDeviceFeatures,
     std::shared_ptr<IAllocator> allocator):
     Dispatchable<VkDevice>(VK_OBJECT_TYPE_DEVICE, nullptr, std::move(allocator)),
-    physicalDevice(std::move(physicalDevice))
+    physicalDevice(std::move(physicalDevice)),
+    resourcePool(std::make_shared<ResourcePool>())
 {
 #ifdef VK_KHR_get_physical_device_properties2
     VkPhysicalDeviceFeatures2KHR features;
@@ -85,7 +86,6 @@ Device::Device(std::shared_ptr<PhysicalDevice> physicalDevice,
     queues.reserve(queueDescriptors.size());
     for (const auto& desc : queueDescriptors)
         queues.emplace_back(desc, std::weak_ptr<Queue>());
-    cache = std::make_shared<ResourceCache>();
 }
 
 Device::~Device()

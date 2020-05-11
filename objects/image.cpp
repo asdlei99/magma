@@ -87,7 +87,7 @@ Image::Image(std::shared_ptr<Device> device, VkImageType imageType, VkFormat for
     std::shared_ptr<DeviceMemory> memory(std::make_shared<DeviceMemory>(this->device,
         memoryRequirements.size, memoryFlags));
     bindMemory(std::move(memory));
-    device->getCache()->addResource(this);
+    MAGMA_REGISTER_RESOURCE(Image, this);
 }
 
 Image::Image(std::shared_ptr<Device> device, VkImage handle, VkImageType imageType, VkFormat format, const VkExtent3D& extent):
@@ -102,10 +102,12 @@ Image::Image(std::shared_ptr<Device> device, VkImage handle, VkImageType imageTy
     flags(0)
 {
     this->handle = handle;
+    MAGMA_REGISTER_RESOURCE(Image, this);
 }
 
 Image::~Image()
 {
+    MAGMA_UNREGISTER_RESOURCE(Image, this);
     vkDestroyImage(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 

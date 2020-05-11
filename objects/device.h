@@ -18,14 +18,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 #include "dispatchable.h"
 #include "../misc/deviceQueueDescriptor.h"
-#include "../misc/resourceCache.h"
+#include "../misc/resourcePool.h"
 
 namespace magma
 {
     class PhysicalDevice;
     class Queue;
     class Fence;
-    class ResourceCache;
+    class ResourcePool;
 
     /* Device objects represent logical connections to physical devices.
        Each device exposes a number of queue families each having one or more queues.
@@ -59,12 +59,15 @@ namespace magma
         // Non-API
         std::shared_ptr<PhysicalDevice> getPhysicalDevice() noexcept { return physicalDevice; }
         std::shared_ptr<const PhysicalDevice> getPhysicalDevice() const noexcept { return physicalDevice; }
-        std::shared_ptr<ResourceCache> getCache() noexcept { return cache; }
-        std::shared_ptr<const ResourceCache> getCache() const noexcept { return cache; }
+        std::shared_ptr<ResourcePool> getResourcePool() noexcept { return resourcePool; }
+        std::shared_ptr<const ResourcePool> getResourcePool() const noexcept { return resourcePool; }
 
     private:
         std::shared_ptr<PhysicalDevice> physicalDevice;
         mutable std::vector<std::pair<DeviceQueueDescriptor, std::weak_ptr<Queue>>> queues;
-        std::shared_ptr<ResourceCache> cache;
+        std::shared_ptr<ResourcePool> resourcePool;
     };
 } // namespace magma
+
+#define MAGMA_REGISTER_RESOURCE(Type, self) self->device->getResourcePool()->getResourceSet<Type>().registerResource(self)
+#define MAGMA_UNREGISTER_RESOURCE(Type, self) self->device->getResourcePool()->getResourceSet<Type>().unregisterResource(self)

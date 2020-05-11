@@ -15,25 +15,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
-#pragma once
-#include "../core/noncopyable.h"
+#include "pch.h"
+#pragma hdrstop
+#include "resourcePool.h"
+#include "../objects/deviceMemory.h"
 
 namespace magma
 {
-    class Buffer;
-    class Image;
+VkDeviceSize ResourcePool::countAllocatedDeviceLocalMemory() const noexcept
+{
+    VkDeviceSize allocatedSize = 0;
+    deviceMemories.forEach([&allocatedSize](const DeviceMemory *memory) {
+        if (memory->local())
+            allocatedSize += memory->getSize();
+    });
+    return allocatedSize;
+}
 
-    /* */
-
-    class ResourceCache : public core::NonCopyable
-    {
-    public:
-        ResourceCache();
-        void addResource(Buffer *buffer);
-        void addResource(Image *image);
-
-    private:
-        std::vector<std::weak_ptr<Buffer>> buffers;
-        std::vector<std::weak_ptr<Image>> images;
-    };
+VkDeviceSize ResourcePool::countAllocatedHostVisibleMemory() const noexcept
+{
+    VkDeviceSize allocatedSize = 0;
+    deviceMemories.forEach([&allocatedSize](const DeviceMemory *memory) {
+        if (memory->hostVisible())
+            allocatedSize += memory->getSize();
+    });
+    return allocatedSize;
+}
 } // namespace magma
