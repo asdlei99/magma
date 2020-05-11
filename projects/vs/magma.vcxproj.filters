@@ -498,6 +498,9 @@
     <ClInclude Include="..\..\objects\objectType.h">
       <Filter>Header Files\objects</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\misc\resourceCache.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\allocator\allocator.cpp">
@@ -772,6 +775,9 @@
     </ClCompile>
     <ClCompile Include="..\..\allocator\objectAllocator.cpp">
       <Filter>Source Files\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\misc\resourceCache.cpp">
+      <Filter>Source Files\misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

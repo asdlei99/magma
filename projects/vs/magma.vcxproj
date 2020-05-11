@@ -203,6 +203,7 @@
     <ClInclude Include="..\..\misc\imageSubresourceRange.h" />
     <ClInclude Include="..\..\misc\instanceExtension.h" />
     <ClInclude Include="..\..\misc\pushConstants.h" />
+    <ClInclude Include="..\..\misc\resourceCache.h" />
     <ClInclude Include="..\..\misc\scissor.h" />
     <ClInclude Include="..\..\misc\scopedDebugMarker.h" />
     <ClInclude Include="..\..\misc\viewport.h" />
@@ -316,6 +317,7 @@
     <ClCompile Include="..\..\misc\exception.cpp" />
     <ClCompile Include="..\..\misc\format.cpp" />
     <ClCompile Include="..\..\misc\geometry.cpp" />
+    <ClCompile Include="..\..\misc\resourceCache.cpp" />
     <ClCompile Include="..\..\misc\scopedDebugMarker.cpp" />
     <ClCompile Include="..\..\objects\accelerationStructure.cpp" />
     <ClCompile Include="..\..\objects\buffer.cpp" />

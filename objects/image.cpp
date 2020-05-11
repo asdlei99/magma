@@ -87,6 +87,7 @@ Image::Image(std::shared_ptr<Device> device, VkImageType imageType, VkFormat for
     std::shared_ptr<DeviceMemory> memory(std::make_shared<DeviceMemory>(this->device,
         memoryRequirements.size, memoryFlags));
     bindMemory(std::move(memory));
+    device->getCache()->addResource(this);
 }
 
 Image::Image(std::shared_ptr<Device> device, VkImage handle, VkImageType imageType, VkFormat format, const VkExtent3D& extent):

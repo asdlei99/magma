@@ -18,12 +18,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 #include "dispatchable.h"
 #include "../misc/deviceQueueDescriptor.h"
+#include "../misc/resourceCache.h"
 
 namespace magma
 {
     class PhysicalDevice;
     class Queue;
     class Fence;
+    class ResourceCache;
 
     /* Device objects represent logical connections to physical devices.
        Each device exposes a number of queue families each having one or more queues.
@@ -57,9 +59,12 @@ namespace magma
         // Non-API
         std::shared_ptr<PhysicalDevice> getPhysicalDevice() noexcept { return physicalDevice; }
         std::shared_ptr<const PhysicalDevice> getPhysicalDevice() const noexcept { return physicalDevice; }
+        std::shared_ptr<ResourceCache> getCache() noexcept { return cache; }
+        std::shared_ptr<const ResourceCache> getCache() const noexcept { return cache; }
 
     private:
         std::shared_ptr<PhysicalDevice> physicalDevice;
         mutable std::vector<std::pair<DeviceQueueDescriptor, std::weak_ptr<Queue>>> queues;
+        std::shared_ptr<ResourceCache> cache;
     };
 } // namespace magma

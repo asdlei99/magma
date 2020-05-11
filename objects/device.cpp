@@ -23,6 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "fence.h"
 #include "../allocator/allocator.h"
 #include "../misc/deviceExtension.h"
+#include "../misc/resourceCache.h"
 #include "../misc/exception.h"
 #include "../helpers/stackArray.h"
 
@@ -84,6 +85,7 @@ Device::Device(std::shared_ptr<PhysicalDevice> physicalDevice,
     queues.reserve(queueDescriptors.size());
     for (const auto& desc : queueDescriptors)
         queues.emplace_back(desc, std::weak_ptr<Queue>());
+    cache = std::make_shared<ResourceCache>();
 }
 
 Device::~Device()

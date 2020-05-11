@@ -53,6 +53,7 @@ Buffer::Buffer(std::shared_ptr<Device> device, VkDeviceSize size,
     std::shared_ptr<DeviceMemory> memory(std::make_shared<DeviceMemory>(
         this->device, memRequirements.size, memFlags));
     bindMemory(std::move(memory));
+    device->getCache()->addResource(this);
 }
 
 Buffer::~Buffer()
