@@ -44,6 +44,7 @@ namespace magma
         friend class DescriptorPool;
 
     public:
+        ~DescriptorSet();
         void update(uint32_t index,
             std::shared_ptr<const Buffer> buffer) noexcept;
         void update(uint32_t index,

@@ -50,6 +50,7 @@ CommandBuffer::CommandBuffer(VkCommandBufferLevel level, std::shared_ptr<Command
     info.commandBufferCount = 1;
     const VkResult alloc = vkAllocateCommandBuffers(MAGMA_HANDLE(device), &info, &handle);
     MAGMA_THROW_FAILURE(alloc, "failed to allocate primary command buffer");
+    MAGMA_REGISTER_RESOURCE(CommandBuffer, this);
 }
 
 CommandBuffer::CommandBuffer(VkCommandBufferLevel level, VkCommandBuffer handle, std::shared_ptr<CommandPool> pool):
@@ -57,10 +58,13 @@ CommandBuffer::CommandBuffer(VkCommandBufferLevel level, VkCommandBuffer handle,
     level(level),
     pool(std::move(pool)),
     fence(std::make_shared<Fence>(this->device))
-{}
+{
+    MAGMA_REGISTER_RESOURCE(CommandBuffer, this);
+}
 
 CommandBuffer::~CommandBuffer()
 {
+    MAGMA_UNREGISTER_RESOURCE(CommandBuffer, this);
     if (handle) // Release if not freed through command pool
         vkFreeCommandBuffers(MAGMA_HANDLE(device), MAGMA_HANDLE(pool), 1, &handle);
 }

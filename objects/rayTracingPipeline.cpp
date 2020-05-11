@@ -65,6 +65,7 @@ RayTracingPipeline::RayTracingPipeline(std::shared_ptr<Device> device,
     MAGMA_DEVICE_EXTENSION(vkCreateRayTracingPipelinesNV, VK_NV_RAY_TRACING_EXTENSION_NAME);
     const VkResult create = vkCreateRayTracingPipelinesNV(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(this->pipelineCache), 1, &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create ray tracing pipeline");
+    MAGMA_REGISTER_RESOURCE(Pipeline, this);
     hash = core::hashArgs(
         info.sType,
         info.flags,

@@ -79,6 +79,7 @@ DescriptorSetLayout::DescriptorSetLayout(std::shared_ptr<Device> device, const B
     info.pBindings = &binding;
     const VkResult create = vkCreateDescriptorSetLayout(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create descriptor set layout");
+    MAGMA_REGISTER_RESOURCE(DescriptorSetLayout, this);
     bindings.push_back(binding);
     hash = core::hashArgs(
         info.sType,
@@ -100,6 +101,7 @@ DescriptorSetLayout::DescriptorSetLayout(std::shared_ptr<Device> device, const s
     info.pBindings = bindings.begin();
     const VkResult create = vkCreateDescriptorSetLayout(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create descriptor set layout");
+    MAGMA_REGISTER_RESOURCE(DescriptorSetLayout, this);
     hash = core::hashArgs(
         info.sType,
         info.flags,
@@ -108,6 +110,7 @@ DescriptorSetLayout::DescriptorSetLayout(std::shared_ptr<Device> device, const s
 
 DescriptorSetLayout::~DescriptorSetLayout()
 {
+    MAGMA_UNREGISTER_RESOURCE(DescriptorSetLayout, this);
     vkDestroyDescriptorSetLayout(MAGMA_HANDLE(device), handle, nullptr);
 }
 

@@ -36,6 +36,12 @@ DescriptorSet::DescriptorSet(VkDescriptorSet handle, std::shared_ptr<Device> dev
     setLayout(std::move(setLayout))
 {
     this->handle = handle;
+    MAGMA_REGISTER_RESOURCE(DescriptorSet, this);
+}
+
+DescriptorSet::~DescriptorSet()
+{
+    MAGMA_UNREGISTER_RESOURCE(DescriptorSet, this);
 }
 
 void DescriptorSet::update(uint32_t index, std::shared_ptr<const Buffer> buffer) noexcept
