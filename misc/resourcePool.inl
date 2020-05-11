@@ -10,6 +10,7 @@ template<typename Type>
 inline void ResourcePool::ResourceSet<Type>::unregisterResource(const Type *resource) noexcept
 {
     auto it = resources.find(resource);
+    MAGMA_ASSERT(it != resources.end());
     if (it != resources.end())
         resources.erase(it);
 }
