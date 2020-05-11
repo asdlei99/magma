@@ -20,9 +20,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 namespace magma
 {
+    class DeviceMemory;
     class Buffer;
     class Image;
-    class DeviceMemory;
+    class Framebuffer;
+    class Pipeline;
+    class PipelineLayout;
+    class DescriptorSet;
+    class DescriptorSetLayout;
+    class CommandBuffer;
 
     class ResourcePool final : public core::NonCopyable
     {
@@ -39,14 +45,23 @@ namespace magma
             void forEach(const std::function<void(const Type *resource)>& fn) const noexcept;
         };
 
-        template<typename Type> ResourceSet<Type>& getResourceSet() noexcept;
+        template<typename Type>
+        ResourceSet<Type>& getResourceSet() noexcept;
+        template<typename Type>
+        const ResourceSet<Type>& getResourceSet() const noexcept;
         VkDeviceSize countAllocatedDeviceLocalMemory() const noexcept;
         VkDeviceSize countAllocatedHostVisibleMemory() const noexcept;
 
     private:
+        ResourceSet<DeviceMemory> deviceMemories;
         ResourceSet<Buffer> buffers;
         ResourceSet<Image> images;
-        ResourceSet<DeviceMemory> deviceMemories;
+        ResourceSet<Framebuffer> framebuffers;
+        ResourceSet<Pipeline> pipelines;
+        ResourceSet<PipelineLayout> pipelineLayouts;
+        ResourceSet<DescriptorSet> descriptorSets;
+        ResourceSet<DescriptorSetLayout> descriptorSetLayouts;
+        ResourceSet<CommandBuffer> commandBuffers;
     };
 } // namespace magma
 

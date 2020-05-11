@@ -27,7 +27,26 @@ void ResourcePool::ResourceSet<Type>::forEach(const std::function<void(const Typ
         fn(resource);
 }
 
-template<> inline ResourcePool::ResourceSet<Buffer>& ResourcePool::getResourceSet<Buffer>() noexcept { return buffers; }
-template<> inline ResourcePool::ResourceSet<Image>& ResourcePool::getResourceSet<Image>() noexcept { return images; }
-template<> inline ResourcePool::ResourceSet<DeviceMemory>& ResourcePool::getResourceSet<DeviceMemory>() noexcept { return deviceMemories; }
+#define MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Type, member)\
+template<>\
+inline ResourcePool::ResourceSet<Type>& ResourcePool::getResourceSet<Type>() noexcept\
+{\
+    return member;\
+}\
+\
+template<>\
+inline const ResourcePool::ResourceSet<Type>& ResourcePool::getResourceSet<Type>() const noexcept\
+{\
+    return member;\
+}
+
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(DeviceMemory, deviceMemories)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Buffer, buffers)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Image, images)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Framebuffer, framebuffers)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Pipeline, pipelines)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(PipelineLayout, pipelineLayouts)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(DescriptorSet, descriptorSets)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(DescriptorSetLayout, descriptorSetLayouts)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(CommandBuffer, commandBuffers)
 } // namespace magma
