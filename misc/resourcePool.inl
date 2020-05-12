@@ -51,4 +51,7 @@ MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(CommandBuffer, commandBuffers)
 #ifdef VK_NV_ray_tracing
 MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(AccelerationStructure, accelerationStructures)
 #endif
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Fence, fences)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Event, events)
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Semaphore, semaphores)
 } // namespace magma

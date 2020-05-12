@@ -32,6 +32,9 @@ namespace magma
 #ifdef VK_NV_ray_tracing
     class AccelerationStructure;
 #endif
+    class Fence;
+    class Event;
+    class Semaphore;
 
     class ResourcePool final : public core::NonCopyable
     {
@@ -47,6 +50,9 @@ namespace magma
 #ifdef VK_NV_ray_tracing
         friend AccelerationStructure;
 #endif
+        friend Fence;
+        friend Event;
+        friend Semaphore;
 
         template<typename Type>
         class ResourceSet final : public core::NonCopyable
@@ -101,6 +107,9 @@ namespace magma
 #ifdef VK_NV_ray_tracing
         ResourceSet<AccelerationStructure> accelerationStructures;
 #endif
+        ResourceSet<Fence> fences;
+        ResourceSet<Event> events;
+        ResourceSet<Semaphore> semaphores;
     };
 } // namespace magma
 

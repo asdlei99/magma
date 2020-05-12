@@ -34,10 +34,12 @@ Event::Event(std::shared_ptr<Device> device,
     info.flags = 0;
     const VkResult create = vkCreateEvent(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create event");
+    MAGMA_REGISTER_RESOURCE(Event, this);
 }
 
 Event::~Event()
 {
+    MAGMA_UNREGISTER_RESOURCE(Event, this);
     vkDestroyEvent(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
