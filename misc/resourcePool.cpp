@@ -56,6 +56,9 @@ ResourcePool::InstanceCount ResourcePool::countResourceInstances() const noexcep
 #ifdef VK_NV_ray_tracing
     instances.accelerationStructureCount = accelerationStructures.resourceCount();
 #endif
+    instances.fenceCount = fences.resourceCount();
+    instances.eventCount = events.resourceCount();
+    instances.semaphoreCount = semaphores.resourceCount();
     return instances;
 }
 
@@ -93,6 +96,8 @@ bool ResourcePool::hasAnyResource() const noexcept
 #ifdef VK_NV_ray_tracing
         accelerationStructures.resourceCount() > 0 ||
 #endif
-        false;
+        fences.resourceCount() > 0 ||
+        events.resourceCount() > 0 ||
+        semaphores.resourceCount() > 0;
 }
 } // namespace magma
