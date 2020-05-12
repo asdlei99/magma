@@ -24,6 +24,7 @@ namespace magma
     class Buffer;
     class Image;
     class Framebuffer;
+    class RenderPass;
     class Pipeline;
     class PipelineLayout;
     class DescriptorSet;
@@ -57,6 +58,7 @@ namespace magma
         ResourceSet<Buffer> buffers;
         ResourceSet<Image> images;
         ResourceSet<Framebuffer> framebuffers;
+        ResourceSet<RenderPass> renderPasses;
         ResourceSet<Pipeline> pipelines;
         ResourceSet<PipelineLayout> pipelineLayouts;
         ResourceSet<DescriptorSet> descriptorSets;
