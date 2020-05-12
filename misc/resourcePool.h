@@ -36,6 +36,11 @@ namespace magma
     class Event;
     class Semaphore;
 
+    /* Resource pool holds pointers to different objects that were created by device.
+       Each logical device has it's own resource pool.
+       Pool allows to keep statistics about resource usage, memory allocations,
+       resource types. May be helpful for application profiling, optimization etc. */
+
     class ResourcePool final : public core::NonCopyable
     {
     public:
