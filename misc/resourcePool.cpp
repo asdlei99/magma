@@ -90,7 +90,6 @@ bool ResourcePool::hasAnyResource() const noexcept
         buffers.resourceCount() > 0 ||
         images.resourceCount() > 0 ||
         framebuffers.resourceCount() > 0 ||
-        renderPasses.resourceCount() > 0 ||
         pipelines.resourceCount() > 0 ||
         pipelineLayouts.resourceCount() > 0 ||
         descriptorSets.resourceCount() > 0 ||

@@ -117,7 +117,6 @@ RenderPass::RenderPass(std::shared_ptr<Device> device,
     info.pDependencies = dependencies;
     const VkResult create = vkCreateRenderPass(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create render pass");
-    MAGMA_REGISTER_RESOURCE(RenderPass, this);
      hash = core::hashArgs(
         info.sType,
         info.flags,
@@ -150,7 +149,6 @@ RenderPass::RenderPass(std::shared_ptr<Device> device,
     info.pDependencies = dependencies.begin();
     const VkResult create = vkCreateRenderPass(MAGMA_HANDLE(device), &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create render pass");
-    MAGMA_REGISTER_RESOURCE(RenderPass, this);
     hash = core::hashArgs(
         info.sType,
         info.flags,
@@ -167,7 +165,6 @@ RenderPass::RenderPass(std::shared_ptr<Device> device,
 
 RenderPass::~RenderPass()
 {
-    MAGMA_UNREGISTER_RESOURCE(RenderPass, this);
     vkDestroyRenderPass(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(allocator));
 }
 
