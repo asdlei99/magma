@@ -24,6 +24,41 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 namespace magma
 {
+ResourcePool::InstanceCount ResourcePool::countResourceInstances() const noexcept
+{
+    InstanceCount instances;
+    instances.deviceMemoryCount = deviceMemories.resourceCount();
+    instances.bufferCount = buffers.resourceCount();
+    instances.imageCount = images.resourceCount();
+    instances.framebufferCount = framebuffers.resourceCount();
+    pipelines.forEach([&instances](const Pipeline *pipeline) {
+        switch (pipeline->getBindPoint())
+        {
+        case VK_PIPELINE_BIND_POINT_GRAPHICS:
+            ++instances.graphicsPipelineCount; break;
+        case VK_PIPELINE_BIND_POINT_COMPUTE:
+            ++instances.computePipelineCount; break;
+#ifdef VK_NV_ray_tracing
+        case VK_PIPELINE_BIND_POINT_RAY_TRACING_NV:
+            ++instances.rayTracingPipelineCount; break;
+#endif
+        }
+    });
+    instances.pipelineLayoutCount = pipelineLayouts.resourceCount();
+    instances.descriptorSetCount = descriptorSets.resourceCount();
+    instances.descriptorSetLayoutCount = descriptorSetLayouts.resourceCount();
+    commandBuffers.forEach([&instances](const CommandBuffer *cmdBuffer) {
+        if (cmdBuffer->primary())
+            ++instances.primaryCommandBufferCount;
+        else
+            ++instances.secondaryCommandBufferCount;
+    });
+#ifdef VK_NV_ray_tracing
+    instances.accelerationStructureCount = accelerationStructures.resourceCount();
+#endif
+    return instances;
+}
+
 VkDeviceSize ResourcePool::countAllocatedDeviceLocalMemory() const noexcept
 {
     VkDeviceSize allocatedSize = 0;
@@ -42,46 +77,6 @@ VkDeviceSize ResourcePool::countAllocatedHostVisibleMemory() const noexcept
             allocatedSize += memory->getSize();
     });
     return allocatedSize;
-}
-
-uint32_t ResourcePool::countGraphicsPipelines() const noexcept
-{
-    uint32_t graphicsPipelineCount = 0;
-    pipelines.forEach([&graphicsPipelineCount](const Pipeline *pipeline) {
-        if (VK_PIPELINE_BIND_POINT_GRAPHICS == pipeline->getBindPoint())
-            ++graphicsPipelineCount;
-    });
-    return graphicsPipelineCount;
-}
-
-uint32_t ResourcePool::countComputePipelines() const noexcept
-{
-    uint32_t computePipelineCount = 0;
-    pipelines.forEach([&computePipelineCount](const Pipeline *pipeline) {
-        if (VK_PIPELINE_BIND_POINT_COMPUTE == pipeline->getBindPoint())
-            ++computePipelineCount;
-    });
-    return computePipelineCount;
-}
-
-uint32_t ResourcePool::countPrimaryCommandBuffers() const noexcept
-{
-    uint32_t primaryCmdBufferCount = 0;
-    commandBuffers.forEach([&primaryCmdBufferCount](const CommandBuffer *cmdBuffer) {
-        if (cmdBuffer->primary())
-            ++primaryCmdBufferCount;
-    });
-    return primaryCmdBufferCount;
-}
-
-uint32_t ResourcePool::countSecondaryCommandBuffers() const noexcept
-{
-    uint32_t secondaryCmdBufferCount = 0;
-    commandBuffers.forEach([&secondaryCmdBufferCount](const CommandBuffer *cmdBuffer) {
-        if (!cmdBuffer->primary())
-            ++secondaryCmdBufferCount;
-    });
-    return secondaryCmdBufferCount;
 }
 
 bool ResourcePool::hasAnyResource() const noexcept

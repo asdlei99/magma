@@ -60,12 +60,30 @@ namespace magma
             void forEach(const std::function<void(const Type *resource)>& fn) const noexcept;
         };
 
+    public:
+        struct InstanceCount
+        {
+            uint32_t deviceMemoryCount = 0;
+            uint32_t bufferCount = 0;
+            uint32_t imageCount = 0;
+            uint32_t framebufferCount = 0;
+            uint32_t graphicsPipelineCount = 0;
+            uint32_t computePipelineCount = 0;
+            uint32_t rayTracingPipelineCount = 0;
+            uint32_t pipelineLayoutCount = 0;
+            uint32_t descriptorSetCount = 0;
+            uint32_t descriptorSetLayoutCount = 0;
+            uint32_t primaryCommandBufferCount = 0;
+            uint32_t secondaryCommandBufferCount = 0;
+            uint32_t accelerationStructureCount = 0;
+            uint32_t fenceCount = 0;
+            uint32_t eventCount = 0;
+            uint32_t semaphoreCount = 0;
+        };
+
+        InstanceCount countResourceInstances() const noexcept;
         VkDeviceSize countAllocatedDeviceLocalMemory() const noexcept;
         VkDeviceSize countAllocatedHostVisibleMemory() const noexcept;
-        uint32_t countGraphicsPipelines() const noexcept;
-        uint32_t countComputePipelines() const noexcept;
-        uint32_t countPrimaryCommandBuffers() const noexcept;
-        uint32_t countSecondaryCommandBuffers() const noexcept;
         bool hasAnyResource() const noexcept;
 
     private:
