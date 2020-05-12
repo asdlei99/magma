@@ -24,14 +24,14 @@ namespace magma
     class Buffer;
     class Image;
     class Framebuffer;
+#ifdef VK_NV_ray_tracing
+    class AccelerationStructure;
+#endif
     class Pipeline;
     class PipelineLayout;
     class DescriptorSet;
     class DescriptorSetLayout;
     class CommandBuffer;
-#ifdef VK_NV_ray_tracing
-    class AccelerationStructure;
-#endif
     class Fence;
     class Event;
     class Semaphore;
@@ -42,14 +42,14 @@ namespace magma
         friend Buffer;
         friend Image;
         friend Framebuffer;
+#ifdef VK_NV_ray_tracing
+        friend AccelerationStructure;
+#endif
         friend Pipeline;
         friend PipelineLayout;
         friend DescriptorSet;
         friend DescriptorSetLayout;
         friend CommandBuffer;
-#ifdef VK_NV_ray_tracing
-        friend AccelerationStructure;
-#endif
         friend Fence;
         friend Event;
         friend Semaphore;
@@ -73,6 +73,7 @@ namespace magma
             uint32_t bufferCount = 0;
             uint32_t imageCount = 0;
             uint32_t framebufferCount = 0;
+            uint32_t accelerationStructureCount = 0;
             uint32_t graphicsPipelineCount = 0;
             uint32_t computePipelineCount = 0;
             uint32_t rayTracingPipelineCount = 0;
@@ -81,7 +82,6 @@ namespace magma
             uint32_t descriptorSetLayoutCount = 0;
             uint32_t primaryCommandBufferCount = 0;
             uint32_t secondaryCommandBufferCount = 0;
-            uint32_t accelerationStructureCount = 0;
             uint32_t fenceCount = 0;
             uint32_t eventCount = 0;
             uint32_t semaphoreCount = 0;
@@ -99,14 +99,14 @@ namespace magma
         ResourceSet<Buffer> buffers;
         ResourceSet<Image> images;
         ResourceSet<Framebuffer> framebuffers;
+#ifdef VK_NV_ray_tracing
+        ResourceSet<AccelerationStructure> accelerationStructures;
+#endif
         ResourceSet<Pipeline> pipelines;
         ResourceSet<PipelineLayout> pipelineLayouts;
         ResourceSet<DescriptorSet> descriptorSets;
         ResourceSet<DescriptorSetLayout> descriptorSetLayouts;
         ResourceSet<CommandBuffer> commandBuffers;
-#ifdef VK_NV_ray_tracing
-        ResourceSet<AccelerationStructure> accelerationStructures;
-#endif
         ResourceSet<Fence> fences;
         ResourceSet<Event> events;
         ResourceSet<Semaphore> semaphores;

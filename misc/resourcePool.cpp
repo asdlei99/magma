@@ -31,6 +31,9 @@ ResourcePool::InstanceCount ResourcePool::countResourceInstances() const noexcep
     instances.bufferCount = buffers.resourceCount();
     instances.imageCount = images.resourceCount();
     instances.framebufferCount = framebuffers.resourceCount();
+#ifdef VK_NV_ray_tracing
+    instances.accelerationStructureCount = accelerationStructures.resourceCount();
+#endif
     pipelines.forEach([&instances](const Pipeline *pipeline) {
         switch (pipeline->getBindPoint())
         {
@@ -53,9 +56,6 @@ ResourcePool::InstanceCount ResourcePool::countResourceInstances() const noexcep
         else
             ++instances.secondaryCommandBufferCount;
     });
-#ifdef VK_NV_ray_tracing
-    instances.accelerationStructureCount = accelerationStructures.resourceCount();
-#endif
     instances.fenceCount = fences.resourceCount();
     instances.eventCount = events.resourceCount();
     instances.semaphoreCount = semaphores.resourceCount();
@@ -88,14 +88,14 @@ bool ResourcePool::hasAnyResource() const noexcept
         buffers.resourceCount() > 0 ||
         images.resourceCount() > 0 ||
         framebuffers.resourceCount() > 0 ||
+#ifdef VK_NV_ray_tracing
+        accelerationStructures.resourceCount() > 0 ||
+#endif
         pipelines.resourceCount() > 0 ||
         pipelineLayouts.resourceCount() > 0 ||
         descriptorSets.resourceCount() > 0 ||
         descriptorSetLayouts.resourceCount() > 0 ||
         commandBuffers.resourceCount() > 0 ||
-#ifdef VK_NV_ray_tracing
-        accelerationStructures.resourceCount() > 0 ||
-#endif
         fences.resourceCount() > 0 ||
         events.resourceCount() > 0 ||
         semaphores.resourceCount() > 0;
