@@ -35,7 +35,19 @@ namespace magma
 
     class ResourcePool final : public core::NonCopyable
     {
-    public:
+        friend DeviceMemory;
+        friend Buffer;
+        friend Image;
+        friend Framebuffer;
+        friend Pipeline;
+        friend PipelineLayout;
+        friend DescriptorSet;
+        friend DescriptorSetLayout;
+        friend CommandBuffer;
+#ifdef VK_NV_ray_tracing
+        friend AccelerationStructure;
+#endif
+
         template<typename Type>
         class ResourceSet final : public core::NonCopyable
         {
@@ -48,10 +60,6 @@ namespace magma
             void forEach(const std::function<void(const Type *resource)>& fn) const noexcept;
         };
 
-        template<typename Type>
-        ResourceSet<Type>& getResourceSet() noexcept;
-        template<typename Type>
-        const ResourceSet<Type>& getResourceSet() const noexcept;
         VkDeviceSize countAllocatedDeviceLocalMemory() const noexcept;
         VkDeviceSize countAllocatedHostVisibleMemory() const noexcept;
         uint32_t countGraphicsPipelines() const noexcept;
@@ -61,6 +69,8 @@ namespace magma
         bool hasAnyResource() const noexcept;
 
     private:
+        template<typename Type> ResourceSet<Type>& getAccessor() noexcept;
+
         ResourceSet<DeviceMemory> deviceMemories;
         ResourceSet<Buffer> buffers;
         ResourceSet<Image> images;

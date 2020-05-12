@@ -30,13 +30,7 @@ void ResourcePool::ResourceSet<Type>::forEach(const std::function<void(const Typ
 
 #define MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(Type, member)\
 template<>\
-inline ResourcePool::ResourceSet<Type>& ResourcePool::getResourceSet<Type>() noexcept\
-{\
-    return member;\
-}\
-\
-template<>\
-inline const ResourcePool::ResourceSet<Type>& ResourcePool::getResourceSet<Type>() const noexcept\
+inline ResourcePool::ResourceSet<Type>& ResourcePool::getAccessor<Type>() noexcept\
 {\
     return member;\
 }

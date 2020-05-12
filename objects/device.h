@@ -69,5 +69,3 @@ namespace magma
     };
 } // namespace magma
 
-#define MAGMA_REGISTER_RESOURCE(Type, self) self->device->getResourcePool()->getResourceSet<Type>().registerResource(self)
-#define MAGMA_UNREGISTER_RESOURCE(Type, self) self->device->getResourcePool()->getResourceSet<Type>().unregisterResource(self)
