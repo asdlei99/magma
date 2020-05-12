@@ -59,6 +59,7 @@ namespace magma
         uint32_t countComputePipelines() const noexcept;
         uint32_t countPrimaryCommandBuffers() const noexcept;
         uint32_t countSecondaryCommandBuffers() const noexcept;
+        bool hasAnyResource() const noexcept;
 
     private:
         ResourceSet<DeviceMemory> deviceMemories;
