@@ -30,6 +30,9 @@ namespace magma
     class DescriptorSet;
     class DescriptorSetLayout;
     class CommandBuffer;
+#ifdef VK_NV_ray_tracing
+    class AccelerationStructure;
+#endif
 
     class ResourcePool final : public core::NonCopyable
     {
@@ -64,6 +67,9 @@ namespace magma
         ResourceSet<DescriptorSet> descriptorSets;
         ResourceSet<DescriptorSetLayout> descriptorSetLayouts;
         ResourceSet<CommandBuffer> commandBuffers;
+#ifdef VK_NV_ray_tracing
+        ResourceSet<AccelerationStructure> accelerationStructures;
+#endif
     };
 } // namespace magma
 

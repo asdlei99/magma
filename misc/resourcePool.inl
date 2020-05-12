@@ -51,4 +51,7 @@ MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(PipelineLayout, pipelineLayouts)
 MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(DescriptorSet, descriptorSets)
 MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(DescriptorSetLayout, descriptorSetLayouts)
 MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(CommandBuffer, commandBuffers)
+#ifdef VK_NV_ray_tracing
+MAGMA_RESOURCE_POOL_IMPLEMENT_SET_ACCESSOR(AccelerationStructure, accelerationStructures)
+#endif
 } // namespace magma
