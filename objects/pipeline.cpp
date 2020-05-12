@@ -33,6 +33,7 @@ Pipeline::Pipeline(VkPipelineBindPoint bindPoint, std::shared_ptr<Device> device
     pipelineCache(std::move(pipelineCache)),
     basePipeline(std::move(basePipeline))
 {
+    MAGMA_REGISTER_RESOURCE(Pipeline, this);
     if (!this->layout)
     {   // Layout must be a valid VkPipelineLayout handle
         this->layout = std::make_shared<PipelineLayout>(this->device);

@@ -134,7 +134,6 @@ GraphicsPipeline::GraphicsPipeline(std::shared_ptr<Device> device,
     info.basePipelineIndex = -1;
     const VkResult create = vkCreateGraphicsPipelines(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(this->pipelineCache), 1, &info, MAGMA_OPTIONAL_INSTANCE(allocator), &handle);
     MAGMA_THROW_FAILURE(create, "failed to create graphics pipeline");
-    MAGMA_REGISTER_RESOURCE(Pipeline, this);
     hash = core::hashArgs(
         info.sType,
         info.flags,
