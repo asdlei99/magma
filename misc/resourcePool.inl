@@ -3,16 +3,20 @@ namespace magma
 template<typename Type>
 inline void ResourcePool::ResourceSet<Type>::registerResource(const Type *resource) noexcept
 {
-    resources.insert(resource);
+    try {
+        resources.insert(resource);
+    } catch (...) {}
 }
 
 template<typename Type>
 inline void ResourcePool::ResourceSet<Type>::unregisterResource(const Type *resource) noexcept
 {
-    auto it = resources.find(resource);
-    MAGMA_ASSERT(it != resources.end());
-    if (it != resources.end())
-        resources.erase(it);
+    try {
+        auto it = resources.find(resource);
+        MAGMA_ASSERT(it != resources.end());
+        if (it != resources.end())
+            resources.erase(it);
+    } catch (...) {}
 }
 
 template<typename Type>
