@@ -38,34 +38,6 @@ namespace magma
 
     class ResourcePool final : public core::NonCopyable
     {
-        friend DeviceMemory;
-        friend Buffer;
-        friend Image;
-        friend Framebuffer;
-#ifdef VK_NV_ray_tracing
-        friend AccelerationStructure;
-#endif
-        friend Pipeline;
-        friend PipelineLayout;
-        friend DescriptorSet;
-        friend DescriptorSetLayout;
-        friend CommandBuffer;
-        friend Fence;
-        friend Event;
-        friend Semaphore;
-
-        template<typename Type>
-        class Pool final : public core::NonCopyable
-        {
-            std::unordered_set<const Type *> resources;
-
-        public:
-            void registerResource(const Type *resource) noexcept;
-            void unregisterResource(const Type *resouce) noexcept;
-            uint32_t resourceCount() const noexcept;
-            void forEach(const std::function<void(const Type *resource)>& fn) const noexcept;
-        };
-
     public:
         struct InstanceCount
         {
@@ -87,10 +59,24 @@ namespace magma
             uint32_t semaphoreCount = 0;
         };
 
+    public:
         InstanceCount countResourceInstances() const noexcept;
         VkDeviceSize countAllocatedDeviceLocalMemory() const noexcept;
         VkDeviceSize countAllocatedHostVisibleMemory() const noexcept;
         bool hasAnyResource() const noexcept;
+
+    private:
+        template<typename Type>
+        class Pool final : public core::NonCopyable
+        {
+            std::unordered_set<const Type *> resources;
+
+        public:
+            void registerResource(const Type *resource) noexcept;
+            void unregisterResource(const Type *resouce) noexcept;
+            uint32_t resourceCount() const noexcept;
+            void forEach(const std::function<void(const Type *resource)>& fn) const noexcept;
+        };
 
     private:
         template<typename Type>
@@ -111,6 +97,22 @@ namespace magma
         Pool<Fence> fences;
         Pool<Event> events;
         Pool<Semaphore> semaphores;
+
+        friend DeviceMemory;
+        friend Buffer;
+        friend Image;
+        friend Framebuffer;
+#ifdef VK_NV_ray_tracing
+        friend AccelerationStructure;
+#endif
+        friend Pipeline;
+        friend PipelineLayout;
+        friend DescriptorSet;
+        friend DescriptorSetLayout;
+        friend CommandBuffer;
+        friend Fence;
+        friend Event;
+        friend Semaphore;
     };
 } // namespace magma
 
