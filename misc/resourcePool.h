@@ -55,9 +55,9 @@ namespace magma
         friend Semaphore;
 
         template<typename Type>
-        class ResourceSet final : public core::NonCopyable
+        class Pool final : public core::NonCopyable
         {
-            std::set<const Type *> resources;
+            std::unordered_set<const Type *> resources;
 
         public:
             void registerResource(const Type *resource) noexcept;
@@ -93,23 +93,24 @@ namespace magma
         bool hasAnyResource() const noexcept;
 
     private:
-        template<typename Type> ResourceSet<Type>& getAccessor() noexcept;
+        template<typename Type>
+        Pool<Type>& getPool() noexcept;
 
-        ResourceSet<DeviceMemory> deviceMemories;
-        ResourceSet<Buffer> buffers;
-        ResourceSet<Image> images;
-        ResourceSet<Framebuffer> framebuffers;
+        Pool<DeviceMemory> deviceMemories;
+        Pool<Buffer> buffers;
+        Pool<Image> images;
+        Pool<Framebuffer> framebuffers;
 #ifdef VK_NV_ray_tracing
-        ResourceSet<AccelerationStructure> accelerationStructures;
+        Pool<AccelerationStructure> accelerationStructures;
 #endif
-        ResourceSet<Pipeline> pipelines;
-        ResourceSet<PipelineLayout> pipelineLayouts;
-        ResourceSet<DescriptorSet> descriptorSets;
-        ResourceSet<DescriptorSetLayout> descriptorSetLayouts;
-        ResourceSet<CommandBuffer> commandBuffers;
-        ResourceSet<Fence> fences;
-        ResourceSet<Event> events;
-        ResourceSet<Semaphore> semaphores;
+        Pool<Pipeline> pipelines;
+        Pool<PipelineLayout> pipelineLayouts;
+        Pool<DescriptorSet> descriptorSets;
+        Pool<DescriptorSetLayout> descriptorSetLayouts;
+        Pool<CommandBuffer> commandBuffers;
+        Pool<Fence> fences;
+        Pool<Event> events;
+        Pool<Semaphore> semaphores;
     };
 } // namespace magma
 

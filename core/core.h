@@ -113,5 +113,5 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #define MAGMA_SPECIALIZE_VERTEX_ATTRIBUTE(type, normalized, format)\
     template<> struct VertexAttribute<type, normalized> : AttributeFormat<format> {}
 
-#define MAGMA_REGISTER_RESOURCE(Type, self) self->getDevice()->getResourcePool()->getAccessor<Type>().registerResource(self)
-#define MAGMA_UNREGISTER_RESOURCE(Type, self) self->getDevice()->getResourcePool()->getAccessor<Type>().unregisterResource(self)
+#define MAGMA_REGISTER_RESOURCE(Type, self) self->getDevice()->getResourcePool()->getPool<Type>().registerResource(self)
+#define MAGMA_UNREGISTER_RESOURCE(Type, self) self->getDevice()->getResourcePool()->getPool<Type>().unregisterResource(self)
