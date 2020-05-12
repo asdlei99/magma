@@ -55,6 +55,10 @@ namespace magma
         const ResourceSet<Type>& getResourceSet() const noexcept;
         VkDeviceSize countAllocatedDeviceLocalMemory() const noexcept;
         VkDeviceSize countAllocatedHostVisibleMemory() const noexcept;
+        uint32_t countGraphicsPipelines() const noexcept;
+        uint32_t countComputePipelines() const noexcept;
+        uint32_t countPrimaryCommandBuffers() const noexcept;
+        uint32_t countSecondaryCommandBuffers() const noexcept;
 
     private:
         ResourceSet<DeviceMemory> deviceMemories;
