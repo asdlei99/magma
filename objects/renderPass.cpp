@@ -244,4 +244,46 @@ SubpassDependency RenderPass::subpassEndDependency(bool colorAttachment, bool de
     subpassDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
     return subpassDependency;
 }
+/*
+MultiviewRenderPass::MultiviewRenderPass(std::shared_ptr<Device> device, uint32_t viewMask, uint32_t correlationMask,
+    std::shared_ptr<IAllocator> allocator * nullptr *)
+{
+    VkRenderPassMultiviewCreateInfoKHR renderPassMultiviewInfo;
+    renderPassMultiviewInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO_KHR;
+    renderPassMultiviewInfo.pNext = nullptr;
+    renderPassMultiviewInfo.subpassCount = 1;
+    renderPassMultiviewInfo.pViewMasks = &viewMask;
+    renderPassMultiviewInfo.correlationMaskCount = 1;
+    renderPassMultiviewInfo.pCorrelationMasks = &correlationMask;
+    // Create render pass
+    VkRenderPassCreateInfo renderPassInfo;
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    renderPassInfo.pNext = &renderPassMultiviewInfo;
+    renderPassInfo.flags = 0;
+    //renderPassInfo.attachmentCount = MAGMA_COUNT(attachments);
+    //renderPassInfo.pAttachments = attachments.data();
+    renderPassInfo.subpassCount = renderPassMultiviewInfo.subpassCount;
+    //renderPassInfo.pSubpasses = &subpass;
+    renderPassInfo.dependencyCount = 2;
+    //renderPassInfo.pDependencies = dependencies;
+    const VkResult result = vkCreateRenderPass(MAGMA_HANDLE(device), &renderPassInfo, MAGMA_OPTIONAL_INSTANCE(hostAllocator), &handle);
+    MAGMA_THROW_FAILURE(result, "failed to create multi-view render pass");
+    hash = core::hashArgs(
+        renderPassMultiviewInfo.sType,
+        renderPassMultiviewInfo.subpassCount,
+        *renderPassMultiviewInfo.pViewMasks,
+        renderPassMultiviewInfo.correlationMaskCount,
+        *renderPassMultiviewInfo.pCorrelationMasks,
+        renderPassInfo.sType,
+        renderPassInfo.flags,
+        renderPassInfo.attachmentCount,
+        renderPassInfo.subpassCount,
+        renderPassInfo.dependencyCount);
+    //for (const auto& attachment : attachments)
+    //    core::hashCombine(hash, attachment.hash());
+    //core::hashCombine(hash, subpass.hash());
+    //core::memzero(subpass); // Aware destructor
+    //for (const auto& dependency : dependencies)
+    //    core::hashCombine(hash, dependency.hash());
+}*/
 } // namespace magma

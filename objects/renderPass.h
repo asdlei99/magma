@@ -60,4 +60,13 @@ namespace magma
         std::vector<AttachmentDescription> attachments;
         std::size_t hash;
     };
+
+    class MultiviewRenderPass : public RenderPass
+    {
+    public:
+        explicit MultiviewRenderPass(std::shared_ptr<Device> device,
+            uint32_t viewMask,
+            uint32_t correlationMask,
+            std::shared_ptr<IAllocator> allocator /* nullptr */);
+    };
 } // namespace magma
