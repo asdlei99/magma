@@ -24,6 +24,8 @@ namespace magma
 
     class ComputePipeline : public Pipeline
     {
+        friend class PipelineCompiler;
+
     public:
         explicit ComputePipeline(std::shared_ptr<Device> device,
             const PipelineShaderStage& shaderStage,
