@@ -387,12 +387,12 @@ void PipelineCompiler::buildPipelines(std::shared_ptr<Device> device, std::share
 #endif // VK_NV_ray_tracing
     graphics.clear();
     compute.clear();
-    if (!graphicsPipelineInfos.empty())
+    if (!graphicsPipelines.empty())
         MAGMA_THROW_FAILURE(graphicsResult, "failed to compile graphics pipelines");
-    if (!computePipelineInfos.empty())
+    if (!computePipelines.empty())
         MAGMA_THROW_FAILURE(computeResult, "failed to compile compute pipelines");
 #ifdef VK_NV_ray_tracing
-    if (!rtPipelineInfos.empty())
+    if (!rtPipelines.empty())
         MAGMA_THROW_FAILURE(rtResult, "failed to compile ray tracing pipelines");
 #endif
 }
