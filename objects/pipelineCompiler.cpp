@@ -44,16 +44,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 namespace magma
 {
-PipelineCompiler::PipelineCompiler(uint32_t preAllocCount /* 0 */)
+PipelineCompiler::PipelineCompiler(std::size_t capacity /* 0 */):
+    capacity(capacity)
 {
-    if (preAllocCount)
-    {
-        graphicsPipelines.reserve(preAllocCount);
-        computePipelines.reserve(preAllocCount >> 4);
-    #ifdef VK_NV_ray_tracing
-        rtPipelines.reserve(preAllocCount >> 4);
-    #endif
-    }
+    reserve();
 }
 
 uint32_t PipelineCompiler::newGraphicsPipeline(const std::vector<PipelineShaderStage>& shaderStages,
@@ -395,6 +389,19 @@ void PipelineCompiler::buildPipelines(std::shared_ptr<Device> device, std::share
     if (!rtPipelines.empty())
         MAGMA_THROW_FAILURE(rtResult, "failed to compile ray tracing pipelines");
 #endif
+    reserve();
+}
+
+void PipelineCompiler::reserve()
+{
+    if (capacity)
+    {
+        graphicsPipelineInfos.reserve(capacity);
+        computePipelineInfos.reserve(capacity >> 4);
+    #ifdef VK_NV_ray_tracing
+        rtPipelineInfos.reserve(capacity >> 4);
+    #endif
+    }
 }
 
 void PipelineCompiler::fixupStagePointers()

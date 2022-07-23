@@ -47,7 +47,7 @@ namespace magma
     class PipelineCompiler final : core::NonCopyable
     {
     public:
-        explicit PipelineCompiler(uint32_t preAllocCount = 0);
+        explicit PipelineCompiler(std::size_t capacity = 0);
         uint32_t newGraphicsPipeline(const std::vector<PipelineShaderStage>& shaderStages,
             const VertexInputState& vertexInputState,
             const InputAssemblyState& inputAssemblyState,
@@ -85,6 +85,7 @@ namespace magma
     #endif
 
     private:
+        void reserve();
         void fixupStagePointers();
 
         struct PipelineData
@@ -106,6 +107,7 @@ namespace magma
             void clear();
         };
 
+        const std::size_t capacity;
         PipelineData graphics;
         PipelineData compute;
     #ifdef VK_NV_ray_tracing
