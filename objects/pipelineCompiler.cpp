@@ -438,7 +438,7 @@ void PipelineCompiler::PipelineData::compactShaderStages()
     }
 }
 
-void PipelineCompiler::PipelineData::free()
+void PipelineCompiler::PipelineData::free() noexcept
 {
     stages.clear();
 #ifdef VK_NV_ray_tracing

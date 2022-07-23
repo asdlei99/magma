@@ -105,7 +105,7 @@ namespace magma
             std::vector<VkPipeline> pipelineHandles;
 
             void compactShaderStages();
-            void free();
+            void free() noexcept;
         };
 
         const std::size_t capacity;
