@@ -215,7 +215,7 @@ uint32_t PipelineCompiler::newRayTracingPipeline(const std::vector<PipelineShade
     pipelineInfo.stageCount = MAGMA_COUNT(shaderStages);
     pipelineInfo.pStages = nullptr; // Fixup later
     pipelineInfo.groupCount = MAGMA_COUNT(shaderGroups);
-    pipelineInfo.pGroups = rt.groups.back().data();
+    pipelineInfo.pGroups = rt.groups.back().data(); // TODO: Fixup later?
     pipelineInfo.maxRecursionDepth = maxRecursionDepth;
     pipelineInfo.layout = MAGMA_HANDLE(rt.layouts.back());
     pipelineInfo.basePipelineHandle = MAGMA_OPTIONAL_HANDLE(rt.basePipelines.back());
