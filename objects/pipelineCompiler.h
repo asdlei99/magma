@@ -44,7 +44,7 @@ namespace magma
     /* Vulkan has an ability to create multiple pipeline objects in a single call.
        This is a base class for such implementation. */
 
-    class PipelineCompiler final : core::NonCopyable
+    class PipelineCompiler : core::NonCopyable
     {
     public:
         explicit PipelineCompiler(std::size_t capacity = 0);
