@@ -104,7 +104,7 @@ namespace magma
             std::vector<VkPipeline> pipelineHandles;
 
             void compactShaderStages();
-            void clear();
+            void free();
         };
 
         const std::size_t capacity;
@@ -113,7 +113,6 @@ namespace magma
     #ifdef VK_NV_ray_tracing
         PipelineData rt;
     #endif
-
         std::list<VertexInputState> vertexInputStates;
         std::list<InputAssemblyState> inputAssemblyStates;
         std::list<TesselationState> tesselationStates;
@@ -134,7 +133,6 @@ namespace magma
     #ifdef VK_EXT_pipeline_creation_feedback
         std::list<VkPipelineCreationFeedbackCreateInfoEXT> creationFeedbackInfos;
     #endif
-
         std::vector<std::shared_ptr<GraphicsPipeline>> graphicsPipelines;
         std::vector<std::shared_ptr<ComputePipeline>> computePipelines;
     #ifdef VK_NV_ray_tracing

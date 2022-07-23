@@ -377,10 +377,10 @@ void PipelineCompiler::buildPipelines(std::shared_ptr<Device> device, std::share
     }
     rtPipelineInfos.clear();
     // Free temporarily allocated storage that had to be preserved until ctor calls
-    rt.clear();
+    rt.free();
 #endif // VK_NV_ray_tracing
-    graphics.clear();
-    compute.clear();
+    graphics.free();
+    compute.free();
     if (!graphicsPipelines.empty())
         MAGMA_THROW_FAILURE(graphicsResult, "failed to compile graphics pipelines");
     if (!computePipelines.empty())
@@ -438,7 +438,7 @@ void PipelineCompiler::PipelineData::compactShaderStages()
     }
 }
 
-void PipelineCompiler::PipelineData::clear()
+void PipelineCompiler::PipelineData::free()
 {
     stages.clear();
 #ifdef VK_NV_ray_tracing
