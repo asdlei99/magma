@@ -47,6 +47,7 @@ namespace magma
     class PipelineCompiler final : core::NonCopyable
     {
     public:
+        explicit PipelineCompiler(uint32_t preAllocCount = 0);
         uint32_t newGraphicsPipeline(const std::vector<PipelineShaderStage>& shaderStages,
             const VertexInputState& vertexInputState,
             const InputAssemblyState& inputAssemblyState,
@@ -77,27 +78,39 @@ namespace magma
         void buildPipelines(std::shared_ptr<Device> device,
             std::shared_ptr<PipelineCache> pipelineCache,
             std::shared_ptr<IAllocator> allocator = nullptr);
-        uint32_t getPipelineCount(VkPipelineBindPoint bindPoint) const noexcept;
-        //std::shared_ptr<Pipeline> getPipeline(uint32_t index) const noexcept { return pipelines[index]; }
+        std::vector<std::shared_ptr<GraphicsPipeline>> getGraphicsPipelines() const noexcept { return graphicsPipelines; }
+        std::vector<std::shared_ptr<ComputePipeline>> getComputePipelines() const noexcept { return computePipelines; }
+    #ifdef VK_NV_ray_tracing
+        std::vector<std::shared_ptr<RayTracingPipeline>> getRayTracingPipelines() const noexcept { return rtPipelines; }
+    #endif
 
     private:
-        template<typename Type>
-        void fixup(std::vector<Type>& pipelineInfos) const;
-        void gatherShaderStageInfos() const;
-        void postCreateCleanup();
-        void postBuildCleanup();
+        void fixupStagePointers();
 
-        std::list<std::vector<PipelineShaderStage>> stages;
-        std::list<std::shared_ptr<PipelineLayout>> layouts;
-        std::list<std::shared_ptr<Pipeline>> basePipelines;
-    #ifdef VK_EXT_pipeline_creation_feedback
-        std::list<VkPipelineCreationFeedbackEXT> creationFeedbacks;
-        std::list<VkPipelineCreationFeedbackCreateInfoEXT> creationFeedbackInfos;
+        struct PipelineData
+        {
+            std::list<std::vector<PipelineShaderStage>> stages;
+        #ifdef VK_NV_ray_tracing
+            std::list<std::vector<RayTracingShaderGroup>> groups;
+        #endif
+            std::list<std::shared_ptr<PipelineLayout>> layouts;
+            std::list<std::shared_ptr<Pipeline>> basePipelines;
+        #ifdef VK_EXT_pipeline_creation_feedback
+            std::list<VkPipelineCreationFeedbackEXT> creationFeedbacks;
+        #endif
+            std::list<hash_t> hashes;
+            std::vector<VkPipelineShaderStageCreateInfo> shaderStageInfos;
+            std::vector<VkPipeline> pipelineHandles;
+
+            void compactShaderStages();
+            void clear();
+        };
+
+        PipelineData graphics;
+        PipelineData compute;
+    #ifdef VK_NV_ray_tracing
+        PipelineData rt;
     #endif
-        std::list<hash_t> hashes;
-
-        std::list<std::vector<RayTracingShaderGroup>> groups;
-
 
         std::list<VertexInputState> vertexInputStates;
         std::list<InputAssemblyState> inputAssemblyStates;
@@ -114,14 +127,16 @@ namespace magma
         std::vector<VkGraphicsPipelineCreateInfo> graphicsPipelineInfos;
         std::vector<VkComputePipelineCreateInfo> computePipelineInfos;
     #ifdef VK_NV_ray_tracing
-        std::vector<VkRayTracingPipelineCreateInfoNV> rayTracingPipelineInfos;
+        std::vector<VkRayTracingPipelineCreateInfoNV> rtPipelineInfos;
     #endif
+    #ifdef VK_EXT_pipeline_creation_feedback
+        std::list<VkPipelineCreationFeedbackCreateInfoEXT> creationFeedbackInfos;
+    #endif
+
         std::vector<std::shared_ptr<GraphicsPipeline>> graphicsPipelines;
         std::vector<std::shared_ptr<ComputePipeline>> computePipelines;
     #ifdef VK_NV_ray_tracing
-        std::vector<std::shared_ptr<RayTracingPipeline>> rayTracingPipelines;
+        std::vector<std::shared_ptr<RayTracingPipeline>> rtPipelines;
     #endif
-
-        mutable std::vector<VkPipelineShaderStageCreateInfo> shaderStageInfos;
     };
 } // namespace magma

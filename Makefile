@@ -73,7 +73,6 @@ MAGMA_OBJS= \
 	objects/commandBufferDebug.o \
 	objects/commandPool.o \
 	objects/computePipeline.o \
-	objects/computePipelines.o \
 	objects/conditionalRenderingBuffer.o \
 	objects/debugReportCallback.o \
 	objects/debugUtilsMessenger.o \
@@ -90,7 +89,6 @@ MAGMA_OBJS= \
 	objects/fence.o \
 	objects/framebuffer.o \
 	objects/graphicsPipeline.o \
-	objects/graphicsPipelines.o \
 	objects/image.o \
 	objects/image1D.o \
 	objects/image1DArray.o \
@@ -109,13 +107,13 @@ MAGMA_OBJS= \
 	objects/physicalDeviceGroup.o \
 	objects/pipeline.o \
 	objects/pipelineCache.o \
+	objects/pipelineCompiler.o \
 	objects/pipelineLayout.o \
 	objects/primaryCommandBuffer.o \
 	objects/queryPool.o \
 	objects/queue.o \
 	objects/rayTracingBuffer.o \
 	objects/rayTracingPipeline.o \
-	objects/rayTracingPipelines.o \
 	objects/renderPass.o \
 	objects/renderPassMultiview.o \
 	objects/resource.o \

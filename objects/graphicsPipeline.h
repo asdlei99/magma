@@ -37,8 +37,6 @@ namespace magma
 
     class GraphicsPipeline : public Pipeline
     {
-        friend class PipelineCompiler;
-
     public:
         explicit GraphicsPipeline(std::shared_ptr<Device> device,
             const std::vector<PipelineShaderStage>& shaderStages,
@@ -76,6 +74,7 @@ namespace magma
             VkPipelineCreateFlags flags = 0);
 
     private:
+        friend class PipelineCompiler;
         explicit GraphicsPipeline(VkPipeline pipeline,
             std::shared_ptr<Device> device,
             std::shared_ptr<PipelineLayout> layout,
@@ -85,6 +84,5 @@ namespace magma
             VkPipelineCreationFeedbackEXT creationFeedback,
         #endif
             hash_t hash);
-        friend class GraphicsPipelines;
     };
 } // namespace magma

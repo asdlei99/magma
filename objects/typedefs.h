@@ -25,7 +25,6 @@ namespace magma
     MAGMA_TYPEDEF_SHARED_PTR(CommandBuffer)
     MAGMA_TYPEDEF_SHARED_PTR(CommandPool)
     MAGMA_TYPEDEF_SHARED_PTR(ComputePipeline)
-    MAGMA_TYPEDEF_SHARED_PTR(ComputePipelines)
     MAGMA_TYPEDEF_SHARED_PTR(DeferredOperation)
     MAGMA_TYPEDEF_SHARED_PTR(DepthStencilAttachment)
     MAGMA_TYPEDEF_SHARED_PTR(DescriptorPool)
@@ -44,7 +43,6 @@ namespace magma
     MAGMA_TYPEDEF_SHARED_PTR(Fence)
     MAGMA_TYPEDEF_SHARED_PTR(Framebuffer)
     MAGMA_TYPEDEF_SHARED_PTR(GraphicsPipeline)
-    MAGMA_TYPEDEF_SHARED_PTR(GraphicsPipelines)
     MAGMA_TYPEDEF_SHARED_PTR(Image)
     MAGMA_TYPEDEF_SHARED_PTR(Image1D)
     MAGMA_TYPEDEF_SHARED_PTR(Image1DArray)
@@ -62,6 +60,7 @@ namespace magma
     MAGMA_TYPEDEF_SHARED_PTR(PhysicalDevice)
     MAGMA_TYPEDEF_SHARED_PTR(Pipeline)
     MAGMA_TYPEDEF_SHARED_PTR(PipelineCache)
+    MAGMA_TYPEDEF_SHARED_PTR(PipelineCompiler)
     MAGMA_TYPEDEF_SHARED_PTR(PipelineLayout)
     MAGMA_TYPEDEF_SHARED_PTR(PipelineStatisticsQuery)
     MAGMA_TYPEDEF_SHARED_PTR(PrimaryCommandBuffer)
@@ -168,7 +167,6 @@ namespace magma
     MAGMA_TYPEDEF_SHARED_PTR(BottomLevelAccelerationStructure)
     MAGMA_TYPEDEF_SHARED_PTR(RayTracingBuffer)
     MAGMA_TYPEDEF_SHARED_PTR(RayTracingPipeline)
-    MAGMA_TYPEDEF_SHARED_PTR(RayTracingPipelines)
     MAGMA_TYPEDEF_SHARED_PTR(TopLevelAccelerationStructure)
 #endif // VK_NV_ray_tracing
 

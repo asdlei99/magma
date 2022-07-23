@@ -29,8 +29,6 @@ namespace magma
 #ifdef VK_NV_ray_tracing
     class RayTracingPipeline : public Pipeline
     {
-        friend class PipelineCompiler;
-
     public:
         explicit RayTracingPipeline(std::shared_ptr<Device> device,
             const std::vector<PipelineShaderStage>& shaderStages,
@@ -47,6 +45,7 @@ namespace magma
         void compileDeferred(uint32_t shaderIndex);
 
     private:
+        friend class PipelineCompiler;
         explicit RayTracingPipeline(VkPipeline pipeline,
             std::shared_ptr<Device> device,
             std::shared_ptr<PipelineLayout> layout,
@@ -58,7 +57,6 @@ namespace magma
             VkPipelineCreationFeedbackEXT creationFeedback,
         #endif
             hash_t hash);
-        friend class RayTracingPipelines;
 
         const uint32_t shaderGroupCount;
         const uint32_t maxRecursionDepth;

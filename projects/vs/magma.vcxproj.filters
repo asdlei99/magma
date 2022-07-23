@@ -597,15 +597,6 @@
     <ClInclude Include="..\..\misc\compatibility.h">
       <Filter>Header Files\misc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\objects\graphicsPipelines.h">
-      <Filter>Header Files\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\objects\computePipelines.h">
-      <Filter>Header Files\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\objects\rayTracingPipelines.h">
-      <Filter>Header Files\objects</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\objects\transformFeedbackBuffer.h">
       <Filter>Header Files\objects</Filter>
     </ClInclude>
@@ -1032,15 +1023,6 @@
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\objects\imagelessFramebuffer.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\objects\rayTracingPipelines.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\objects\computePipelines.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\objects\graphicsPipelines.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\objects\object.cpp">
