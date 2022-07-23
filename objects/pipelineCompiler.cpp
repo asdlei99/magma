@@ -110,7 +110,7 @@ uint32_t PipelineCompiler::newGraphicsPipeline(const std::vector<PipelineShaderS
     pipelineInfo.pColorBlendState = &colorBlendStates.back();
     pipelineInfo.pDynamicState = &dynamicStateInfos.back();
     pipelineInfo.layout = MAGMA_OPTIONAL_HANDLE(graphics.layouts.back());
-    pipelineInfo.renderPass = *renderPasses.back();
+    pipelineInfo.renderPass = MAGMA_HANDLE(renderPasses.back());
     pipelineInfo.subpass = subpass;
     pipelineInfo.basePipelineHandle = MAGMA_OPTIONAL_HANDLE(graphics.basePipelines.back());
     pipelineInfo.basePipelineIndex = -1;
