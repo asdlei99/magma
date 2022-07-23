@@ -280,7 +280,6 @@ void PipelineCompiler::buildPipelines(std::shared_ptr<Device> device, std::share
         dynamicStateInfos.clear();
         renderPasses.clear();
         graphicsPipelineInfos.clear();
-        computePipelineInfos.clear();
     }
     VkResult computeResult = VK_NOT_READY;
     if (!computePipelineInfos.empty())
@@ -289,6 +288,7 @@ void PipelineCompiler::buildPipelines(std::shared_ptr<Device> device, std::share
         computeResult = vkCreateComputePipelines(*device, MAGMA_OPTIONAL_HANDLE(pipelineCache),
             MAGMA_COUNT(computePipelineInfos), computePipelineInfos.data(), allocator.get(),
             compute.pipelineHandles.data());
+        computePipelineInfos.clear();
     }
 #ifdef VK_NV_ray_tracing
     VkResult rtResult = VK_NOT_READY;
