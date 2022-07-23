@@ -41,8 +41,9 @@ namespace magma
     struct ColorBlendState;
     class ViewportState;
 
-    /* Vulkan has an ability to create multiple pipeline objects in a single call.
-       This is a base class for such implementation. */
+    /* Pipeline compiler utilizes the ability of creating multiple graphics, compute or
+       ray tracing pipelines in a single API call. This may be more efficient on driver side
+       than creating single pipeline per each API call. */
 
     class PipelineCompiler : core::NonCopyable
     {
