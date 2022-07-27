@@ -105,6 +105,7 @@ MAGMA_OBJS= \
 	objects/indexBuffer.o \
 	objects/indirectBuffer.o \
 	objects/instance.o \
+	objects/managedDeviceMemory.o \
 	objects/object.o \
 	objects/physicalDevice.o \
 	objects/physicalDeviceGroup.o \

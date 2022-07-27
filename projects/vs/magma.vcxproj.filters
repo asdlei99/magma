@@ -699,6 +699,9 @@
     <ClInclude Include="..\..\extensions\physicalDeviceExtendedFeatures.h">
       <Filter>Header Files\extensions</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\objects\managedDeviceMemory.h">
+      <Filter>Header Files\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\allocator\allocationCallbacks.cpp">
@@ -1078,6 +1081,9 @@
     </ClCompile>
     <ClCompile Include="..\..\misc\pipelineExecutable.cpp">
       <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\objects\managedDeviceMemory.cpp">
+      <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

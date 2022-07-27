@@ -20,6 +20,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "buffer.h"
 #include "device.h"
 #include "deviceMemory.h"
+#include "managedDeviceMemory.h"
 #include "queue.h"
 #include "fence.h"
 #include "commandBuffer.h"
@@ -49,11 +50,21 @@ Buffer::Buffer(std::shared_ptr<Device> device, VkDeviceSize size,
     const VkResult result = vkCreateBuffer(MAGMA_HANDLE(device), &bufferInfo, MAGMA_OPTIONAL_INSTANCE(hostAllocator), &handle);
     MAGMA_THROW_FAILURE(result, "failed to create buffer");
     const VkMemoryRequirements memoryRequirements = getMemoryRequirements();
-    std::shared_ptr<DeviceMemory> memory = std::make_shared<DeviceMemory>(
-        std::move(device),
-        memoryRequirements, memoryFlags, memoryPriority,
-        &handle, VK_OBJECT_TYPE_BUFFER,
-        std::move(allocator));
+    std::shared_ptr<DeviceMemory> memory;
+    if (MAGMA_DEVICE_ALLOCATOR(allocator))
+    {
+        memory = std::make_shared<ManagedDeviceMemory>(
+            std::move(device),
+            memoryRequirements, memoryFlags, memoryPriority,
+            &handle, VK_OBJECT_TYPE_BUFFER,
+            std::move(allocator));
+    } else
+    {
+        memory = std::make_shared<DeviceMemory>(
+            std::move(device),
+            memoryRequirements, memoryFlags, memoryPriority,
+            MAGMA_HOST_ALLOCATOR(allocator));
+    }
     bindMemory(std::move(memory));
 }
 
@@ -62,8 +73,7 @@ Buffer::~Buffer()
     vkDestroyBuffer(*device, handle, MAGMA_OPTIONAL_INSTANCE(hostAllocator));
 }
 
-void Buffer::realloc(VkDeviceSize newSize,
-    std::shared_ptr<Allocator> allocator /* nullptr */)
+void Buffer::realloc(VkDeviceSize newSize)
 {
     if (getSize() == newSize)
         return;
@@ -77,11 +87,9 @@ void Buffer::realloc(VkDeviceSize newSize,
     bufferInfo.queueFamilyIndexCount = sharing.getQueueFamiliesCount();
     bufferInfo.pQueueFamilyIndices = sharing.getQueueFamilyIndices().data();
     vkDestroyBuffer(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(hostAllocator));
-    hostAllocator = MAGMA_HOST_ALLOCATOR(allocator);
-    deviceAllocator = MAGMA_DEVICE_ALLOCATOR(allocator);
     const VkResult result = vkCreateBuffer(MAGMA_HANDLE(device), &bufferInfo, MAGMA_OPTIONAL_INSTANCE(hostAllocator), &handle);
     MAGMA_THROW_FAILURE(result, "failed to reallocate buffer");
-    memory->realloc(newSize, memory->getPriority(), &handle, VK_OBJECT_TYPE_BUFFER, std::move(allocator));
+    memory->realloc(newSize, memory->getPriority(), &handle, VK_OBJECT_TYPE_BUFFER);
     bindMemory(std::move(memory), offset);
 }
 

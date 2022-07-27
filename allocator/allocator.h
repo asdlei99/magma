@@ -137,7 +137,7 @@ namespace magma
         virtual VkResult invalidateMappedRange(DeviceMemoryBlock memory,
             VkDeviceSize offset,
             VkDeviceSize size) noexcept = 0;
-        friend class DeviceMemory;
+        friend class ManagedDeviceMemory;
     };
 
     /* Aggregates host and device memory allocators. */

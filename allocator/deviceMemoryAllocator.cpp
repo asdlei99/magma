@@ -19,6 +19,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #pragma hdrstop
 #include "deviceMemoryAllocator.h"
 #include "../objects/deviceMemory.h"
+#include "../objects/managedDeviceMemory.h"
 #include "../objects/device.h"
 #include "../objects/physicalDevice.h"
 #include "../objects/instance.h"
@@ -319,11 +320,15 @@ std::vector<VmaAllocation> DeviceMemoryAllocator::gatherSuballocations(const std
         std::shared_ptr<DeviceMemory> deviceMemory = resource->getMemory();
         if (deviceMemory)
         {
-            DeviceMemoryBlock suballocation = deviceMemory->getAllocation();
-            if (suballocation)
+            std::shared_ptr<ManagedDeviceMemory> managedDeviceMemory = std::dynamic_pointer_cast<ManagedDeviceMemory>(deviceMemory);
+            if (managedDeviceMemory)
             {
-                allocations.push_back(reinterpret_cast<VmaAllocation>(suballocation));
-                defragmentationResources.push_back(resource);
+                DeviceMemoryBlock suballocation = managedDeviceMemory->getAllocation();
+                if (suballocation)
+                {
+                    allocations.push_back(reinterpret_cast<VmaAllocation>(suballocation));
+                    defragmentationResources.push_back(resource);
+                }
             }
         }
     }

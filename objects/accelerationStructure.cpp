@@ -20,6 +20,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "accelerationStructure.h"
 #include "device.h"
 #include "deviceMemory.h"
+#include "managedDeviceMemory.h"
 #include "../allocator/allocator.h"
 #include "../misc/geometry.h"
 #include "../misc/extProcAddress.h"
@@ -57,9 +58,21 @@ AccelerationStructure::AccelerationStructure(std::shared_ptr<Device> device, VkA
     const VkResult result = vkCreateAccelerationStructureNV(MAGMA_HANDLE(device), &accelStructInfo, MAGMA_OPTIONAL_INSTANCE(hostAllocator), &handle);
     MAGMA_THROW_FAILURE(result, "failed to create acceleration structure");
     const VkMemoryRequirements memoryRequirements = getObjectMemoryRequirements();
-    std::shared_ptr<DeviceMemory> memory = std::make_shared<DeviceMemory>(std::move(device),
-        memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryPriority,
-        &handle, VK_OBJECT_TYPE_BUFFER, std::move(allocator));
+    std::shared_ptr<DeviceMemory> memory;
+    if (MAGMA_DEVICE_ALLOCATOR(allocator))
+    {
+        memory = std::make_shared<ManagedDeviceMemory>(
+            std::move(device),
+            memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryPriority,
+            &handle, VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV,
+            std::move(allocator));
+    } else
+    {
+        memory = std::make_shared<DeviceMemory>(
+            std::move(device),
+            memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryPriority,
+            MAGMA_HOST_ALLOCATOR(allocator));
+    }
     bindMemory(std::move(memory));
 }
 

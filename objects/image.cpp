@@ -21,6 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "buffer.h"
 #include "device.h"
 #include "deviceMemory.h"
+#include "managedDeviceMemory.h"
 #include "queue.h"
 #include "fence.h"
 #include "commandBuffer.h"
@@ -69,9 +70,21 @@ Image::Image(std::shared_ptr<Device> device, VkImageType imageType, VkFormat for
     const VkMemoryPropertyFlags memoryFlags = (VK_IMAGE_TILING_LINEAR == tiling)
         ? VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
         : VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-    std::shared_ptr<DeviceMemory> memory = std::make_shared<DeviceMemory>(
-        std::move(device), memoryRequirements, memoryFlags, 0.f,
-        &handle, VK_OBJECT_TYPE_IMAGE, std::move(allocator));
+    std::shared_ptr<DeviceMemory> memory;
+    if (MAGMA_DEVICE_ALLOCATOR(allocator))
+    {
+        memory = std::make_shared<ManagedDeviceMemory>(
+            std::move(device),
+            memoryRequirements, memoryFlags, MAGMA_MEMORY_PRIORITY,
+            &handle, VK_OBJECT_TYPE_IMAGE,
+            std::move(allocator));
+    } else
+    {
+        memory = std::make_shared<DeviceMemory>(
+            std::move(device),
+            memoryRequirements, memoryFlags, MAGMA_MEMORY_PRIORITY,
+            MAGMA_HOST_ALLOCATOR(allocator));
+    }
     bindMemory(std::move(memory));
 }
 

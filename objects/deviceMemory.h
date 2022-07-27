@@ -20,12 +20,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 namespace magma
 {
-    class Allocator;
-    class IDeviceMemoryAllocator;
-
-    /* Opaque handle to memory sub-allocation.
-       Each device memory allocator hides the implementation details under it. */
-    typedef void *DeviceMemoryBlock;
+    class IAllocator;
 
     /* Device memory is memory that is visible to the device -
        for example the contents of the image or buffer objects,
@@ -38,61 +33,60 @@ namespace magma
             const VkMemoryRequirements& memoryRequirements,
             VkMemoryPropertyFlags flags,
             float priority,
-            const void *object,
-            VkObjectType objectType,
-            std::shared_ptr<Allocator> allocator = nullptr);
+            std::shared_ptr<IAllocator> allocator = nullptr);
 #ifdef VK_KHR_device_group
         explicit DeviceMemory(std::shared_ptr<Device> device,
             uint32_t deviceMask,
             const VkMemoryRequirements& memoryRequirements,
             VkMemoryPropertyFlags flags,
             float priority,
-            std::shared_ptr<Allocator> allocator = nullptr);
-#endif
+            std::shared_ptr<IAllocator> allocator = nullptr);
+#endif // VK_KHR_device_group
         ~DeviceMemory();
-        std::shared_ptr<IDeviceMemoryAllocator> getDeviceAllocator() const noexcept { return deviceAllocator; }
-        DeviceMemoryBlock getAllocation() const noexcept { return memory; }
+        float getPriority() const noexcept { return priority; }
+        void setPriority(float priority) noexcept;
         VkDeviceSize getOffset() const noexcept { return offset; }
         VkDeviceSize getSize() const noexcept { return memoryRequirements.size; }
         VkDeviceSize getAlignment() const noexcept { return memoryRequirements.alignment; }
         uint32_t getMemoryTypeBits() const noexcept { return memoryRequirements.memoryTypeBits; }
-        float getPriority() const noexcept { return priority; }
-        void setPriority(float priority) noexcept;
         bool local() const noexcept;
         bool pinned() const noexcept;
         bool hostVisible() const noexcept;
         bool hostCached() const noexcept;
         bool mapped() const noexcept;
-        void realloc(VkDeviceSize newSize,
+        virtual void realloc(VkDeviceSize newSize,
             float priority,
             const void *object,
-            VkObjectType objectType,
-            std::shared_ptr<Allocator> allocator = nullptr);
-        void bind(const void *object,
+            VkObjectType objectType);
+        virtual void bind(const void *object,
             VkObjectType objectType,
             VkDeviceSize offset /* 0 */);
-        void *map(VkDeviceSize offset = 0,
+        virtual void *map(VkDeviceSize offset = 0,
             VkDeviceSize size = VK_WHOLE_SIZE,
             VkMemoryMapFlags flags = 0) noexcept;
         template<typename Type>
         Type *map(VkDeviceSize offset = 0,
             VkDeviceSize size = VK_WHOLE_SIZE,
             VkMemoryMapFlags flags = 0) noexcept;
-        void unmap() noexcept;
-        bool flushMappedRange(VkDeviceSize offset = 0,
+        virtual void unmap() noexcept;
+        virtual bool flushMappedRange(VkDeviceSize offset = 0,
             VkDeviceSize size = VK_WHOLE_SIZE) noexcept;
-        bool invalidateMappedRange(VkDeviceSize offset = 0,
+        virtual bool invalidateMappedRange(VkDeviceSize offset = 0,
             VkDeviceSize size = VK_WHOLE_SIZE) noexcept;
-        void onDefragment() noexcept;
+        virtual void onDefragment() noexcept;
 
-    private:
+    protected:
+        explicit DeviceMemory(std::shared_ptr<Device> device,
+            const VkMemoryRequirements& memoryRequirements,
+            VkMemoryPropertyFlags flags,
+            float priority,
+            std::shared_ptr<IAllocator> allocator,
+            int);
         uint32_t getTypeIndex(VkMemoryPropertyFlags flags) const;
 
         VkMemoryRequirements memoryRequirements;
         const VkMemoryPropertyFlags flags;
-        const float priority;
-        std::shared_ptr<IDeviceMemoryAllocator> deviceAllocator;
-        DeviceMemoryBlock memory;
+        float priority;
         VkDeviceSize offset;
         void *mappedRange;
     };

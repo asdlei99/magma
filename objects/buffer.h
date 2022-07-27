@@ -33,8 +33,7 @@ namespace magma
     {
     public:
         ~Buffer();
-        void realloc(VkDeviceSize newSize,
-            std::shared_ptr<Allocator> allocator = nullptr);
+        void realloc(VkDeviceSize newSize);
         VkBufferCreateFlags getFlags() const noexcept { return flags; }
         VkBufferUsageFlags getUsage() const noexcept { return usage; }
         VkMemoryRequirements getMemoryRequirements() const noexcept;
