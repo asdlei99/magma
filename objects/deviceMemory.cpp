@@ -37,10 +37,10 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device,
     mappedRange(nullptr)
 {}
 
-DeviceMemory::DeviceMemory(std::shared_ptr<Device> device,
+DeviceMemory::DeviceMemory(std::shared_ptr<Device> device_,
     const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags flags, float priority,
     std::shared_ptr<IAllocator> allocator /* nullptr */):
-    NonDispatchable(VK_OBJECT_TYPE_DEVICE_MEMORY, std::move(device), std::move(allocator)),
+    NonDispatchable(VK_OBJECT_TYPE_DEVICE_MEMORY, std::move(device_), std::move(allocator)),
     memoryRequirements(memoryRequirements),
     flags(flags),
     priority(priority),
@@ -68,10 +68,10 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device,
 }
 
 #ifdef VK_KHR_device_group
-DeviceMemory::DeviceMemory(std::shared_ptr<Device> device, uint32_t deviceMask,
+DeviceMemory::DeviceMemory(std::shared_ptr<Device> device_, uint32_t deviceMask,
     const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags flags, float priority,
     std::shared_ptr<IAllocator> allocator /* nullptr */):
-    NonDispatchable(VK_OBJECT_TYPE_DEVICE_MEMORY, std::move(device), std::move(allocator)),
+    NonDispatchable(VK_OBJECT_TYPE_DEVICE_MEMORY, std::move(device_), std::move(allocator)),
     memoryRequirements(memoryRequirements),
     flags(flags),
     priority(priority),
@@ -90,7 +90,7 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device, uint32_t deviceMask,
     allocInfo.memoryTypeIndex = getTypeIndex(flags);
 #ifdef VK_EXT_memory_priority
     VkMemoryPriorityAllocateInfoEXT memoryPriorityInfo;
-    if (this->device->extensionEnabled(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME))
+    if (device->extensionEnabled(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME))
     {
         MAGMA_ASSERT((priority >= 0.f) && (priority <= 1.f));
         memoryPriorityInfo.sType = VK_STRUCTURE_TYPE_MEMORY_PRIORITY_ALLOCATE_INFO_EXT;
