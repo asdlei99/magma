@@ -106,4 +106,13 @@ bool ManagedDeviceMemory::invalidateMappedRange(
     VkResult result = deviceAllocator->invalidateMappedRange(block, offset, size);
     return (VK_SUCCESS == result);
 }
+
+void ManagedDeviceMemory::onDefragment() noexcept
+{
+    const MemoryBlockInfo memoryInfo = deviceAllocator->getMemoryBlockInfo(block);
+    // The following can be changed after call to vmaDefragment()
+    // if allocation is passed to the function, or if allocation is lost:
+    handle = memoryInfo.deviceMemory;
+    subOffset = memoryInfo.offset;
+}
 } // namespace magma
