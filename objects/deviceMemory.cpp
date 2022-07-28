@@ -154,14 +154,14 @@ void DeviceMemory::realloc(VkDeviceSize newSize, float priority, const void *obj
 }
 
 void DeviceMemory::bind(const void *object, VkObjectType objectType,
-    VkDeviceSize offset_ /* 0 */)
+    VkDeviceSize offset /* 0 */)
 {
     MAGMA_ASSERT((VK_OBJECT_TYPE_BUFFER == objectType) || (VK_OBJECT_TYPE_IMAGE == objectType));
     VkResult result;
     if (VK_OBJECT_TYPE_BUFFER == objectType)
-        result = vkBindBufferMemory(MAGMA_HANDLE(device), MAGMA_BUFFER_HANDLE(object), handle, offset_);
+        result = vkBindBufferMemory(MAGMA_HANDLE(device), MAGMA_BUFFER_HANDLE(object), handle, offset);
     else // VK_OBJECT_TYPE_IMAGE
-        result = vkBindImageMemory(MAGMA_HANDLE(device), MAGMA_IMAGE_HANDLE(object), handle, offset_);
+        result = vkBindImageMemory(MAGMA_HANDLE(device), MAGMA_IMAGE_HANDLE(object), handle, offset);
     MAGMA_THROW_FAILURE(result, VK_OBJECT_TYPE_BUFFER == objectType
         ? "failed to bind buffer memory"
         : "failed to bind image memory");

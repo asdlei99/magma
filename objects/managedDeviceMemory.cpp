@@ -57,10 +57,10 @@ void ManagedDeviceMemory::realloc(VkDeviceSize newSize, float priority, const vo
 }
 
 void ManagedDeviceMemory::bind(const void *object, VkObjectType objectType,
-    VkDeviceSize offset_ /* 0 */)
+    VkDeviceSize offset /* 0 */)
 {
     MAGMA_ASSERT((VK_OBJECT_TYPE_BUFFER == objectType) || (VK_OBJECT_TYPE_IMAGE == objectType));
-    VkResult result = deviceAllocator->bindMemory(block, offset_, object, objectType);
+    VkResult result = deviceAllocator->bindMemory(block, offset, object, objectType);
     MAGMA_THROW_FAILURE(result, VK_OBJECT_TYPE_BUFFER == objectType
         ? "failed to bind buffer memory"
         : "failed to bind image memory");
