@@ -38,6 +38,7 @@ ManagedDeviceMemory::~ManagedDeviceMemory()
 {
     MAGMA_ASSERT(!mappedRange);
     deviceAllocator->free(block);
+    handle = VK_NULL_HANDLE;
 }
 
 void ManagedDeviceMemory::realloc(VkDeviceSize newSize, float priority, const void *object, VkObjectType objectType)

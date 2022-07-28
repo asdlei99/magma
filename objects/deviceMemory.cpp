@@ -107,7 +107,7 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device_, uint32_t deviceMask,
 DeviceMemory::~DeviceMemory()
 {
     MAGMA_ASSERT(!mappedRange);
-    if (handle)
+    if (handle != VK_NULL_HANDLE)
         vkFreeMemory(MAGMA_HANDLE(device), handle, MAGMA_OPTIONAL_INSTANCE(hostAllocator));
 }
 
