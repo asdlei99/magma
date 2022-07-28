@@ -31,7 +31,7 @@ ManagedDeviceMemory::ManagedDeviceMemory(std::shared_ptr<Device> device,
     deviceAllocator(MAGMA_DEVICE_ALLOCATOR(allocator))
 {
     MAGMA_ASSERT(deviceAllocator != nullptr);
-    block = deviceAllocator->alloc(memoryRequirements, flags, priority, object, objectType);
+    block = deviceAllocator->alloc(memoryRequirements, flags, priority, object, objectType, &handle);
 }
 
 ManagedDeviceMemory::~ManagedDeviceMemory()

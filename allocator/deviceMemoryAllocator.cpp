@@ -74,7 +74,8 @@ DeviceMemoryAllocator::~DeviceMemoryAllocator()
 }
 
 DeviceMemoryBlock DeviceMemoryAllocator::alloc(const VkMemoryRequirements& memoryRequirements,
-    VkMemoryPropertyFlags flags, float priority, const void *handle, VkObjectType objectType)
+    VkMemoryPropertyFlags flags, float priority, const void *object, VkObjectType objectType,
+    VkDeviceMemory *handle)
 {
     MAGMA_ASSERT((priority >= 0.f) && (priority <= 1.f));
     MAGMA_ASSERT(handle);
@@ -96,19 +97,21 @@ DeviceMemoryBlock DeviceMemoryAllocator::alloc(const VkMemoryRequirements& memor
     allocInfo.pUserData = nullptr;
     allocInfo.priority = priority;
     VmaAllocation allocation;
+    VmaAllocationInfo allocationInfo;
     VkResult result;
     switch (objectType)
     {
     case VK_OBJECT_TYPE_BUFFER:
-        result = vmaAllocateMemoryForBuffer(allocator, MAGMA_BUFFER_HANDLE(handle), &allocInfo, &allocation, nullptr);
+        result = vmaAllocateMemoryForBuffer(allocator, MAGMA_BUFFER_HANDLE(object), &allocInfo, &allocation, &allocationInfo);
         break;
     case VK_OBJECT_TYPE_IMAGE:
-        result = vmaAllocateMemoryForImage(allocator, MAGMA_IMAGE_HANDLE(handle), &allocInfo, &allocation, nullptr);
+        result = vmaAllocateMemoryForImage(allocator, MAGMA_IMAGE_HANDLE(object), &allocInfo, &allocation, &allocationInfo);
         break;
     default:
-        result = vmaAllocateMemory(allocator, &memoryRequirements, &allocInfo, &allocation, nullptr);
+        result = vmaAllocateMemory(allocator, &memoryRequirements, &allocInfo, &allocation, &allocationInfo);
     }
     MAGMA_THROW_FAILURE(result, "failed to allocate memory");
+    *handle = allocationInfo.deviceMemory;
     return reinterpret_cast<DeviceMemoryBlock>(allocation);
 }
 

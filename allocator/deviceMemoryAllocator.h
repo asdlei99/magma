@@ -41,8 +41,9 @@ namespace magma
         virtual DeviceMemoryBlock alloc(const VkMemoryRequirements& memoryRequirements,
             VkMemoryPropertyFlags flags,
             float priority,
-            const void *handle,
-            VkObjectType objectType) override;
+            const void *object,
+            VkObjectType objectType,
+            VkDeviceMemory *handle) override;
         virtual std::vector<DeviceMemoryBlock> allocPages(const std::vector<VkMemoryRequirements>& memoryRequirements,
             const std::vector<VkMemoryPropertyFlags>& flags,
             const std::vector<float>& priorities) override;
