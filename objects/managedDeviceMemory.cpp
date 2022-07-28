@@ -32,6 +32,7 @@ ManagedDeviceMemory::ManagedDeviceMemory(std::shared_ptr<Device> device,
 {
     MAGMA_ASSERT(deviceAllocator != nullptr);
     block = deviceAllocator->alloc(memoryRequirements, flags, priority, object, objectType, &handle);
+    subOffset = deviceAllocator->getMemoryBlockInfo(block).offset;
 }
 
 ManagedDeviceMemory::~ManagedDeviceMemory()
@@ -47,7 +48,7 @@ void ManagedDeviceMemory::realloc(VkDeviceSize newSize, float priority, const vo
     memoryRequirements.size = newSize;
     deviceAllocator->free(block);
     block = deviceAllocator->alloc(memoryRequirements, flags, priority, object, objectType);
-    onDefragment();
+    subOffset = deviceAllocator->getMemoryBlockInfo(block).offset;
 }
 
 void ManagedDeviceMemory::bind(const void *object, VkObjectType objectType,
