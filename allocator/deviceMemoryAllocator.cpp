@@ -41,22 +41,22 @@ static_assert(sizeof(magma::DefragmentationStats) == sizeof(VmaDefragmentationSt
 
 namespace magma
 {
-DeviceMemoryAllocator::DeviceMemoryAllocator(std::shared_ptr<Device> device,
-    std::shared_ptr<IAllocator> hostAllocator /* nullptr */):
-    device(std::move(device)),
-    hostAllocator(std::move(hostAllocator)),
+DeviceMemoryAllocator::DeviceMemoryAllocator(std::shared_ptr<Device> device_,
+    std::shared_ptr<IAllocator> hostAllocator_ /* nullptr */):
+    device(std::move(device_)),
+    hostAllocator(std::move(hostAllocator_)),
     allocator(VK_NULL_HANDLE),
     defragmentationContext(VK_NULL_HANDLE)
 {
-    std::shared_ptr<PhysicalDevice> physicalDevice = this->device->getPhysicalDevice();
-    VmaAllocatorCreateInfo allocatorInfo;
+    std::shared_ptr<PhysicalDevice> physicalDevice = device->getPhysicalDevice();
+    VmaAllocatorCreateInfo allocatorInfo = {};
     allocatorInfo.flags = 0;
     if (device->extensionEnabled(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME))
         allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_EXT_MEMORY_PRIORITY_BIT;
     allocatorInfo.physicalDevice = *physicalDevice;
-    allocatorInfo.device = *this->device;
+    allocatorInfo.device = MAGMA_HANDLE(device);
     allocatorInfo.preferredLargeHeapBlockSize = 0;
-    allocatorInfo.pAllocationCallbacks = this->hostAllocator.get();
+    allocatorInfo.pAllocationCallbacks = hostAllocator.get();
     allocatorInfo.pDeviceMemoryCallbacks = nullptr;
     allocatorInfo.frameInUseCount = 0;
     allocatorInfo.pHeapSizeLimit = nullptr;
@@ -64,6 +64,7 @@ DeviceMemoryAllocator::DeviceMemoryAllocator(std::shared_ptr<Device> device,
     allocatorInfo.pRecordSettings = nullptr;
     allocatorInfo.instance = *physicalDevice->getInstance();
     allocatorInfo.vulkanApiVersion = physicalDevice->getInstance()->getApiVersion();
+    allocatorInfo.pTypeExternalMemoryHandleTypes = nullptr;
     const VkResult result = vmaCreateAllocator(&allocatorInfo, &allocator);
     MAGMA_THROW_FAILURE(result, "failed to create VMA allocator");
 }
