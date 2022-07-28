@@ -24,15 +24,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 namespace magma
 {
 ManagedDeviceMemory::ManagedDeviceMemory(std::shared_ptr<Device> device,
-    const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags flags, float priority,
+    const VkMemoryRequirements& memoryRequirements_, VkMemoryPropertyFlags flags, float priority,
     const void *object, VkObjectType objectType,
     std::shared_ptr<Allocator> allocator /* nullptr */):
-    DeviceMemory(std::move(device), memoryRequirements, flags, priority, MAGMA_HOST_ALLOCATOR(allocator), 0),
+    DeviceMemory(std::move(device), memoryRequirements_, flags, priority, MAGMA_HOST_ALLOCATOR(allocator), 0),
     deviceAllocator(MAGMA_DEVICE_ALLOCATOR(allocator))
 {
     MAGMA_ASSERT(deviceAllocator != nullptr);
-    block = deviceAllocator->alloc(memoryRequirements, flags, priority, object, objectType, &handle);
-    subOffset = deviceAllocator->getMemoryBlockInfo(block).offset;
+    block = deviceAllocator->alloc(memoryRequirements_, flags, priority, object, objectType, &handle);
+    const MemoryBlockInfo memoryInfo = deviceAllocator->getMemoryBlockInfo(block);
+    handle = memoryInfo.deviceMemory;
+    memoryRequirements.size = memoryInfo.size;
+    subOffset = memoryInfo.offset;
 }
 
 ManagedDeviceMemory::~ManagedDeviceMemory()
@@ -44,11 +47,13 @@ ManagedDeviceMemory::~ManagedDeviceMemory()
 
 void ManagedDeviceMemory::realloc(VkDeviceSize newSize, float priority, const void *object, VkObjectType objectType)
 {
-    MAGMA_ASSERT(!mappedRange);
+    this->~ManagedDeviceMemory();
     memoryRequirements.size = newSize;
-    deviceAllocator->free(block);
-    block = deviceAllocator->alloc(memoryRequirements, flags, priority, object, objectType);
-    subOffset = deviceAllocator->getMemoryBlockInfo(block).offset;
+    block = deviceAllocator->alloc(memoryRequirements, flags, priority, object, objectType, &handle);
+    const MemoryBlockInfo memoryInfo = deviceAllocator->getMemoryBlockInfo(block);
+    handle = memoryInfo.deviceMemory;
+    memoryRequirements.size = memoryInfo.size;
+    subOffset = memoryInfo.offset;
 }
 
 void ManagedDeviceMemory::bind(const void *object, VkObjectType objectType,
