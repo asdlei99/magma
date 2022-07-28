@@ -27,6 +27,12 @@ namespace magma
        Each device memory allocator hides the implementation details under it. */
     typedef void *DeviceMemoryBlock;
 
+    /* Device memory block that is managed by Vulkan Memory Allocator.
+       Keep in mind that there is an implementation-dependent limit
+       of a number of memory allocations reported by
+       VkPhysicalDeviceLimits::maxMemoryAllocationCount, so using this
+       object is a preferred approach for device memory allocation. */
+
     class ManagedDeviceMemory : public DeviceMemory
     {
     public:
