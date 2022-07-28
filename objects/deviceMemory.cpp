@@ -33,7 +33,7 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device,
     memoryRequirements(memoryRequirements),
     flags(flags),
     priority(priority),
-    offset(0),
+    subOffset(0ull),
     mappedRange(nullptr)
 {}
 
@@ -44,7 +44,7 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device_,
     memoryRequirements(memoryRequirements),
     flags(flags),
     priority(priority),
-    offset(0),
+    subOffset(0ull),
     mappedRange(nullptr)
 {
     VkMemoryAllocateInfo allocInfo;
@@ -75,7 +75,7 @@ DeviceMemory::DeviceMemory(std::shared_ptr<Device> device_, uint32_t deviceMask,
     memoryRequirements(memoryRequirements),
     flags(flags),
     priority(priority),
-    offset(0),
+    subOffset(0ull),
     mappedRange(nullptr)
 {
     VkMemoryAllocateFlagsInfoKHR allocFlagsInfo;
@@ -165,7 +165,6 @@ void DeviceMemory::bind(const void *object, VkObjectType objectType,
     MAGMA_THROW_FAILURE(result, VK_OBJECT_TYPE_BUFFER == objectType
         ? "failed to bind buffer memory"
         : "failed to bind image memory");
-    offset = offset_;
 }
 
 void *DeviceMemory::map(

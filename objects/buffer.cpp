@@ -133,7 +133,7 @@ void Buffer::bindMemoryDeviceGroup(std::shared_ptr<DeviceMemory> memory,
     bindInfo.pNext = &deviceGroupBindInfo;
     bindInfo.buffer = handle;
     bindInfo.memory = *memory;
-    bindInfo.memoryOffset = memory->getOffset() + offset;
+    bindInfo.memoryOffset = memory->getSuballocationOffset() + offset;
     MAGMA_REQUIRED_DEVICE_EXTENSION(vkBindBufferMemory2KHR, VK_KHR_BIND_MEMORY_2_EXTENSION_NAME);
     const VkResult result = vkBindBufferMemory2KHR(MAGMA_HANDLE(device), 1, &bindInfo);
     MAGMA_THROW_FAILURE(result, "failed to bind buffer memory within device group");

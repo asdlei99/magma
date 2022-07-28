@@ -58,7 +58,6 @@ void ManagedDeviceMemory::bind(const void *object, VkObjectType objectType,
     MAGMA_THROW_FAILURE(result, VK_OBJECT_TYPE_BUFFER == objectType
         ? "failed to bind buffer memory"
         : "failed to bind image memory");
-    offset = offset_;
 }
 
 void *ManagedDeviceMemory::map(

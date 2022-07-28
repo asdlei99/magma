@@ -43,12 +43,12 @@ namespace magma
             std::shared_ptr<IAllocator> allocator = nullptr);
 #endif // VK_KHR_device_group
         ~DeviceMemory();
-        float getPriority() const noexcept { return priority; }
-        void setPriority(float priority) noexcept;
-        VkDeviceSize getOffset() const noexcept { return offset; }
         VkDeviceSize getSize() const noexcept { return memoryRequirements.size; }
         VkDeviceSize getAlignment() const noexcept { return memoryRequirements.alignment; }
         uint32_t getMemoryTypeBits() const noexcept { return memoryRequirements.memoryTypeBits; }
+        float getPriority() const noexcept { return priority; }
+        void setPriority(float priority) noexcept;
+        VkDeviceSize getSuballocationOffset() const noexcept { return subOffset; }
         bool local() const noexcept;
         bool pinned() const noexcept;
         bool hostVisible() const noexcept;
@@ -87,7 +87,7 @@ namespace magma
         VkMemoryRequirements memoryRequirements;
         const VkMemoryPropertyFlags flags;
         float priority;
-        VkDeviceSize offset;
+        VkDeviceSize subOffset;
         void *mappedRange;
     };
 } // namespace magma

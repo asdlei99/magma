@@ -209,7 +209,7 @@ void Image::bindMemoryDeviceGroup(std::shared_ptr<DeviceMemory> memory,
     bindInfo.pNext = &deviceGroupBindInfo;
     bindInfo.image = handle;
     bindInfo.memory = *memory;
-    bindInfo.memoryOffset = memory->getOffset() + offset;
+    bindInfo.memoryOffset = memory->getSuballocationOffset() + offset;
     MAGMA_REQUIRED_DEVICE_EXTENSION(vkBindImageMemory2KHR, VK_KHR_BIND_MEMORY_2_EXTENSION_NAME);
     const VkResult result = vkBindImageMemory2KHR(MAGMA_HANDLE(device), 1, &bindInfo);
     MAGMA_THROW_FAILURE(result, "failed to bind image memory within device group");
@@ -235,7 +235,7 @@ void Image::bindMemoryDeviceGroup(std::shared_ptr<DeviceMemory> memory,
     bindInfo.pNext = &deviceGroupBindInfo;
     bindInfo.image = handle;
     bindInfo.memory = *memory;
-    bindInfo.memoryOffset = memory->getOffset() + offset;
+    bindInfo.memoryOffset = memory->getSuballocationOffset() + offset;
     MAGMA_REQUIRED_DEVICE_EXTENSION(vkBindImageMemory2KHR, VK_KHR_BIND_MEMORY_2_EXTENSION_NAME);
     const VkResult result = vkBindImageMemory2KHR(MAGMA_HANDLE(device), 1, &bindInfo);
     MAGMA_THROW_FAILURE(result, "failed to bind image memory within device group");

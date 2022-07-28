@@ -91,7 +91,7 @@ void AccelerationStructure::bindMemory(std::shared_ptr<DeviceMemory> memory,
     bindInfo.pNext = nullptr;
     bindInfo.accelerationStructure = handle;
     bindInfo.memory = *memory;
-    bindInfo.memoryOffset = memory->getOffset() + offset;
+    bindInfo.memoryOffset = memory->getSuballocationOffset() + offset;
     bindInfo.deviceIndexCount = 0;
     bindInfo.pDeviceIndices = nullptr;
     MAGMA_DEVICE_EXTENSION(vkBindAccelerationStructureMemoryNV);
@@ -112,7 +112,7 @@ void AccelerationStructure::bindMemoryDeviceGroup(std::shared_ptr<DeviceMemory> 
     bindInfo.pNext = nullptr;
     bindInfo.accelerationStructure = handle;
     bindInfo.memory = *memory;
-    bindInfo.memoryOffset = memory->getOffset() + offset;
+    bindInfo.memoryOffset = memory->getSuballocationOffset() + offset;
     bindInfo.deviceIndexCount = MAGMA_COUNT(deviceIndices);
     bindInfo.pDeviceIndices = deviceIndices.data();
     MAGMA_DEVICE_EXTENSION(vkBindAccelerationStructureMemoryNV);
