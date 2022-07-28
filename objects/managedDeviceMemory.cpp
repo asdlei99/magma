@@ -65,6 +65,7 @@ void *ManagedDeviceMemory::map(
     VkDeviceSize size /* VK_WHOLE_SIZE */,
     VkMemoryMapFlags flags /* 0 */) noexcept
 {
+    MAGMA_ASSERT(hostVisible());
     MAGMA_UNUSED(size);
     MAGMA_UNUSED(flags);
     if (!mappedRange)
@@ -82,6 +83,7 @@ void *ManagedDeviceMemory::map(
 
 void ManagedDeviceMemory::unmap() noexcept
 {
+    MAGMA_ASSERT(hostVisible());
     if (mappedRange)
     {
         deviceAllocator->unmap(block);

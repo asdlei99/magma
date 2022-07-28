@@ -173,6 +173,7 @@ void *DeviceMemory::map(
     VkDeviceSize size /* VK_WHOLE_SIZE */,
     VkMemoryMapFlags flags /* 0 */) noexcept
 {
+    MAGMA_ASSERT(hostVisible());
     if (!mappedRange)
     {
         const VkResult result = vkMapMemory(MAGMA_HANDLE(device), handle, offset, size, flags, &mappedRange);
@@ -188,6 +189,7 @@ void *DeviceMemory::map(
 
 void DeviceMemory::unmap() noexcept
 {
+    MAGMA_ASSERT(hostVisible());
     if (mappedRange)
     {
         vkUnmapMemory(*device, handle);
