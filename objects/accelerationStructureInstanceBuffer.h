@@ -68,7 +68,7 @@ namespace magma
         void setForceNoOpaque(bool noOpaque) noexcept { if (noOpaque) flags |= VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_NV;
                                                         else flags &= ~VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_NV; }
         bool opaque() const noexcept { return flags & VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_NV; }
-        bool noOpaque() const noexcept { return flags & VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_NV; }
+        bool nooOpaque() const noexcept { return flags & VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_NV; }
         void setAccelerationStructure(std::shared_ptr<const AccelerationStructure> accelerationStructure);
     };
 
