@@ -96,6 +96,18 @@ VkDeviceAddress AccelerationStructure::getDeviceAddress() const noexcept
     return vkGetAccelerationStructureDeviceAddressKHR(*device, &deviceAddressInfo);
 }
 
+bool AccelerationStructure::hostBuild() const noexcept
+{
+    return (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_HOST_KHR == buildType) ||
+        (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_HOST_OR_DEVICE_KHR == buildType);
+}
+
+bool AccelerationStructure::deviceBuild() const noexcept
+{
+    return (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR == buildType) ||
+        (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_HOST_OR_DEVICE_KHR == buildType);
+}
+
 bool AccelerationStructure::build(const std::vector<AccelerationStructureGeometry>& geometries,
     const std::vector<AccelerationStructureBuildRange>& buildRanges,
     std::shared_ptr<Buffer> scratchBuffer,
