@@ -635,7 +635,7 @@ void CommandBuffer::buildAccelerationStructure(std::shared_ptr<AccelerationStruc
     accelerationStructureBuildGeometryInfo.flags = flags;
     accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
     accelerationStructureBuildGeometryInfo.srcAccelerationStructure = VK_NULL_HANDLE;
-    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = accelerationStructure->getHandle();
+    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure;
     accelerationStructureBuildGeometryInfo.geometryCount = MAGMA_COUNT(geometries);
     accelerationStructureBuildGeometryInfo.pGeometries = geometries.data();
     accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
@@ -656,8 +656,8 @@ void CommandBuffer::updateAccelerationStructure(std::shared_ptr<AccelerationStru
     accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
     accelerationStructureBuildGeometryInfo.flags = flags;
     accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
-    accelerationStructureBuildGeometryInfo.srcAccelerationStructure = accelerationStructure->getHandle(); // Update
-    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = accelerationStructure->getHandle(); // in-place
+    accelerationStructureBuildGeometryInfo.srcAccelerationStructure = *accelerationStructure; // Update
+    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure; // in-place
     accelerationStructureBuildGeometryInfo.geometryCount = MAGMA_COUNT(geometries);
     accelerationStructureBuildGeometryInfo.pGeometries = geometries.data();
     accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
@@ -684,8 +684,8 @@ void CommandBuffer::buildAccelerationStructures(const std::vector<std::shared_pt
         accelerationStructureBuildGeometryInfo.flags = flags;
         accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
         accelerationStructureBuildGeometryInfo.srcAccelerationStructure = VK_NULL_HANDLE;
-        accelerationStructureBuildGeometryInfo.dstAccelerationStructure = accelerationStructure->getHandle();
-        accelerationStructureBuildGeometryInfo.geometryCount = geometries->size();
+        accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure;
+        accelerationStructureBuildGeometryInfo.geometryCount = static_cast<uint32_t>(geometries->size());
         accelerationStructureBuildGeometryInfo.pGeometries = geometries->data();
         accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
         accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress(); // TODO: offset!
@@ -721,9 +721,9 @@ void CommandBuffer::updateAccelerationStructures(const std::vector<std::shared_p
         accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
         accelerationStructureBuildGeometryInfo.flags = flags;
         accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
-        accelerationStructureBuildGeometryInfo.srcAccelerationStructure = accelerationStructure->getHandle(); // Update
-        accelerationStructureBuildGeometryInfo.dstAccelerationStructure = accelerationStructure->getHandle(); // in-place
-        accelerationStructureBuildGeometryInfo.geometryCount = geometries->size();
+        accelerationStructureBuildGeometryInfo.srcAccelerationStructure = *accelerationStructure; // Update
+        accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure; // in-place
+        accelerationStructureBuildGeometryInfo.geometryCount = static_cast<uint32_t>(geometries->size());
         accelerationStructureBuildGeometryInfo.pGeometries = geometries->data();
         accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
         accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress(); // TODO: offset!
