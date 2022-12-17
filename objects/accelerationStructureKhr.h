@@ -109,10 +109,9 @@ namespace magma
             const StructureChain& extendedInfo = StructureChain());
     };
 
-    /* Generic acceleration structure whose type is determined at build time
-       used for special circumstances. In these cases, the acceleration structure
-       type is not known at creation time, but must be specified at build time
-       as either top or bottom. */
+    /* Generic acceleration structure is intended to be used by API translation layers.
+       In these cases, the acceleration structure type is not known at creation time,
+       but must be specified at build time as either top or bottom. */
 
     class GenericAccelerationStructure : public AccelerationStructure
     {
