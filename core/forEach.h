@@ -36,5 +36,19 @@ namespace magma
                 eachFn(i, j);
             }
         }
+
+        template<class First, class Second>
+        inline void foreachConst(const First& a, const Second& b,
+            std::function<void(typename First::const_iterator&, typename Second::const_iterator&)> eachFn)
+        {
+            typename First::const_iterator i;
+            typename Second::const_iterator j;
+            for (i = a.cbegin(), j = b.cbegin();
+                (i != a.cend()) && (j != b.cend());
+                ++i, ++j)
+            {
+                eachFn(i, j);
+            }
+        }
     } // namespace core
 } // namespace magma
