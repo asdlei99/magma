@@ -228,6 +228,7 @@
     <ClInclude Include="..\..\helpers\uniformArray.h" />
     <ClInclude Include="..\..\helpers\uniformArrayIterator.h" />
     <ClInclude Include="..\..\magma.h" />
+    <ClInclude Include="..\..\misc\accelerationStructureGeometry.h" />
     <ClInclude Include="..\..\misc\borderColor.h" />
     <ClInclude Include="..\..\misc\deviceFaultInfo.h" />
     <ClInclude Include="..\..\misc\framebufferAttachmentImage.h" />
@@ -247,7 +248,9 @@
     <ClInclude Include="..\..\misc\scopedDebugMarker.h" />
     <ClInclude Include="..\..\misc\viewport.h" />
     <ClInclude Include="..\..\objects\accelerationStructure.h" />
+    <ClInclude Include="..\..\objects\accelerationStructureBuffer.h" />
     <ClInclude Include="..\..\objects\accelerationStructureInstanceBuffer.h" />
+    <ClInclude Include="..\..\objects\accelerationStructureKhr.h" />
     <ClInclude Include="..\..\objects\buffer.h" />
     <ClInclude Include="..\..\objects\bufferView.h" />
     <ClInclude Include="..\..\objects\commandBuffer.h" />
@@ -408,6 +411,7 @@
     <ClCompile Include="..\..\helpers\checkFeatureSupport.cpp" />
     <ClCompile Include="..\..\helpers\executeCommandBuffer.cpp" />
     <ClCompile Include="..\..\helpers\stringize.cpp" />
+    <ClCompile Include="..\..\misc\accelerationStructureGeometry.cpp" />
     <ClCompile Include="..\..\misc\deviceFaultInfo.cpp" />
     <ClCompile Include="..\..\misc\framebufferAttachmentImage.cpp" />
     <ClCompile Include="..\..\misc\sharing.cpp" />
@@ -418,7 +422,9 @@
     <ClCompile Include="..\..\misc\pipelineExecutable.cpp" />
     <ClCompile Include="..\..\misc\scopedDebugMarker.cpp" />
     <ClCompile Include="..\..\objects\accelerationStructure.cpp" />
+    <ClCompile Include="..\..\objects\accelerationStructureBuffer.cpp" />
     <ClCompile Include="..\..\objects\accelerationStructureInstanceBuffer.cpp" />
+    <ClCompile Include="..\..\objects\accelerationStructureKhr.cpp" />
     <ClCompile Include="..\..\objects\buffer.cpp" />
     <ClCompile Include="..\..\objects\bufferView.cpp" />
     <ClCompile Include="..\..\objects\commandBuffer.cpp" />

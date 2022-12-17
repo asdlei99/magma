@@ -24,8 +24,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "renderPass.h"
 #include "imageView.h"
 #include "fence.h"
-#include "accelerationStructure.h"
+//#include "accelerationStructure.h"
+#include "accelerationStructureKhr.h"
 #include "../misc/geometry.h"
+#include "../misc/accelerationStructureGeometry.h"
 #include "../exceptions/errorResult.h"
 
 namespace magma
@@ -621,7 +623,129 @@ void CommandBuffer::endTransformFeedback(uint32_t firstCounterBuffer, const std:
 }
 #endif // VK_EXT_transform_feedback
 
-#ifdef VK_NV_ray_tracing
+#ifdef VK_KHR_acceleration_structure
+void CommandBuffer::buildAccelerationStructure(std::shared_ptr<AccelerationStructure>& accelerationStructure, std::shared_ptr<Buffer> scratchBuffer,
+    const std::vector<AccelerationStructureGeometry>& geometries, const std::vector<AccelerationStructureBuildRange>& buildRanges,
+    VkBuildAccelerationStructureFlagsKHR flags) noexcept
+{
+    VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+    accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+    accelerationStructureBuildGeometryInfo.pNext = nullptr;
+    accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
+    accelerationStructureBuildGeometryInfo.flags = flags;
+    accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
+    accelerationStructureBuildGeometryInfo.srcAccelerationStructure = VK_NULL_HANDLE;
+    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = accelerationStructure->getHandle();
+    accelerationStructureBuildGeometryInfo.geometryCount = MAGMA_COUNT(geometries);
+    accelerationStructureBuildGeometryInfo.pGeometries = geometries.data();
+    accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+    accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress();
+    const VkAccelerationStructureBuildRangeInfoKHR *buildRangeInfos[1] = {buildRanges.data()};
+    MAGMA_DEVICE_EXTENSION(vkCmdBuildAccelerationStructuresKHR);
+    if (vkCmdBuildAccelerationStructuresKHR)
+        vkCmdBuildAccelerationStructuresKHR(handle, 1, &accelerationStructureBuildGeometryInfo, buildRangeInfos);
+}
+
+void CommandBuffer::updateAccelerationStructure(std::shared_ptr<AccelerationStructure>& accelerationStructure, std::shared_ptr<Buffer> scratchBuffer,
+    const std::vector<AccelerationStructureGeometry>& geometries, const std::vector<AccelerationStructureBuildRange>& buildRanges,
+    VkBuildAccelerationStructureFlagsKHR flags) noexcept
+{
+    VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+    accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+    accelerationStructureBuildGeometryInfo.pNext = nullptr;
+    accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
+    accelerationStructureBuildGeometryInfo.flags = flags;
+    accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
+    accelerationStructureBuildGeometryInfo.srcAccelerationStructure = accelerationStructure->getHandle(); // Update
+    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = accelerationStructure->getHandle(); // in-place
+    accelerationStructureBuildGeometryInfo.geometryCount = MAGMA_COUNT(geometries);
+    accelerationStructureBuildGeometryInfo.pGeometries = geometries.data();
+    accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+    accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress();
+    const VkAccelerationStructureBuildRangeInfoKHR *buildRangeInfos[1] = {buildRanges.data()};
+    MAGMA_DEVICE_EXTENSION(vkCmdBuildAccelerationStructuresKHR);
+    if (vkCmdBuildAccelerationStructuresKHR)
+        vkCmdBuildAccelerationStructuresKHR(handle, 1, &accelerationStructureBuildGeometryInfo, buildRangeInfos);
+}
+
+void CommandBuffer::buildAccelerationStructures(const std::vector<std::shared_ptr<AccelerationStructure>>& accelerationStructures, std::shared_ptr<Buffer> scratchBuffer,
+    const std::list<std::vector<AccelerationStructureGeometry>>& geometryList, const std::list<std::vector<AccelerationStructureBuildRange>>& buildRangeList,
+    VkBuildAccelerationStructureFlagsKHR flags)
+{
+    std::vector<VkAccelerationStructureBuildGeometryInfoKHR> accelerationStructureBuildGeometryInfos;
+    accelerationStructureBuildGeometryInfos.reserve(accelerationStructures.size());
+    auto geometries = geometryList.begin();
+    for (auto& accelerationStructure: accelerationStructures)
+    {
+        VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+        accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+        accelerationStructureBuildGeometryInfo.pNext = nullptr;
+        accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
+        accelerationStructureBuildGeometryInfo.flags = flags;
+        accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
+        accelerationStructureBuildGeometryInfo.srcAccelerationStructure = VK_NULL_HANDLE;
+        accelerationStructureBuildGeometryInfo.dstAccelerationStructure = accelerationStructure->getHandle();
+        accelerationStructureBuildGeometryInfo.geometryCount = geometries->size();
+        accelerationStructureBuildGeometryInfo.pGeometries = geometries->data();
+        accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+        accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress(); // TODO: offset!
+        accelerationStructureBuildGeometryInfos.push_back(accelerationStructureBuildGeometryInfo);
+        ++geometries;
+    }
+    std::vector<const VkAccelerationStructureBuildRangeInfoKHR *> buildRangeInfos;
+    buildRangeInfos.reserve(buildRangeList.size());
+    for (const auto& range: buildRangeList)
+        buildRangeInfos.push_back(range.data());
+    MAGMA_DEVICE_EXTENSION(vkCmdBuildAccelerationStructuresKHR);
+    if (vkCmdBuildAccelerationStructuresKHR)
+    {
+        vkCmdBuildAccelerationStructuresKHR(handle,
+            MAGMA_COUNT(accelerationStructureBuildGeometryInfos),
+            accelerationStructureBuildGeometryInfos.data(),
+            buildRangeInfos.data());
+    }
+}
+
+void CommandBuffer::updateAccelerationStructures(const std::vector<std::shared_ptr<AccelerationStructure>>& accelerationStructures, std::shared_ptr<Buffer> scratchBuffer,
+    const std::list<std::vector<AccelerationStructureGeometry>>& geometryList, const std::list<std::vector<AccelerationStructureBuildRange>>& buildRangeList,
+    VkBuildAccelerationStructureFlagsKHR flags)
+{
+    std::vector<VkAccelerationStructureBuildGeometryInfoKHR> accelerationStructureBuildGeometryInfos;
+    accelerationStructureBuildGeometryInfos.reserve(accelerationStructures.size());
+    auto geometries = geometryList.begin();
+    for (auto& accelerationStructure: accelerationStructures)
+    {
+        VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+        accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+        accelerationStructureBuildGeometryInfo.pNext = nullptr;
+        accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
+        accelerationStructureBuildGeometryInfo.flags = flags;
+        accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
+        accelerationStructureBuildGeometryInfo.srcAccelerationStructure = accelerationStructure->getHandle(); // Update
+        accelerationStructureBuildGeometryInfo.dstAccelerationStructure = accelerationStructure->getHandle(); // in-place
+        accelerationStructureBuildGeometryInfo.geometryCount = geometries->size();
+        accelerationStructureBuildGeometryInfo.pGeometries = geometries->data();
+        accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+        accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress(); // TODO: offset!
+        accelerationStructureBuildGeometryInfos.push_back(accelerationStructureBuildGeometryInfo);
+        ++geometries;
+    }
+    std::vector<const VkAccelerationStructureBuildRangeInfoKHR *> buildRangeInfos;
+    buildRangeInfos.reserve(buildRangeList.size());
+    for (const auto& range: buildRangeList)
+        buildRangeInfos.push_back(range.data());
+    MAGMA_DEVICE_EXTENSION(vkCmdBuildAccelerationStructuresKHR);
+    if (vkCmdBuildAccelerationStructuresKHR)
+    {
+        vkCmdBuildAccelerationStructuresKHR(handle,
+            MAGMA_COUNT(accelerationStructureBuildGeometryInfos),
+            accelerationStructureBuildGeometryInfos.data(),
+            buildRangeInfos.data());
+    }
+}
+#endif // VK_KHR_acceleration_structure
+
+#if 0//def VK_NV_ray_tracing
 void CommandBuffer::buildAccelerationStructure(const std::shared_ptr<Buffer>& instanceData, VkDeviceSize instanceOffset, bool update,
     const std::shared_ptr<AccelerationStructure>& dst, const std::shared_ptr<AccelerationStructure>& src,
     const std::shared_ptr<Buffer>& scratch, VkDeviceSize scratchOffset /* 0 */) noexcept

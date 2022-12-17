@@ -31,6 +31,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "../barriers/memoryBarrier.h"
 #include "../barriers/bufferMemoryBarrier.h"
 #include "../barriers/imageMemoryBarrier.h"
+#include "../misc/accelerationStructureGeometry.h"
 #include "../misc/extProcAddress.h"
 #include "../misc/clearValue.h"
 #include "../misc/clearAttachment.h"
@@ -59,6 +60,10 @@ namespace magma
     struct MemoryBarrier;
     struct BufferMemoryBarrier;
     class ImageMemoryBarrier;
+
+#ifdef VK_KHR_acceleration_structure
+    struct AccelerationStructureBuildRange;
+#endif
 
     /* Command buffers are objects used to record commands which can be subsequently
        submitted to a device queue for execution. */
@@ -435,6 +440,29 @@ namespace magma
             const std::initializer_list<std::shared_ptr<TransformFeedbackCounterBuffer>>& counterBuffers,
             const std::initializer_list<VkDeviceSize>& counterBufferOffsets = {}) noexcept;
 #endif // VK_EXT_transform_feedback
+
+    #ifdef VK_KHR_acceleration_structure
+        void buildAccelerationStructure(std::shared_ptr<AccelerationStructure>& accelerationStructure,
+            std::shared_ptr<Buffer> scratchBuffer,
+            const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<AccelerationStructureBuildRange>& buildRanges,
+            VkBuildAccelerationStructureFlagsKHR flags) noexcept;
+        void updateAccelerationStructure(std::shared_ptr<AccelerationStructure>& accelerationStructure,
+            std::shared_ptr<Buffer> scratchBuffer,
+            const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<AccelerationStructureBuildRange>& buildRanges,
+            VkBuildAccelerationStructureFlagsKHR flags) noexcept;
+        void buildAccelerationStructures(const std::vector<std::shared_ptr<AccelerationStructure>>& accelerationStructures,
+            std::shared_ptr<Buffer> scratchBuffer,
+            const std::list<std::vector<AccelerationStructureGeometry>>& geometryList,
+            const std::list<std::vector<AccelerationStructureBuildRange>>& buildRangeList,
+            VkBuildAccelerationStructureFlagsKHR flags);
+        void updateAccelerationStructures(const std::vector<std::shared_ptr<AccelerationStructure>>& accelerationStructures,
+            std::shared_ptr<Buffer> scratchBuffer,
+            const std::list<std::vector<AccelerationStructureGeometry>>& geometryList,
+            const std::list<std::vector<AccelerationStructureBuildRange>>& buildRangeList,
+            VkBuildAccelerationStructureFlagsKHR flags);
+    #endif // VK_KHR_acceleration_structure
 
 #ifdef VK_NV_ray_tracing
         void buildAccelerationStructure(const std::shared_ptr<Buffer>& instanceData,
