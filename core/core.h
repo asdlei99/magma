@@ -111,9 +111,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #define MAGMA_OPTIONAL_HANDLE(p) core::dereference(p)
 #define MAGMA_OPTIONAL_INSTANCE(p) this->p ? this->p.get() : nullptr
 
-#define MAGMA_SUCCEEDED(result)\
-    ((VK_SUCCESS == result) ||\
-     (VK_INCOMPLETE == result))
+#ifdef VK_KHR_deferred_host_operations
+    #define MAGMA_SUCCEEDED(result)\
+        ((VK_SUCCESS == result) ||\
+         (VK_INCOMPLETE == result) ||\
+         (VK_OPERATION_DEFERRED_KHR == result) ||\
+         (VK_OPERATION_NOT_DEFERRED_KHR == result))
+#else
+    #define MAGMA_SUCCEEDED(result)\
+        ((VK_SUCCESS == result) ||\
+         (VK_INCOMPLETE == result))
+#endif // VK_KHR_deferred_host_operations
 
 #define MAGMA_PRESENT_SUCCEEDED(result)\
     ((VK_SUCCESS == result) ||\

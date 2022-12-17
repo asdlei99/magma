@@ -21,6 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "accelerationStructureBuffer.h"
 #include "device.h"
 #include "commandBuffer.h"
+#include "deferredOperation.h"
 #include "../allocator/allocator.h"
 #include "../misc/extProcAddress.h"
 #include "../exceptions/errorResult.h"
@@ -94,6 +95,54 @@ VkDeviceAddress AccelerationStructure::getDeviceAddress() const noexcept
     deviceAddressInfo.accelerationStructure = handle;
     MAGMA_DEVICE_EXTENSION(vkGetAccelerationStructureDeviceAddressKHR);
     return vkGetAccelerationStructureDeviceAddressKHR(*device, &deviceAddressInfo);
+}
+
+bool AccelerationStructure::build(const std::vector<AccelerationStructureGeometry>& geometries,
+    const std::vector<AccelerationStructureBuildRange>& buildRanges,
+    std::shared_ptr<Buffer> scratchBuffer,
+    std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) noexcept
+{
+    VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+    accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+    accelerationStructureBuildGeometryInfo.pNext = nullptr;
+    accelerationStructureBuildGeometryInfo.type = structureType;
+    accelerationStructureBuildGeometryInfo.flags = buildFlags;
+    accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
+    accelerationStructureBuildGeometryInfo.srcAccelerationStructure = VK_NULL_HANDLE;
+    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = handle;
+    accelerationStructureBuildGeometryInfo.geometryCount = MAGMA_COUNT(geometries);
+    accelerationStructureBuildGeometryInfo.pGeometries = geometries.data();
+    accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+    accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress();
+    const VkAccelerationStructureBuildRangeInfoKHR *buildRangeInfos[1] = {buildRanges.data()};
+    MAGMA_DEVICE_EXTENSION(vkBuildAccelerationStructuresKHR);
+    const VkResult result = vkBuildAccelerationStructuresKHR(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(deferredOperation),
+        1, &accelerationStructureBuildGeometryInfo, buildRangeInfos);
+    return MAGMA_SUCCEEDED(result);
+}
+
+bool AccelerationStructure::update(const std::vector<AccelerationStructureGeometry>& geometries,
+    const std::vector<AccelerationStructureBuildRange>& buildRanges,
+    std::shared_ptr<Buffer> scratchBuffer,
+    std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) noexcept
+{
+    VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+    accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+    accelerationStructureBuildGeometryInfo.pNext = nullptr;
+    accelerationStructureBuildGeometryInfo.type = structureType;
+    accelerationStructureBuildGeometryInfo.flags = buildFlags;
+    accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
+    accelerationStructureBuildGeometryInfo.srcAccelerationStructure = handle; // Update
+    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = handle; // in-place
+    accelerationStructureBuildGeometryInfo.geometryCount = MAGMA_COUNT(geometries);
+    accelerationStructureBuildGeometryInfo.pGeometries = geometries.data();
+    accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+    accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress();
+    const VkAccelerationStructureBuildRangeInfoKHR *buildRangeInfos[1] = {buildRanges.data()};
+    MAGMA_DEVICE_EXTENSION(vkBuildAccelerationStructuresKHR);
+    const VkResult result = vkBuildAccelerationStructuresKHR(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(deferredOperation),
+        1, &accelerationStructureBuildGeometryInfo, buildRangeInfos);
+    return MAGMA_SUCCEEDED(result);
 }
 
 TopLevelAccelerationStructure::TopLevelAccelerationStructure(std::shared_ptr<Device> device, VkAccelerationStructureCreateFlagsKHR createFlags,

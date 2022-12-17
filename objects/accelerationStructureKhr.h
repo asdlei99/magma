@@ -24,6 +24,7 @@ namespace magma
     class Buffer;
     class AccelerationStructureBuffer;
     class CommandBuffer;
+    class DeferredOperation;
 
     /* Acceleration structures are an opaque structure that can be built by the implementation
        to more efficiently perform spatial queries on the provided geometric data.
@@ -44,6 +45,14 @@ namespace magma
         VkDeviceSize getUpdateScratchSize() const noexcept { return updateScratchSize; }
         VkDeviceSize getBuildScratchSize() const noexcept { return buildScratchSize; }
         VkDeviceAddress getDeviceAddress() const noexcept;
+        bool build(const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<AccelerationStructureBuildRange>& buildRanges,
+            std::shared_ptr<Buffer> scratchBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+        bool update(const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<AccelerationStructureBuildRange>& buildRanges,
+            std::shared_ptr<Buffer> scratchBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
 
     protected:
         AccelerationStructure(std::shared_ptr<Device> device,
