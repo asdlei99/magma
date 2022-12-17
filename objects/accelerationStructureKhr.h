@@ -55,6 +55,21 @@ namespace magma
             const std::vector<AccelerationStructureBuildRange>& buildRanges,
             std::shared_ptr<Buffer> scratchBuffer,
             std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+        bool copy(std::shared_ptr<AccelerationStructure> accelerationStructure,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
+        bool copyToMemory(std::shared_ptr<Buffer> buffer,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
+        bool copyToMemory(void *buffer,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
+        bool copyFromMemory(std::shared_ptr<const Buffer> buffer,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+        bool copyFromMemory(const void *buffer,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
 
     protected:
         AccelerationStructure(std::shared_ptr<Device> device,
