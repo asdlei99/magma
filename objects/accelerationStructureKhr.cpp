@@ -101,6 +101,8 @@ bool AccelerationStructure::build(const std::vector<AccelerationStructureGeometr
     std::shared_ptr<Buffer> scratchBuffer,
     std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) noexcept
 {
+    if (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR == buildType)
+        return false;
     VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
     accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
     accelerationStructureBuildGeometryInfo.pNext = nullptr;
@@ -125,6 +127,8 @@ bool AccelerationStructure::update(const std::vector<AccelerationStructureGeomet
     std::shared_ptr<Buffer> scratchBuffer,
     std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) noexcept
 {
+    if (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR == buildType)
+        return false;
     VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
     accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
     accelerationStructureBuildGeometryInfo.pNext = nullptr;
