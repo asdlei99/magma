@@ -38,7 +38,7 @@ namespace magma
     public:
         ~AccelerationStructure();
         VkAccelerationStructureTypeKHR getType() const noexcept { return structureType; }
-        VkAccelerationStructureCreateFlagsKHR getCreateFlags() const noexcept { return createFlags; }
+        VkAccelerationStructureCreateFlagsKHR getFlags() const noexcept { return flags; }
         VkAccelerationStructureBuildTypeKHR getBuildType() const noexcept { return buildType; }
         VkBuildAccelerationStructureFlagsKHR getBuildFlags() const noexcept { return buildFlags; }
         VkDeviceSize getStructureSize() const noexcept { return accelerationStructureSize; }
@@ -57,23 +57,23 @@ namespace magma
     protected:
         AccelerationStructure(std::shared_ptr<Device> device,
             VkAccelerationStructureTypeKHR structureType,
-            VkAccelerationStructureCreateFlagsKHR createFlags,
-            VkAccelerationStructureBuildTypeKHR buildType,
-            VkBuildAccelerationStructureFlagsKHR buildFlags,
             const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<uint32_t>& maxPrimitiveCounts,
+            VkAccelerationStructureCreateFlagsKHR flags,
+            VkAccelerationStructureBuildTypeKHR buildType,
+            VkBuildAccelerationStructureFlagsKHR buildFlags,
             const StructureChain& extendedInfo,
             std::shared_ptr<Allocator> allocator);
 
     private:
         const VkAccelerationStructureTypeKHR structureType;
-        const VkAccelerationStructureCreateFlagsKHR createFlags;
+        const VkAccelerationStructureCreateFlagsKHR flags;
         const VkAccelerationStructureBuildTypeKHR buildType;
         const VkBuildAccelerationStructureFlagsKHR buildFlags;
-        std::shared_ptr<AccelerationStructureBuffer> buffer; // std::unique_ptr?
         VkDeviceSize accelerationStructureSize;
         VkDeviceSize updateScratchSize;
         VkDeviceSize buildScratchSize;
+        std::shared_ptr<AccelerationStructureBuffer> buffer; // std::unique_ptr?
     };
 
     /* Top-level acceleration structure containing instance data
@@ -83,12 +83,12 @@ namespace magma
     {
     public:
         explicit TopLevelAccelerationStructure(std::shared_ptr<Device> device,
-            VkAccelerationStructureCreateFlagsKHR createFlags,
-            VkAccelerationStructureBuildTypeKHR buildType,
-            VkBuildAccelerationStructureFlagsKHR buildFlags,
             const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<uint32_t>& maxPrimitiveCounts,
+            VkAccelerationStructureBuildTypeKHR buildType,
+            VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator = nullptr,
+            VkAccelerationStructureCreateFlagsKHR flags = 0,
             const StructureChain& extendedInfo = StructureChain());
     };
 
@@ -98,12 +98,12 @@ namespace magma
     {
     public:
         explicit BottomLevelAccelerationStructure(std::shared_ptr<Device> device,
-            VkAccelerationStructureCreateFlagsKHR createFlags,
-            VkAccelerationStructureBuildTypeKHR buildType,
-            VkBuildAccelerationStructureFlagsKHR buildFlags,
             const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<uint32_t>& maxPrimitiveCounts,
+            VkAccelerationStructureBuildTypeKHR buildType,
+            VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator = nullptr,
+            VkAccelerationStructureCreateFlagsKHR flags = 0,
             const StructureChain& extendedInfo = StructureChain());
     };
 
@@ -116,12 +116,12 @@ namespace magma
     {
     public:
         explicit GenericAccelerationStructure(std::shared_ptr<Device> device,
-            VkAccelerationStructureCreateFlagsKHR createFlags,
-            VkAccelerationStructureBuildTypeKHR buildType,
-            VkBuildAccelerationStructureFlagsKHR buildFlags,
             const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<uint32_t>& maxPrimitiveCounts,
+            VkAccelerationStructureBuildTypeKHR buildType,
+            VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator = nullptr,
+            VkAccelerationStructureCreateFlagsKHR flags = 0,
             const StructureChain& extendedInfo = StructureChain());
     };
 #endif // VK_KHR_acceleration_structure

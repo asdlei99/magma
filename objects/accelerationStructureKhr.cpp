@@ -29,14 +29,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 namespace magma
 {
 #ifdef VK_KHR_acceleration_structure
-AccelerationStructure::AccelerationStructure(std::shared_ptr<Device> device,
-    VkAccelerationStructureTypeKHR structureType, VkAccelerationStructureCreateFlagsKHR createFlags,
-    VkAccelerationStructureBuildTypeKHR buildType, VkBuildAccelerationStructureFlagsKHR buildFlags,
+AccelerationStructure::AccelerationStructure(std::shared_ptr<Device> device, VkAccelerationStructureTypeKHR structureType,
     const std::vector<AccelerationStructureGeometry>& geometries, const std::vector<uint32_t>& maxPrimitiveCounts,
+    VkAccelerationStructureCreateFlagsKHR flags, VkAccelerationStructureBuildTypeKHR buildType, VkBuildAccelerationStructureFlagsKHR buildFlags,
     const StructureChain& extendedInfo, std::shared_ptr<Allocator> allocator):
     NonDispatchableResource(VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV, device, Sharing(), allocator),
     structureType(structureType),
-    createFlags(createFlags),
+    flags(flags),
     buildType(buildType),
     buildFlags(buildFlags),
     accelerationStructureSize(0),
@@ -64,7 +63,7 @@ AccelerationStructure::AccelerationStructure(std::shared_ptr<Device> device,
     accelerationStructureBuildSizes.buildScratchSize = 0;
     accelerationStructureInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
     accelerationStructureInfo.pNext = extendedInfo.getChainedNodes();
-    accelerationStructureInfo.createFlags = createFlags;
+    accelerationStructureInfo.createFlags = flags;
     accelerationStructureInfo.offset = 0;
     accelerationStructureInfo.type = structureType;
     accelerationStructureInfo.deviceAddress = 0;
@@ -145,34 +144,34 @@ bool AccelerationStructure::update(const std::vector<AccelerationStructureGeomet
     return MAGMA_SUCCEEDED(result);
 }
 
-TopLevelAccelerationStructure::TopLevelAccelerationStructure(std::shared_ptr<Device> device, VkAccelerationStructureCreateFlagsKHR createFlags,
-    VkAccelerationStructureBuildTypeKHR buildType, VkBuildAccelerationStructureFlagsKHR buildFlags,
+TopLevelAccelerationStructure::TopLevelAccelerationStructure(std::shared_ptr<Device> device,
     const std::vector<AccelerationStructureGeometry>& geometries, const std::vector<uint32_t>& maxPrimitiveCounts,
+    VkAccelerationStructureBuildTypeKHR buildType, VkBuildAccelerationStructureFlagsKHR buildFlags,
     std::shared_ptr<Allocator> allocator /* nullptr */,
+    VkAccelerationStructureCreateFlagsKHR flags /* 0 */,
     const StructureChain& extendedInfo /* default */):
     AccelerationStructure(std::move(device), VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
-        createFlags, buildType, buildFlags, geometries, maxPrimitiveCounts,
-        extendedInfo, std::move(allocator))
+        geometries, maxPrimitiveCounts, flags, buildType, buildFlags, extendedInfo, std::move(allocator))
 {}
 
-BottomLevelAccelerationStructure::BottomLevelAccelerationStructure(std::shared_ptr<Device> device, VkAccelerationStructureCreateFlagsKHR createFlags,
-    VkAccelerationStructureBuildTypeKHR buildType, VkBuildAccelerationStructureFlagsKHR buildFlags,
+BottomLevelAccelerationStructure::BottomLevelAccelerationStructure(std::shared_ptr<Device> device,
     const std::vector<AccelerationStructureGeometry>& geometries, const std::vector<uint32_t>& maxPrimitiveCounts,
+    VkAccelerationStructureBuildTypeKHR buildType, VkBuildAccelerationStructureFlagsKHR buildFlags,
     std::shared_ptr<Allocator> allocator /* nullptr */,
+    VkAccelerationStructureCreateFlagsKHR flags /* 0 */,
     const StructureChain& extendedInfo /* default */):
     AccelerationStructure(std::move(device), VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
-        createFlags, buildType, buildFlags, geometries, maxPrimitiveCounts,
-        extendedInfo, std::move(allocator))
+        geometries, maxPrimitiveCounts, flags, buildType, buildFlags, extendedInfo, std::move(allocator))
 {}
 
-GenericAccelerationStructure::GenericAccelerationStructure(std::shared_ptr<Device> device, VkAccelerationStructureCreateFlagsKHR createFlags,
-    VkAccelerationStructureBuildTypeKHR buildType, VkBuildAccelerationStructureFlagsKHR buildFlags,
+GenericAccelerationStructure::GenericAccelerationStructure(std::shared_ptr<Device> device,
     const std::vector<AccelerationStructureGeometry>& geometries, const std::vector<uint32_t>& maxPrimitiveCounts,
+    VkAccelerationStructureBuildTypeKHR buildType, VkBuildAccelerationStructureFlagsKHR buildFlags,
     std::shared_ptr<Allocator> allocator /* nullptr */,
+    VkAccelerationStructureCreateFlagsKHR flags /* 0 */,
     const StructureChain& extendedInfo /* default */):
     AccelerationStructure(std::move(device), VK_ACCELERATION_STRUCTURE_TYPE_GENERIC_KHR,
-        createFlags, buildType, buildFlags, geometries, maxPrimitiveCounts,
-        extendedInfo, std::move(allocator))
+        geometries, maxPrimitiveCounts, flags, buildType, buildFlags, extendedInfo, std::move(allocator))
 {}
 #endif // VK_KHR_acceleration_structure
 } // namespace magma
