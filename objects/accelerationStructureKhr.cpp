@@ -43,8 +43,19 @@ AccelerationStructure::AccelerationStructure(std::shared_ptr<Device> device, VkA
     buildScratchSize(0)
 {
     VkAccelerationStructureCreateInfoKHR accelerationStructureInfo;
-    VkAccelerationStructureBuildSizesInfoKHR accelerationStructureBuildSizes;
+    VkAccelerationStructureBuildSizesInfoKHR accelerationStructureBuildSizesInfo;
     VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+    accelerationStructureInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
+    accelerationStructureInfo.pNext = extendedInfo.getChainedNodes();
+    accelerationStructureInfo.createFlags = flags;
+    accelerationStructureInfo.offset = 0;
+    accelerationStructureInfo.type = structureType;
+    accelerationStructureInfo.deviceAddress = 0;
+    accelerationStructureBuildSizesInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
+    accelerationStructureBuildSizesInfo.pNext = nullptr;
+    accelerationStructureBuildSizesInfo.accelerationStructureSize = 0;
+    accelerationStructureBuildSizesInfo.updateScratchSize = 0;
+    accelerationStructureBuildSizesInfo.buildScratchSize = 0;
     accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
     accelerationStructureBuildGeometryInfo.pNext = nullptr;
     accelerationStructureBuildGeometryInfo.type = structureType;
@@ -56,28 +67,17 @@ AccelerationStructure::AccelerationStructure(std::shared_ptr<Device> device, VkA
     accelerationStructureBuildGeometryInfo.pGeometries = geometries.data();
     accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
     accelerationStructureBuildGeometryInfo.scratchData.hostAddress = nullptr;
-    accelerationStructureBuildSizes.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
-    accelerationStructureBuildSizes.pNext = nullptr;
-    accelerationStructureBuildSizes.accelerationStructureSize = 0;
-    accelerationStructureBuildSizes.updateScratchSize = 0;
-    accelerationStructureBuildSizes.buildScratchSize = 0;
-    accelerationStructureInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
-    accelerationStructureInfo.pNext = extendedInfo.getChainedNodes();
-    accelerationStructureInfo.createFlags = flags;
-    accelerationStructureInfo.offset = 0;
-    accelerationStructureInfo.type = structureType;
-    accelerationStructureInfo.deviceAddress = 0;
     MAGMA_REQUIRED_DEVICE_EXTENSION(vkGetAccelerationStructureBuildSizesKHR, VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
-    vkGetAccelerationStructureBuildSizesKHR(MAGMA_HANDLE(device), buildType, &accelerationStructureBuildGeometryInfo, maxPrimitiveCounts.data(), &accelerationStructureBuildSizes);
-    buffer = std::make_shared<AccelerationStructureBuffer>(std::move(device), accelerationStructureBuildSizes.accelerationStructureSize, std::move(allocator));
+    vkGetAccelerationStructureBuildSizesKHR(MAGMA_HANDLE(device), buildType, &accelerationStructureBuildGeometryInfo, maxPrimitiveCounts.data(), &accelerationStructureBuildSizesInfo);
+    buffer = std::make_shared<AccelerationStructureBuffer>(std::move(device), accelerationStructureBuildSizesInfo.accelerationStructureSize, std::move(allocator));
     accelerationStructureInfo.buffer = *buffer;
-    accelerationStructureInfo.size = accelerationStructureBuildSizes.accelerationStructureSize;
+    accelerationStructureInfo.size = accelerationStructureBuildSizesInfo.accelerationStructureSize;
     MAGMA_REQUIRED_DEVICE_EXTENSION(vkCreateAccelerationStructureKHR, VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
     const VkResult result = vkCreateAccelerationStructureKHR(MAGMA_HANDLE(device), &accelerationStructureInfo, MAGMA_OPTIONAL_INSTANCE(hostAllocator), &handle);
     MAGMA_THROW_FAILURE(result, "failed to create acceleration structure");
-    accelerationStructureSize = accelerationStructureBuildSizes.accelerationStructureSize;
-    updateScratchSize = accelerationStructureBuildSizes.updateScratchSize;
-    buildScratchSize = accelerationStructureBuildSizes.buildScratchSize;
+    accelerationStructureSize = accelerationStructureBuildSizesInfo.accelerationStructureSize;
+    updateScratchSize = accelerationStructureBuildSizesInfo.updateScratchSize;
+    buildScratchSize = accelerationStructureBuildSizesInfo.buildScratchSize;
 }
 
 AccelerationStructure::~AccelerationStructure()
