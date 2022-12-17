@@ -674,24 +674,24 @@ void CommandBuffer::buildAccelerationStructures(const std::vector<std::shared_pt
 {
     std::vector<VkAccelerationStructureBuildGeometryInfoKHR> accelerationStructureBuildGeometryInfos;
     accelerationStructureBuildGeometryInfos.reserve(accelerationStructures.size());
-    auto geometries = geometryList.begin();
-    for (auto& accelerationStructure: accelerationStructures)
-    {
-        VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
-        accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
-        accelerationStructureBuildGeometryInfo.pNext = nullptr;
-        accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
-        accelerationStructureBuildGeometryInfo.flags = flags;
-        accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
-        accelerationStructureBuildGeometryInfo.srcAccelerationStructure = VK_NULL_HANDLE;
-        accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure;
-        accelerationStructureBuildGeometryInfo.geometryCount = static_cast<uint32_t>(geometries->size());
-        accelerationStructureBuildGeometryInfo.pGeometries = geometries->data();
-        accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
-        accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress(); // TODO: offset!
-        accelerationStructureBuildGeometryInfos.push_back(accelerationStructureBuildGeometryInfo);
-        ++geometries;
-    }
+    core::foreachConst(accelerationStructures, geometryList,
+        [&accelerationStructureBuildGeometryInfos, flags, scratchBuffer](auto accelerationStructureIt, auto geometriesIt)
+        {
+            std::shared_ptr<AccelerationStructure> accelerationStructure = *accelerationStructureIt;
+            VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+            accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+            accelerationStructureBuildGeometryInfo.pNext = nullptr;
+            accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
+            accelerationStructureBuildGeometryInfo.flags = flags;
+            accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
+            accelerationStructureBuildGeometryInfo.srcAccelerationStructure = VK_NULL_HANDLE;
+            accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure;
+            accelerationStructureBuildGeometryInfo.geometryCount = static_cast<uint32_t>(geometriesIt->size());
+            accelerationStructureBuildGeometryInfo.pGeometries = geometriesIt->data();
+            accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+            accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress(); // TODO: offset!
+            accelerationStructureBuildGeometryInfos.push_back(accelerationStructureBuildGeometryInfo);
+        });
     std::vector<const VkAccelerationStructureBuildRangeInfoKHR *> buildRangeInfos;
     buildRangeInfos.reserve(buildRangeList.size());
     for (const auto& range: buildRangeList)
@@ -712,24 +712,24 @@ void CommandBuffer::updateAccelerationStructures(const std::vector<std::shared_p
 {
     std::vector<VkAccelerationStructureBuildGeometryInfoKHR> accelerationStructureBuildGeometryInfos;
     accelerationStructureBuildGeometryInfos.reserve(accelerationStructures.size());
-    auto geometries = geometryList.begin();
-    for (auto& accelerationStructure: accelerationStructures)
-    {
-        VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
-        accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
-        accelerationStructureBuildGeometryInfo.pNext = nullptr;
-        accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
-        accelerationStructureBuildGeometryInfo.flags = flags;
-        accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
-        accelerationStructureBuildGeometryInfo.srcAccelerationStructure = *accelerationStructure; // Update
-        accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure; // in-place
-        accelerationStructureBuildGeometryInfo.geometryCount = static_cast<uint32_t>(geometries->size());
-        accelerationStructureBuildGeometryInfo.pGeometries = geometries->data();
-        accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
-        accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress(); // TODO: offset!
-        accelerationStructureBuildGeometryInfos.push_back(accelerationStructureBuildGeometryInfo);
-        ++geometries;
-    }
+    core::foreachConst(accelerationStructures, geometryList,
+        [&accelerationStructureBuildGeometryInfos, flags, scratchBuffer](auto accelerationStructureIt, auto geometriesIt)
+        {
+            std::shared_ptr<AccelerationStructure> accelerationStructure = *accelerationStructureIt;
+            VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+            accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+            accelerationStructureBuildGeometryInfo.pNext = nullptr;
+            accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
+            accelerationStructureBuildGeometryInfo.flags = flags;
+            accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
+            accelerationStructureBuildGeometryInfo.srcAccelerationStructure = *accelerationStructure; // Update
+            accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure; // in-place
+            accelerationStructureBuildGeometryInfo.geometryCount = static_cast<uint32_t>(geometriesIt->size());
+            accelerationStructureBuildGeometryInfo.pGeometries = geometriesIt->data();
+            accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+            accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress(); // TODO: offset!
+            accelerationStructureBuildGeometryInfos.push_back(accelerationStructureBuildGeometryInfo);
+        });
     std::vector<const VkAccelerationStructureBuildRangeInfoKHR *> buildRangeInfos;
     buildRangeInfos.reserve(buildRangeList.size());
     for (const auto& range: buildRangeList)
