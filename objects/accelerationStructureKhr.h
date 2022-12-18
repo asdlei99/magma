@@ -41,8 +41,8 @@ namespace magma
         VkAccelerationStructureBuildTypeKHR getBuildType() const noexcept { return buildType; }
         VkBuildAccelerationStructureFlagsKHR getBuildFlags() const noexcept { return buildFlags; }
         VkDeviceSize getStructureSize() const noexcept { return accelerationStructureSize; }
-        VkDeviceSize getUpdateScratchSize() const noexcept { return updateScratchSize; }
         VkDeviceSize getBuildScratchSize() const noexcept { return buildScratchSize; }
+        VkDeviceSize getUpdateScratchSize() const noexcept { return updateScratchSize; }
         VkDeviceAddress getDeviceAddress() const noexcept;
         VkDeviceSize queryProperty(VkQueryType queryType) const noexcept;
         bool topLevel() const noexcept;
@@ -90,8 +90,8 @@ namespace magma
         const VkAccelerationStructureBuildTypeKHR buildType;
         const VkBuildAccelerationStructureFlagsKHR buildFlags;
         VkDeviceSize accelerationStructureSize;
-        VkDeviceSize updateScratchSize;
         VkDeviceSize buildScratchSize;
+        VkDeviceSize updateScratchSize;
         std::shared_ptr<AccelerationStructureBuffer> buffer; // std::unique_ptr?
     };
 

@@ -76,8 +76,8 @@ AccelerationStructure::AccelerationStructure(std::shared_ptr<Device> device, VkA
     const VkResult result = vkCreateAccelerationStructureKHR(MAGMA_HANDLE(device), &accelerationStructureInfo, MAGMA_OPTIONAL_INSTANCE(hostAllocator), &handle);
     MAGMA_THROW_FAILURE(result, "failed to create acceleration structure");
     accelerationStructureSize = accelerationStructureBuildSizesInfo.accelerationStructureSize;
-    updateScratchSize = accelerationStructureBuildSizesInfo.updateScratchSize;
     buildScratchSize = accelerationStructureBuildSizesInfo.buildScratchSize;
+    updateScratchSize = accelerationStructureBuildSizesInfo.updateScratchSize;
 }
 
 AccelerationStructure::~AccelerationStructure()
