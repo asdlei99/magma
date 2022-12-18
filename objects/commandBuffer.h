@@ -462,6 +462,21 @@ namespace magma
             const std::list<std::vector<AccelerationStructureGeometry>>& geometryList,
             const std::list<std::vector<AccelerationStructureBuildRange>>& buildRangeList,
             VkBuildAccelerationStructureFlagsKHR flags);
+        void copyAccelerationStructure(std::shared_ptr<AccelerationStructure> dst,
+            std::shared_ptr<const AccelerationStructure> src,
+            VkCopyAccelerationStructureModeKHR mode) const noexcept;
+        void copyAccelerationStructureToMemory(std::shared_ptr<Buffer> dst,
+            std::shared_ptr<const AccelerationStructure> src,
+            VkCopyAccelerationStructureModeKHR mode) const noexcept;
+        void copyAccelerationStructureToMemory(void *dst,
+            std::shared_ptr<const AccelerationStructure> src,
+            VkCopyAccelerationStructureModeKHR mode) const noexcept;
+        void copyMemoryToAccelerationStructure(std::shared_ptr<AccelerationStructure> dst,
+            std::shared_ptr<const Buffer> src,
+            VkCopyAccelerationStructureModeKHR mode) const noexcept;
+        void copyMemoryToAccelerationStructure(std::shared_ptr<AccelerationStructure> dst,
+            const void *src,
+            VkCopyAccelerationStructureModeKHR mode) const noexcept;
     #endif // VK_KHR_acceleration_structure
 
 #ifdef VK_NV_ray_tracing
