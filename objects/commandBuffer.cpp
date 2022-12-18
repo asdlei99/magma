@@ -745,6 +745,33 @@ void CommandBuffer::updateAccelerationStructures(const std::vector<std::shared_p
     }
 }
 
+void CommandBuffer::buildAccelerationStructureIndirect(std::shared_ptr<AccelerationStructure>& accelerationStructure,
+    std::shared_ptr<Buffer>& scratchBuffer, std::shared_ptr<const Buffer>& buildRangeInfos, uint32_t stride,
+    const std::vector<AccelerationStructureGeometry>& geometries, const std::vector<uint32_t>& maxPrimitiveCounts_,
+    VkBuildAccelerationStructureFlagsKHR flags) noexcept
+{
+    VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
+    accelerationStructureBuildGeometryInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+    accelerationStructureBuildGeometryInfo.pNext = nullptr;
+    accelerationStructureBuildGeometryInfo.type = accelerationStructure->getType();
+    accelerationStructureBuildGeometryInfo.flags = flags;
+    accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
+    accelerationStructureBuildGeometryInfo.srcAccelerationStructure = VK_NULL_HANDLE;
+    accelerationStructureBuildGeometryInfo.dstAccelerationStructure = *accelerationStructure;
+    accelerationStructureBuildGeometryInfo.geometryCount = MAGMA_COUNT(geometries);
+    accelerationStructureBuildGeometryInfo.pGeometries = geometries.data();
+    accelerationStructureBuildGeometryInfo.ppGeometries = nullptr;
+    accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer->getDeviceAddress();
+    const VkDeviceAddress indirectDeviceAddresses[1] = {buildRangeInfos->getDeviceAddress()};
+    const uint32_t *maxPrimitiveCounts[1] = {maxPrimitiveCounts_.data()};
+    MAGMA_DEVICE_EXTENSION(vkCmdBuildAccelerationStructuresIndirectKHR);
+    if (vkCmdBuildAccelerationStructuresIndirectKHR)
+    {
+        vkCmdBuildAccelerationStructuresIndirectKHR(handle, 1, &accelerationStructureBuildGeometryInfo,
+            indirectDeviceAddresses, &stride, maxPrimitiveCounts);
+    }
+}
+
 void CommandBuffer::copyAccelerationStructure(std::shared_ptr<AccelerationStructure> dst, std::shared_ptr<const AccelerationStructure> src, VkCopyAccelerationStructureModeKHR mode) const noexcept
 {
     MAGMA_ASSERT(dst);
