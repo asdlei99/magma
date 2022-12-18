@@ -23,7 +23,6 @@ namespace magma
 {
     class Buffer;
     class AccelerationStructureBuffer;
-    class CommandBuffer;
     class DeferredOperation;
 
     /* Acceleration structures are an opaque structure that can be built by the implementation
