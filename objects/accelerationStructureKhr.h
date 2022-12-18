@@ -45,6 +45,8 @@ namespace magma
         VkDeviceSize getBuildScratchSize() const noexcept { return buildScratchSize; }
         VkDeviceAddress getDeviceAddress() const noexcept;
         VkDeviceSize queryProperty(VkQueryType queryType) const noexcept;
+        bool topLevel() const noexcept;
+        bool bottomLevel() const noexcept;
         bool hostBuild() const noexcept;
         bool deviceBuild() const noexcept;
         MAGMA_NODISCARD bool build(const std::vector<AccelerationStructureGeometry>& geometries,
@@ -148,3 +150,5 @@ namespace magma
     };
 #endif // VK_KHR_acceleration_structure
 } // namespace magma
+
+#include "accelerationStructure.inl"
