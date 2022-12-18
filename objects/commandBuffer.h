@@ -477,6 +477,12 @@ namespace magma
         void copyMemoryToAccelerationStructure(std::shared_ptr<AccelerationStructure> dst,
             const void *src,
             VkCopyAccelerationStructureModeKHR mode) const noexcept;
+        void writeAccelerationStructureProperties(std::shared_ptr<const AccelerationStructure> accelerationStructure,
+            std::shared_ptr<QueryPool> queryPool,
+            uint32_t firstQuery = 0);
+        void writeAccelerationStructuresProperties(std::vector<std::shared_ptr<const AccelerationStructure>> accelerationStructures,
+            std::shared_ptr<QueryPool> queryPool,
+            uint32_t firstQuery = 0);
     #endif // VK_KHR_acceleration_structure
 
 #ifdef VK_NV_ray_tracing

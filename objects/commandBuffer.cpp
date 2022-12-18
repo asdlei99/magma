@@ -820,6 +820,25 @@ void CommandBuffer::copyMemoryToAccelerationStructure(std::shared_ptr<Accelerati
         vkCmdCopyMemoryToAccelerationStructureKHR(handle, &copyMemoryToAccelerationStructureInfo);
 }
 
+void CommandBuffer::writeAccelerationStructureProperties(std::shared_ptr<const AccelerationStructure> accelerationStructure, std::shared_ptr<QueryPool> queryPool,
+    uint32_t firstQuery /* 0 */)
+{
+    const VkAccelerationStructureKHR dereferencedAccelerationStructures[1] = {*accelerationStructure};
+    MAGMA_DEVICE_EXTENSION(vkCmdWriteAccelerationStructuresPropertiesKHR);
+    if (vkCmdWriteAccelerationStructuresPropertiesKHR)
+        vkCmdWriteAccelerationStructuresPropertiesKHR(handle, 1, dereferencedAccelerationStructures, queryPool->getType(), *queryPool, firstQuery);
+}
+
+void CommandBuffer::writeAccelerationStructuresProperties(std::vector<std::shared_ptr<const AccelerationStructure>> accelerationStructures, std::shared_ptr<QueryPool> queryPool,
+    uint32_t firstQuery /* 0 */)
+{
+    MAGMA_STACK_ARRAY(VkAccelerationStructureKHR, dereferencedAccelerationStructures, accelerationStructures.size());
+    for (const auto& as: accelerationStructures)
+        dereferencedAccelerationStructures.put(*as);
+    MAGMA_DEVICE_EXTENSION(vkCmdWriteAccelerationStructuresPropertiesKHR);
+    if (vkCmdWriteAccelerationStructuresPropertiesKHR)
+        vkCmdWriteAccelerationStructuresPropertiesKHR(handle, dereferencedAccelerationStructures.size(), dereferencedAccelerationStructures, queryPool->getType(), *queryPool, firstQuery);
+}
 #endif // VK_KHR_acceleration_structure
 
 #if 0//def VK_NV_ray_tracing
