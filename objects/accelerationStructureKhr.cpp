@@ -176,7 +176,7 @@ bool AccelerationStructure::copy(std::shared_ptr<AccelerationStructure> accelera
     return MAGMA_SUCCEEDED(result);
 }
 
-bool AccelerationStructure::copyToMemory(std::shared_ptr<Buffer> buffer, VkCopyAccelerationStructureModeKHR mode,
+bool AccelerationStructure::copyToBuffer(std::shared_ptr<Buffer> buffer, VkCopyAccelerationStructureModeKHR mode,
     std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) const noexcept
 {
     VkCopyAccelerationStructureToMemoryInfoKHR copyAccelerationStructureToMemoryInfo;
