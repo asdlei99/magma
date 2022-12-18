@@ -30,6 +30,9 @@ namespace magma
 #ifdef VK_KHR_timeline_semaphore
     class TimelineSemaphore;
 #endif
+#ifdef VK_KHR_acceleration_structure
+    class AccelerationStructure;
+#endif
     class ResourcePool;
 
     /* Device objects represent logical connections to physical devices.
@@ -78,6 +81,12 @@ namespace magma
             bool waitAll,
             uint64_t timeout = std::numeric_limits<uint64_t>::max()) const;
     #endif // VK_KHR_timeline_semaphore
+    #ifdef VK_KHR_acceleration_structure
+        bool writeAccelerationStructuresProperties(const std::vector<std::shared_ptr<const AccelerationStructure>>& accelerationStructures,
+            VkQueryType queryType,
+            std::vector<VkDeviceSize>& properties) const;
+    #endif // VK_KHR_acceleration_structure
+
 #ifdef VK_KHR_device_group
         VkDeviceGroupPresentModeFlagsKHR getDeviceGroupSurfacePresentModes(std::shared_ptr<const Surface> surface) const;
 #   ifdef VK_EXT_full_screen_exclusive

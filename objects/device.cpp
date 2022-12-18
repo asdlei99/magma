@@ -23,6 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "queue.h"
 #include "fence.h"
 #include "timelineSemaphore.h"
+#include "accelerationStructureKhr.h"
 #include "resourcePool.h"
 #include "../allocator/allocator.h"
 #include "../exceptions/errorResult.h"
@@ -226,6 +227,27 @@ bool Device::waitSemaphores(const std::vector<std::shared_ptr<TimelineSemaphore>
     return (result != VK_TIMEOUT);
 }
 #endif // VK_KHR_timeline_semaphore
+
+#ifdef VK_KHR_acceleration_structure
+bool Device::writeAccelerationStructuresProperties(const std::vector<std::shared_ptr<const AccelerationStructure>>& accelerationStructures,
+    VkQueryType queryType, std::vector<VkDeviceSize>& properties) const
+{
+    MAGMA_ASSERT((VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SIZE_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_BOTTOM_LEVEL_POINTERS_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR == queryType));
+    MAGMA_STACK_ARRAY(VkAccelerationStructureKHR, dereferencedAccelerationStructures, accelerationStructures.size());
+    for (const auto& as: accelerationStructures)
+        dereferencedAccelerationStructures.put(*as);
+    properties.resize(accelerationStructures.size());
+    const size_t dataSize = properties.size() * sizeof(VkDeviceSize);
+    constexpr size_t stride = sizeof(VkDeviceSize);
+    MAGMA_REQUIRED_DEVICE_EXTENSION(vkWriteAccelerationStructuresPropertiesKHR, VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+    const VkResult result = vkWriteAccelerationStructuresPropertiesKHR(MAGMA_HANDLE(device), dereferencedAccelerationStructures.size(), dereferencedAccelerationStructures,
+        queryType, dataSize, properties.data(), stride);
+    return MAGMA_SUCCEEDED(result);
+}
+#endif // VK_KHR_acceleration_structure
 
 #ifdef VK_KHR_device_group
 VkDeviceGroupPresentModeFlagsKHR Device::getDeviceGroupSurfacePresentModes(std::shared_ptr<const Surface> surface) const
