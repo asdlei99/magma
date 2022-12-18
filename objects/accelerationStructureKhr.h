@@ -47,7 +47,7 @@ namespace magma
         VkDeviceSize queryProperty(VkQueryType queryType) const noexcept;
         bool hostBuild() const noexcept;
         bool deviceBuild() const noexcept;
-        bool build(const std::vector<AccelerationStructureGeometry>& geometries,
+        MAGMA_NODISCARD bool build(const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<AccelerationStructureBuildRange>& buildRanges,
             std::shared_ptr<Buffer> scratchBuffer,
             std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
