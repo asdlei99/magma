@@ -213,6 +213,7 @@ bool AccelerationStructure::copyFromMemory(const void *buffer, VkCopyAcceleratio
     copyMemoryToAccelerationStructureInfo.src.hostAddress = buffer;
     copyMemoryToAccelerationStructureInfo.dst = handle;
     copyMemoryToAccelerationStructureInfo.mode = mode;
+    MAGMA_DEVICE_EXTENSION(vkCopyMemoryToAccelerationStructureKHR);
     const VkResult result = vkCopyMemoryToAccelerationStructureKHR(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(deferredOperation), &copyMemoryToAccelerationStructureInfo);
     return MAGMA_SUCCEEDED(result);
 }
