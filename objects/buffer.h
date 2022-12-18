@@ -23,6 +23,12 @@ namespace magma
 {
     class CommandBuffer;
     class IDeviceMemoryAllocator;
+#ifdef VK_KHR_acceleration_structure
+    class AccelerationStructure;
+#endif
+#ifdef VK_KHR_deferred_host_operations
+    class DeferredOperation;
+#endif
 
     /* Buffers represent linear arrays of data which are used
        for various purposes by binding them to a graphics or compute
@@ -52,6 +58,11 @@ namespace magma
             const std::vector<uint32_t>& deviceIndices,
             VkDeviceSize offset = 0) override;
 #endif
+    #ifdef VK_KHR_acceleration_structure
+        bool copyToAccelerationStructure(std::shared_ptr<AccelerationStructure> accelerationStructure,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
+    #endif
         virtual void onDefragment() override;
 
     protected:

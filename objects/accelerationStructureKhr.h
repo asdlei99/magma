@@ -66,9 +66,6 @@ namespace magma
         bool copyToMemory(void *buffer,
             VkCopyAccelerationStructureModeKHR mode,
             std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
-        bool copyFromMemory(std::shared_ptr<const Buffer> buffer,
-            VkCopyAccelerationStructureModeKHR mode,
-            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
         bool copyFromMemory(const void *buffer,
             VkCopyAccelerationStructureModeKHR mode,
             std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;

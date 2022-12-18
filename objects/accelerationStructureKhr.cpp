@@ -204,19 +204,6 @@ bool AccelerationStructure::copyToMemory(void *buffer, VkCopyAccelerationStructu
     return MAGMA_SUCCEEDED(result);
 }
 
-bool AccelerationStructure::copyFromMemory(std::shared_ptr<const Buffer> buffer, VkCopyAccelerationStructureModeKHR mode,
-    std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) noexcept
-{
-    VkCopyMemoryToAccelerationStructureInfoKHR copyMemoryToAccelerationStructureInfo;
-    copyMemoryToAccelerationStructureInfo.sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_ACCELERATION_STRUCTURE_INFO_KHR;
-    copyMemoryToAccelerationStructureInfo.pNext = nullptr;
-    copyMemoryToAccelerationStructureInfo.src.deviceAddress = buffer->getDeviceAddress();
-    copyMemoryToAccelerationStructureInfo.dst = handle;
-    copyMemoryToAccelerationStructureInfo.mode = mode;
-    const VkResult result = vkCopyMemoryToAccelerationStructureKHR(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(deferredOperation), &copyMemoryToAccelerationStructureInfo);
-    return MAGMA_SUCCEEDED(result);
-}
-
 bool AccelerationStructure::copyFromMemory(const void *buffer, VkCopyAccelerationStructureModeKHR mode,
     std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) noexcept
 {

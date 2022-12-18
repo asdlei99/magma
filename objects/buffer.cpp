@@ -23,6 +23,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "queue.h"
 #include "fence.h"
 #include "commandBuffer.h"
+#include "accelerationStructureKhr.h"
+#include "deferredOperation.h"
 #include "../misc/extProcAddress.h"
 #include "../exceptions/errorResult.h"
 #include "../core/copyMemory.h"
@@ -162,6 +164,23 @@ void Buffer::bindMemoryDeviceGroup(std::shared_ptr<DeviceMemory> memory,
     this->memory = std::move(memory);
 }
 #endif // VK_KHR_device_group
+
+#ifdef VK_KHR_acceleration_structure
+bool Buffer::copyToAccelerationStructure(std::shared_ptr<AccelerationStructure> accelerationStructure,
+    VkCopyAccelerationStructureModeKHR mode,
+    std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) const noexcept
+{
+    VkCopyMemoryToAccelerationStructureInfoKHR copyMemoryToAccelerationStructureInfo;
+    copyMemoryToAccelerationStructureInfo.sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_ACCELERATION_STRUCTURE_INFO_KHR;
+    copyMemoryToAccelerationStructureInfo.pNext = nullptr;
+    copyMemoryToAccelerationStructureInfo.src.deviceAddress = getDeviceAddress();
+    copyMemoryToAccelerationStructureInfo.dst = *accelerationStructure;
+    copyMemoryToAccelerationStructureInfo.mode = mode;
+    MAGMA_DEVICE_EXTENSION(vkCopyMemoryToAccelerationStructureKHR);
+    const VkResult result = vkCopyMemoryToAccelerationStructureKHR(MAGMA_HANDLE(device), MAGMA_OPTIONAL_HANDLE(deferredOperation), &copyMemoryToAccelerationStructureInfo);
+    return MAGMA_SUCCEEDED(result);
+}
+#endif // VK_KHR_acceleration_structure
 
 void Buffer::onDefragment()
 {
