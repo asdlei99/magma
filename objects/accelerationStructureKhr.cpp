@@ -96,6 +96,19 @@ VkDeviceAddress AccelerationStructure::getDeviceAddress() const noexcept
     return vkGetAccelerationStructureDeviceAddressKHR(*device, &deviceAddressInfo);
 }
 
+VkDeviceSize AccelerationStructure::queryProperty(VkQueryType queryType) const noexcept
+{
+    MAGMA_ASSERT((VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SIZE_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_BOTTOM_LEVEL_POINTERS_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR == queryType));
+    VkDeviceSize property = 0;
+    MAGMA_DEVICE_EXTENSION(vkWriteAccelerationStructuresPropertiesKHR);
+    const VkResult result = vkWriteAccelerationStructuresPropertiesKHR(MAGMA_HANDLE(device), 1, &handle, queryType, sizeof(VkDeviceSize), &property, sizeof(VkDeviceSize));
+    MAGMA_ASSERT(MAGMA_SUCCEEDED(result));
+    return property;
+}
+
 bool AccelerationStructure::hostBuild() const noexcept
 {
     return (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_HOST_KHR == buildType) ||
