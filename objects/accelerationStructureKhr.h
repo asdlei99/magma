@@ -69,6 +69,8 @@ namespace magma
         bool copyFromMemory(const void *buffer,
             VkCopyAccelerationStructureModeKHR mode,
             std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+        MAGMA_NODISCARD bool serialize(void *data) const noexcept;
+        MAGMA_NODISCARD bool deserialize(const void *data) noexcept;
 
     protected:
         AccelerationStructure(std::shared_ptr<Device> device,

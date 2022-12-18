@@ -21,4 +21,14 @@ inline bool AccelerationStructure::deviceBuild() const noexcept
     return (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR == buildType) ||
         (VK_ACCELERATION_STRUCTURE_BUILD_TYPE_HOST_OR_DEVICE_KHR == buildType);
 }
+
+inline bool AccelerationStructure::serialize(void *data) const noexcept
+{
+    return copyToMemory(data, VK_COPY_ACCELERATION_STRUCTURE_MODE_SERIALIZE_KHR);
+}
+
+inline bool AccelerationStructure::deserialize(const void *data) noexcept
+{
+    return copyFromMemory(data, VK_COPY_ACCELERATION_STRUCTURE_MODE_DESERIALIZE_KHR);
+}
 } // namespace magma
