@@ -38,7 +38,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #endif
 
 #if defined(_MSC_VER)
-  #if _HAS_CXX17
+  #if _MSVC_LANG > 201402
     #define MAGMA_CXX17
   #endif
 #elif defined(__MINGW32__) || defined(__GNUC__)
@@ -70,6 +70,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #define MAGMA_ALIGNMENT 16
 #define MAGMA_ALIGN(size) (((size) + 0xF) & ~(0xF))
 #define MAGMA_ALIGNED(p) (((uintptr_t)(const void *)(p)) % (MAGMA_ALIGNMENT) == 0)
+
+#ifdef MAGMA_CXX17
+  #define MAGMA_NODISCARD [[nodiscard]]
+#else
+  #define MAGMA_NODISCARD
+#endif
 
 // https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkMemoryPriorityAllocateInfoEXT.html
 #define MAGMA_DEFAULT_MEMORY_PRIORITY 0.5f
