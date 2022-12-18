@@ -271,5 +271,17 @@ GenericAccelerationStructure::GenericAccelerationStructure(std::shared_ptr<Devic
     AccelerationStructure(std::move(device), VK_ACCELERATION_STRUCTURE_TYPE_GENERIC_KHR,
         geometries, maxPrimitiveCounts, flags, buildType, buildFlags, extendedInfo, std::move(allocator))
 {}
+
+bool GenericAccelerationStructure::build(VkAccelerationStructureTypeKHR type,
+    const std::vector<AccelerationStructureGeometry>& geometries,
+    const std::vector<AccelerationStructureBuildRange>& buildRanges,
+    std::shared_ptr<Buffer> scratchBuffer,
+    std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */) noexcept
+{
+    if (VK_ACCELERATION_STRUCTURE_TYPE_GENERIC_KHR == type)
+        return false;
+    structureType = type;
+    return AccelerationStructure::build(geometries, buildRanges, std::move(scratchBuffer), std::move(deferredOperation));
+}
 #endif // VK_KHR_acceleration_structure
 } // namespace magma

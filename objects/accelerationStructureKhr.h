@@ -82,8 +82,9 @@ namespace magma
             const StructureChain& extendedInfo,
             std::shared_ptr<Allocator> allocator);
 
+        VkAccelerationStructureTypeKHR structureType;
+
     private:
-        const VkAccelerationStructureTypeKHR structureType;
         const VkAccelerationStructureCreateFlagsKHR flags;
         const VkAccelerationStructureBuildTypeKHR buildType;
         const VkBuildAccelerationStructureFlagsKHR buildFlags;
@@ -139,6 +140,11 @@ namespace magma
             std::shared_ptr<Allocator> allocator = nullptr,
             VkAccelerationStructureCreateFlagsKHR flags = 0,
             const StructureChain& extendedInfo = StructureChain());
+        MAGMA_NODISCARD bool build(VkAccelerationStructureTypeKHR type,
+            const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<AccelerationStructureBuildRange>& buildRanges,
+            std::shared_ptr<Buffer> scratchBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
     };
 #endif // VK_KHR_acceleration_structure
 } // namespace magma
