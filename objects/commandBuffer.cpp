@@ -29,6 +29,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "../misc/geometry.h"
 #include "../misc/accelerationStructureGeometry.h"
 #include "../exceptions/errorResult.h"
+#include "../core/forEach.h"
 
 namespace magma
 {
@@ -675,7 +676,7 @@ void CommandBuffer::buildAccelerationStructures(const std::vector<std::shared_pt
     std::vector<VkAccelerationStructureBuildGeometryInfoKHR> accelerationStructureBuildGeometryInfos;
     accelerationStructureBuildGeometryInfos.reserve(accelerationStructures.size());
     core::foreachConst(accelerationStructures, geometryList,
-        [&accelerationStructureBuildGeometryInfos, flags, scratchBuffer](auto accelerationStructureIt, auto geometriesIt)
+        [&accelerationStructureBuildGeometryInfos, flags, &scratchBuffer](auto accelerationStructureIt, auto geometriesIt)
         {
             std::shared_ptr<AccelerationStructure> accelerationStructure = *accelerationStructureIt;
             VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
@@ -713,7 +714,7 @@ void CommandBuffer::updateAccelerationStructures(const std::vector<std::shared_p
     std::vector<VkAccelerationStructureBuildGeometryInfoKHR> accelerationStructureBuildGeometryInfos;
     accelerationStructureBuildGeometryInfos.reserve(accelerationStructures.size());
     core::foreachConst(accelerationStructures, geometryList,
-        [&accelerationStructureBuildGeometryInfos, flags, scratchBuffer](auto accelerationStructureIt, auto geometriesIt)
+        [&accelerationStructureBuildGeometryInfos, flags, &scratchBuffer](auto accelerationStructureIt, auto geometriesIt)
         {
             std::shared_ptr<AccelerationStructure> accelerationStructure = *accelerationStructureIt;
             VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo;
