@@ -93,7 +93,7 @@ VkDeviceAddress AccelerationStructure::getDeviceAddress() const noexcept
     deviceAddressInfo.pNext = nullptr;
     deviceAddressInfo.accelerationStructure = handle;
     MAGMA_DEVICE_EXTENSION(vkGetAccelerationStructureDeviceAddressKHR);
-    return vkGetAccelerationStructureDeviceAddressKHR(*device, &deviceAddressInfo);
+    return vkGetAccelerationStructureDeviceAddressKHR(MAGMA_HANDLE(device), &deviceAddressInfo);
 }
 
 VkDeviceSize AccelerationStructure::queryProperty(VkQueryType queryType) const noexcept
