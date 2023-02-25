@@ -31,6 +31,7 @@ namespace magma
     class TimelineSemaphore;
 #endif
     class ResourcePool;
+    class DeviceExtendedFeatures;
 
     /* Device objects represent logical connections to physical devices.
        Each device exposes a number of queue families each having one or more queues.
