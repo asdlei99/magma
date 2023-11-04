@@ -37,6 +37,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "../misc/clearAttachment.h"
 #include "../misc/viewport.h"
 #include "../misc/scissor.h"
+#include "../misc/stridedDeviceAddressRegion.h"
 #include "../helpers/stackArray.h"
 
 namespace magma
@@ -491,6 +492,22 @@ namespace magma
             std::shared_ptr<QueryPool> queryPool,
             uint32_t firstQuery = 0);
     #endif // VK_KHR_acceleration_structure
+
+    #ifdef VK_KHR_ray_tracing_pipeline
+        void traceRays(const StridedDeviceAddressRegion& raygenShaderBindingTable,
+            const StridedDeviceAddressRegion& missShaderBindingTable,
+            const StridedDeviceAddressRegion& hitShaderBindingTable,
+            const StridedDeviceAddressRegion& callableShaderBindingTable,
+            uint32_t width,
+            uint32_t height,
+            uint32_t depth) const noexcept;
+        void traceRaysIndirect(const StridedDeviceAddressRegion& raygenShaderBindingTable,
+            const StridedDeviceAddressRegion& missShaderBindingTable,
+            const StridedDeviceAddressRegion& hitShaderBindingTable,
+            const StridedDeviceAddressRegion& callableShaderBindingTable,
+            const std::shared_ptr<Buffer>& rayTraceIndirectCommand) const noexcept;
+		void setRayTracingPipelineStackSize(uint32_t pipelineStackSize) const noexcept;
+    #endif // VK_KHR_ray_tracing_pipeline
 
 #ifdef VK_NV_ray_tracing
         void buildAccelerationStructure(const std::shared_ptr<Buffer>& instanceData,

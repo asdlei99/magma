@@ -233,6 +233,7 @@
     <ClInclude Include="..\..\misc\deviceFaultInfo.h" />
     <ClInclude Include="..\..\misc\framebufferAttachmentImage.h" />
     <ClInclude Include="..\..\misc\sharing.h" />
+    <ClInclude Include="..\..\misc\stridedDeviceAddressRegion.h" />
     <ClInclude Include="..\..\misc\structureChain.h" />
     <ClInclude Include="..\..\misc\clearAttachment.h" />
     <ClInclude Include="..\..\misc\clearValue.h" />
@@ -306,6 +307,7 @@
     <ClInclude Include="..\..\objects\queue.h" />
     <ClInclude Include="..\..\objects\rayTracingBuffer.h" />
     <ClInclude Include="..\..\objects\rayTracingPipeline.h" />
+    <ClInclude Include="..\..\objects\rayTracingPipelineKhr.h" />
     <ClInclude Include="..\..\objects\rayTracingPipelines.h" />
     <ClInclude Include="..\..\objects\renderPass.h" />
     <ClInclude Include="..\..\objects\renderPassMultiview.h" />
@@ -335,6 +337,7 @@
     <ClInclude Include="..\..\packed\vector.h" />
     <ClInclude Include="..\..\shaders\pipelineShaderStage.h" />
     <ClInclude Include="..\..\shaders\rayTracingShaderGroup.h" />
+    <ClInclude Include="..\..\shaders\rayTracingShaderGroupKhr.h" />
     <ClInclude Include="..\..\shaders\shaderBindingTable.h" />
     <ClInclude Include="..\..\shaders\shaderReflection.h" />
     <ClInclude Include="..\..\shaders\shaderReflectionFactory.h" />
@@ -478,6 +481,7 @@
     <ClCompile Include="..\..\objects\queue.cpp" />
     <ClCompile Include="..\..\objects\rayTracingBuffer.cpp" />
     <ClCompile Include="..\..\objects\rayTracingPipeline.cpp" />
+    <ClCompile Include="..\..\objects\rayTracingPipelineKhr.cpp" />
     <ClCompile Include="..\..\objects\rayTracingPipelines.cpp" />
     <ClCompile Include="..\..\objects\renderPass.cpp" />
     <ClCompile Include="..\..\objects\renderPassMultiview.cpp" />
@@ -630,6 +634,7 @@ $(VK_SDK_PATH)\Bin\glslangValidator.exe -V -DNV --vn vsBlitNV %(FullPath) -o ../
     <None Include="..\..\objects\object.inl" />
     <None Include="..\..\objects\pipeline.inl" />
     <None Include="..\..\objects\queryPool.inl" />
+    <None Include="..\..\objects\rayTracingPipeline.inl" />
     <None Include="..\..\objects\resource.inl" />
     <None Include="..\..\objects\resourcePool.inl" />
     <None Include="..\..\objects\shaderModule.inl" />
@@ -645,6 +650,7 @@ $(VK_SDK_PATH)\Bin\glslangValidator.exe -V -DNV --vn vsBlitNV %(FullPath) -o ../
     <None Include="..\..\packed\x10y10z10w2unorm.inl" />
     <None Include="..\..\packed\x11y11z10ufloat.inl" />
     <None Include="..\..\packed\r5g6b5unorm.inl" />
+    <None Include="..\..\shaders\rayTracingShaderGroup.inl" />
     <None Include="..\..\shaders\specialization.inl" />
     <None Include="..\..\states\colorBlendAttachmentState.inl" />
     <None Include="..\..\states\colorBlendState.inl" />

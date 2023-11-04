@@ -868,6 +868,10 @@ void CommandBuffer::writeAccelerationStructuresProperties(std::vector<std::share
 }
 #endif // VK_KHR_acceleration_structure
 
+// inline void CommandBuffer::traceRays()
+// inline void CommandBuffer::traceRaysIndirect()
+// inline void CommandBuffer::setRayTracingPipelineStackSize()
+
 #if 0//def VK_NV_ray_tracing
 void CommandBuffer::buildAccelerationStructure(const std::shared_ptr<Buffer>& instanceData, VkDeviceSize instanceOffset, bool update,
     const std::shared_ptr<AccelerationStructure>& dst, const std::shared_ptr<AccelerationStructure>& src,

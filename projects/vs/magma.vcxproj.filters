@@ -754,7 +754,16 @@
       <Filter>Header Files\objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\misc\accelerationStructureGeometry.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\shaders\rayTracingShaderGroupKhr.h">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\objects\rayTracingPipelineKhr.h">
+      <Filter>Header Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\misc\stridedDeviceAddressRegion.h">
+      <Filter>Header Files\misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1181,6 +1190,9 @@
     <ClCompile Include="..\..\misc\accelerationStructureGeometry.cpp">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\objects\rayTracingPipelineKhr.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\auxiliary\immediateRender.inl">
@@ -1361,6 +1373,12 @@
       <Filter>Header Files\objects</Filter>
     </None>
     <None Include="..\..\objects\accelerationStructure.inl">
+      <Filter>Header Files\objects</Filter>
+    </None>
+    <None Include="..\..\shaders\rayTracingShaderGroup.inl">
+      <Filter>Header Files\shaders</Filter>
+    </None>
+    <None Include="..\..\objects\rayTracingPipeline.inl">
       <Filter>Header Files\objects</Filter>
     </None>
   </ItemGroup>

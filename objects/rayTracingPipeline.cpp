@@ -31,14 +31,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 namespace magma
 {
 #ifdef VK_NV_ray_tracing
-RayTracingPipeline::RayTracingPipeline(std::shared_ptr<Device> device,
+RayTracingPipelineNV::RayTracingPipelineNV(std::shared_ptr<Device> device,
     const std::vector<PipelineShaderStage>& shaderStages,
     const std::vector<RayTracingShaderGroup>& shaderGroups,
     uint32_t maxRecursionDepth,
     std::shared_ptr<PipelineLayout> layout,
     std::shared_ptr<IAllocator> allocator /* nullptr */,
     std::shared_ptr<PipelineCache> pipelineCache /* nullptr */,
-    std::shared_ptr<RayTracingPipeline> basePipeline /* nullptr */,
+    std::shared_ptr<RayTracingPipelineNV> basePipeline /* nullptr */,
     VkPipelineCreateFlags flags /* 0 */):
     Pipeline(VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, std::move(device), std::move(layout), std::move(basePipeline), std::move(allocator)),
     shaderGroupCount(MAGMA_COUNT(shaderGroups)),
@@ -94,7 +94,7 @@ RayTracingPipeline::RayTracingPipeline(std::shared_ptr<Device> device,
     hash = core::hashCombine(hash, this->layout->getHash());
 }
 
-RayTracingPipeline::RayTracingPipeline(VkPipeline pipeline,
+RayTracingPipelineNV::RayTracingPipelineNV(VkPipeline pipeline,
     std::shared_ptr<Device> device,
     std::shared_ptr<PipelineLayout> layout,
     std::shared_ptr<Pipeline> basePipeline,
@@ -116,7 +116,7 @@ RayTracingPipeline::RayTracingPipeline(VkPipeline pipeline,
     handle = pipeline;
 }
 
-std::vector<uint8_t> RayTracingPipeline::getShaderGroupHandles() const
+std::vector<uint8_t> RayTracingPipelineNV::getShaderGroupHandles() const
 {
     const VkPhysicalDeviceRayTracingPropertiesNV& rayTracingProperties = device->getPhysicalDevice()->getRayTracingProperties();
     std::vector<uint8_t> shaderGroupHandles(shaderGroupCount * rayTracingProperties.shaderGroupHandleSize);
@@ -126,7 +126,7 @@ std::vector<uint8_t> RayTracingPipeline::getShaderGroupHandles() const
     return shaderGroupHandles;
 }
 
-void RayTracingPipeline::compileDeferred(uint32_t shaderIndex)
+void RayTracingPipelineNV::compileDeferred(uint32_t shaderIndex)
 {
     MAGMA_DEVICE_EXTENSION(vkCompileDeferredNV);
     const VkResult result = vkCompileDeferredNV(MAGMA_HANDLE(device), handle, shaderIndex);

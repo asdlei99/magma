@@ -629,6 +629,39 @@ inline void CommandBuffer::endTransformFeedback() noexcept
 }
 #endif // VK_EXT_transform_feedback
 
+#ifdef VK_KHR_ray_tracing_pipeline
+inline void CommandBuffer::traceRays(const StridedDeviceAddressRegion& raygenShaderBindingTable, const StridedDeviceAddressRegion& missShaderBindingTable,
+    const StridedDeviceAddressRegion& hitShaderBindingTable, const StridedDeviceAddressRegion& callableShaderBindingTable,
+    uint32_t width, uint32_t height, uint32_t depth) const noexcept
+{
+    MAGMA_ASSERT(width);
+    MAGMA_ASSERT(height);
+    MAGMA_ASSERT(depth);
+    MAGMA_DEVICE_EXTENSION(vkCmdTraceRaysKHR);
+    if (vkCmdTraceRaysKHR)
+        vkCmdTraceRaysKHR(handle, &raygenShaderBindingTable, &missShaderBindingTable, &hitShaderBindingTable, &callableShaderBindingTable, width, height, depth00);
+}
+
+inline void CommandBuffer::traceRaysIndirect(const StridedDeviceAddressRegion& raygenShaderBindingTable, const StridedDeviceAddressRegion& missShaderBindingTable,
+    const StridedDeviceAddressRegion& hitShaderBindingTable, const StridedDeviceAddressRegion& callableShaderBindingTable, 
+    const std::shared_ptr<Buffer>& rayTraceIndirectCommand) const noexcept
+{
+    MAGMA_DEVICE_EXTENSION(vkCmdTraceRaysIndirectKHR);
+    if (vkCmdTraceRaysIndirectKHR)
+    {
+        const VkDeviceAddress indirectDeviceAddress = rayTraceIndirectCommand->getDeviceAddress();
+        vkCmdTraceRaysIndirectKHR(handle, &raygenShaderBindingTable, &missShaderBindingTable, &hitShaderBindingTable, &callableShaderBindingTable, indirectDeviceAddress);
+    }
+}
+
+inline void CommandBuffer::setRayTracingPipelineStackSize(uint32_t pipelineStackSize) const noexcept
+{
+    MAGMA_DEVICE_EXTENSION(vkCmdSetRayTracingPipelineStackSizeKHR);
+    if (vkCmdSetRayTracingPipelineStackSizeKHR)
+        vkCmdSetRayTracingPipelineStackSizeKHR(handle, pipelineStackSize);
+}
+#endif // VK_KHR_ray_tracing_pipeline
+
 inline void CommandBuffer::enableOcclusionQuery(bool enable, VkQueryControlFlags queryFlags) noexcept
 {
     occlusionQueryEnable = MAGMA_BOOLEAN(enable);

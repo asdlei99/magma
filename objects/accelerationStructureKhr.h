@@ -22,8 +22,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 namespace magma
 {
     class Buffer;
+#ifdef VK_KHR_acceleration_structure
     class AccelerationStructureBuffer;
+#endif
+#ifdef VK_KHR_deferred_host_operations
     class DeferredOperation;
+#endif
 
     /* Acceleration structures are an opaque structure that can be built by the implementation
        to more efficiently perform spatial queries on the provided geometric data.
