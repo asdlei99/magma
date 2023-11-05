@@ -1,6 +1,6 @@
 /*
-Magma - abstraction layer to facilitate usage of Khronos Vulkan API.
-Copyright (C) 2018-2022 Victor Coda.
+Magma - Abstraction layer over Khronos Vulkan API.
+Copyright (C) 2018-2023 Victor Coda.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,90 +16,146 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 #pragma once
+#ifdef VK_KHR_acceleration_structure
 #include "resource.h"
-#include "../misc/geometry.h"
+#include "../misc/accelerationStructureGeometry.h"
 
 namespace magma
 {
-    /* Acceleration structures are an opaque structure that can
-       be built by the implementation to more efficiently perform
-       spatial queries on the provided geometric data. Acceleration
-       structure is either a top-level acceleration structure
-       containing a set of bottom-level acceleration structures or
-       a bottom-level acceleration structure containing either
-       a set of axis-aligned bounding boxes for custom geometry or
-       a set of triangles. */
+    class Buffer;
+    class AccelerationStructureStorageBuffer;
+#ifdef VK_KHR_deferred_host_operations
+    class DeferredOperation;
+#endif
 
-#ifdef VK_NV_ray_tracing
-    class AccelerationStructure : public NonDispatchableResource<AccelerationStructure, VkAccelerationStructureNV>
+    /* Acceleration structures are opaque data structures
+       that are built by the implementation to more efficiently
+       perform spatial queries on the provided geometric data.
+       For this extension, an acceleration structure is either
+       a top-level acceleration structure containing a set of
+       bottom-level acceleration structures or a bottom-level
+       acceleration structure containing either a set of axis-
+       aligned bounding boxes for custom geometry or a set of
+       triangles. */
+
+    class AccelerationStructure : public NonDispatchableResource<AccelerationStructure, VkAccelerationStructureKHR>
     {
     public:
         ~AccelerationStructure();
-        bool topLevel() const noexcept { return VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_NV == accelerationStructureInfo.type; }
-        bool bottomLevel() const noexcept { return VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_NV == accelerationStructureInfo.type; }
-        const VkAccelerationStructureInfoNV& getInfo() const noexcept { return accelerationStructureInfo; }
-        //std::shared_ptr<IDeviceMemory> getMemory() const noexcept { return memory; }
-        VkMemoryRequirements getObjectMemoryRequirements() const;
-        VkMemoryRequirements getBuildScratchMemoryRequirements() const;
-        VkMemoryRequirements getUpdateScratchMemoryRequirements() const;
-        uint64_t getReferenceHandle() const;
-        Class getResourceClass() const noexcept override final { return Class::AccelerationStructure; }
-        void bindMemory(std::shared_ptr<IDeviceMemory> memory,
-            VkDeviceSize offset = 0) override;
-    #ifdef VK_KHR_device_group
-        void bindMemoryDeviceGroup(std::shared_ptr<IDeviceMemory> memory,
-            const std::vector<uint32_t>& deviceIndices,
-            const std::vector<VkRect2D>& splitInstanceBindRegions = {},
-            VkDeviceSize offset = 0) override;
-    #endif // VK_KHR_device_group
-        void onDefragment() override;
+        VkAccelerationStructureTypeKHR getType() const noexcept { return structureType; }
+        VkAccelerationStructureCreateFlagsKHR getFlags() const noexcept { return flags; }
+        VkAccelerationStructureBuildTypeKHR getBuildType() const noexcept { return buildType; }
+        VkBuildAccelerationStructureFlagsKHR getBuildFlags() const noexcept { return buildFlags; }
+        VkDeviceSize getStructureSize() const noexcept { return accelerationStructureSize; }
+        VkDeviceSize getBuildScratchSize() const noexcept { return buildScratchSize; }
+        VkDeviceSize getUpdateScratchSize() const noexcept { return updateScratchSize; }
+        VkDeviceAddress getDeviceAddress() const noexcept;
+        VkDeviceSize getProperty(VkQueryType queryType) const noexcept;
+        bool topLevel() const noexcept;
+        bool bottomLevel() const noexcept;
+        bool hostBuild() const noexcept;
+        bool deviceBuild() const noexcept;
+        bool build(const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<AccelerationStructureBuildRange>& buildRanges,
+            std::shared_ptr<Buffer> scratchBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+        bool update(const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<AccelerationStructureBuildRange>& buildRanges,
+            std::shared_ptr<Buffer> scratchBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+        bool copy(std::shared_ptr<AccelerationStructure> accelerationStructure,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
+        bool copyToBuffer(std::shared_ptr<Buffer> buffer,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
+        bool copyToMemory(void *buffer,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
+        bool copyFromMemory(const void *buffer,
+            VkCopyAccelerationStructureModeKHR mode,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+        bool serialize(void *data) const noexcept;
+        bool deserialize(const void *data) noexcept;
 
     protected:
-        explicit AccelerationStructure(std::shared_ptr<Device> device,
-            VkAccelerationStructureTypeNV type,
-            uint32_t instanceCount,
-            const std::list<Geometry>& geometries,
-            VkBuildAccelerationStructureFlagsNV flags,
-            VkDeviceSize compactedSize,
-            float memoryPriority,
-            std::shared_ptr<Allocator> allocator);
+        AccelerationStructure(std::shared_ptr<Device> device,
+            VkAccelerationStructureTypeKHR structureType,
+            const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<uint32_t>& maxPrimitiveCounts,
+            VkAccelerationStructureCreateFlagsKHR flags,
+            VkAccelerationStructureBuildTypeKHR buildType,
+            VkBuildAccelerationStructureFlagsKHR buildFlags,
+            std::shared_ptr<Allocator> allocator,
+            const StructureChain& extendedInfo);
+
+        VkAccelerationStructureTypeKHR structureType;
 
     private:
-        VkMemoryRequirements2 getMemoryRequirements(VkAccelerationStructureMemoryRequirementsTypeNV type) const;
-
-        VkAccelerationStructureInfoNV accelerationStructureInfo;
+        const VkAccelerationStructureCreateFlagsKHR flags;
+        const VkAccelerationStructureBuildTypeKHR buildType;
+        const VkBuildAccelerationStructureFlagsKHR buildFlags;
+        VkDeviceSize accelerationStructureSize;
+        VkDeviceSize buildScratchSize;
+        VkDeviceSize updateScratchSize;
+        std::unique_ptr<AccelerationStructureStorageBuffer> buffer;
     };
 
-    /* Top-level acceleration structure containing instance data referring to bottom-level acceleration structures.*/
+    /* Top-level acceleration structure containing instance
+       data referring to bottom-level acceleration structures. */
 
     class TopLevelAccelerationStructure : public AccelerationStructure
     {
     public:
         explicit TopLevelAccelerationStructure(std::shared_ptr<Device> device,
-            uint32_t instanceCount,
+            const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<uint32_t>& maxPrimitiveCounts,
+            VkAccelerationStructureBuildTypeKHR buildType,
+            VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator = nullptr,
-            VkBuildAccelerationStructureFlagsNV flags = 0,
-            VkDeviceSize compactedSize = 0,
-            float memoryPriority = MAGMA_DEFAULT_MEMORY_PRIORITY):
-            AccelerationStructure(std::move(device), VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_NV,
-                instanceCount, std::list<Geometry>{}, flags, compactedSize, memoryPriority, std::move(allocator))
-        {}
+            VkAccelerationStructureCreateFlagsKHR flags = 0,
+            const StructureChain& extendedInfo = StructureChain());
     };
 
-    /* Bottom-level acceleration structure containing the AABBs or geometry to be intersected. */
+    /* Bottom-level acceleration structure containing the AABBs
+       or geometry to be intersected. */
 
     class BottomLevelAccelerationStructure : public AccelerationStructure
     {
     public:
         explicit BottomLevelAccelerationStructure(std::shared_ptr<Device> device,
-            const std::list<Geometry>& geometries,
+            const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<uint32_t>& maxPrimitiveCounts,
+            VkAccelerationStructureBuildTypeKHR buildType,
+            VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator = nullptr,
-            VkBuildAccelerationStructureFlagsNV flags = 0,
-            VkDeviceSize compactedSize = 0,
-            float memoryPriority = MAGMA_DEFAULT_MEMORY_PRIORITY):
-            AccelerationStructure(std::move(device), VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_NV,
-                0, geometries, flags, compactedSize, memoryPriority, std::move(allocator))
-        {}
+            VkAccelerationStructureCreateFlagsKHR flags = 0,
+            const StructureChain& extendedInfo = StructureChain());
     };
-#endif // VK_NV_ray_tracing
+
+    /* Generic acceleration structure is intended to be used
+       by API translation layers. In these cases, the acceleration
+       structure type is not known at creation time, but must be
+       specified at build time as either top or bottom. */
+
+    class GenericAccelerationStructure : public AccelerationStructure
+    {
+    public:
+        explicit GenericAccelerationStructure(std::shared_ptr<Device> device,
+            const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<uint32_t>& maxPrimitiveCounts,
+            VkAccelerationStructureBuildTypeKHR buildType,
+            VkBuildAccelerationStructureFlagsKHR buildFlags,
+            std::shared_ptr<Allocator> allocator = nullptr,
+            VkAccelerationStructureCreateFlagsKHR flags = 0,
+            const StructureChain& extendedInfo = StructureChain());
+        bool build(VkAccelerationStructureTypeKHR type,
+            const std::vector<AccelerationStructureGeometry>& geometries,
+            const std::vector<AccelerationStructureBuildRange>& buildRanges,
+            std::shared_ptr<Buffer> scratchBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+    };
 } // namespace magma
+
+#include "accelerationStructure.inl"
+#endif // VK_KHR_acceleration_structure
