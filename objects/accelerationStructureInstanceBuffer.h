@@ -16,27 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 #pragma once
-#include "rayTracingBuffer.h"
-
-#if defined(VK_NV_ray_tracing) && !defined(VK_SHADER_UNUSED_KHR)
-
-/* With an early SDK definitions weren't provided in the headers
-   so I declared my own structures that obey vendor layout. */
-
-typedef struct VkTransformMatrixNV {
-    float matrix[3][4];
-} VkTransformMatrixNV;
-
-typedef struct VkAccelerationStructureInstanceNV {
-    VkTransformMatrixNV transform;
-    uint32_t instanceCustomIndex:24;
-    uint32_t mask:8;
-    uint32_t instanceShaderBindingTableRecordOffset:24;
-    VkFlags flags:8;
-    uint64_t accelerationStructureReference;
-} VkAccelerationStructureInstanceNV;
-
-#endif // VK_NV_ray_tracing && !VK_SHADER_UNUSED_KHR
 
 namespace magma
 {
@@ -44,61 +23,31 @@ namespace magma
     class CommandBuffer;
     class SrcTransferBuffer;
 
-#ifdef VK_NV_ray_tracing
-    typedef VkTransformMatrixNV TransformMatrix;
-
     /* Single acceleration structure instance for building
        into an acceleration structure geometry. */
 
-    class AccelerationStructureInstance : public VkAccelerationStructureInstanceNV
+#ifdef VK_KHR_acceleration_structure
+    class AccelerationStructureInstance : public VkAccelerationStructureInstanceKHR
     {
     public:
         AccelerationStructureInstance() noexcept;
-        void setTransform(const TransformMatrix& transform_) noexcept { transform = transform_; }
-        void setInstanceIndex(uint32_t instanceIndex) noexcept { instanceCustomIndex = instanceIndex; }
+        void setTransform(const VkTransformMatrixKHR& transform_) noexcept { transform = transform_; }
+        void setInstanceCustomIndex(uint32_t customIndex) noexcept { instanceCustomIndex = customIndex; }
         void setVisibilityMask(uint8_t mask_) noexcept { mask = mask_; }
-        void setShaderBindingTableOffset(uint32_t offset) noexcept { instanceShaderBindingTableRecordOffset = offset; }
-        void setCullTriangles(bool enable) noexcept { setFlag(VK_GEOMETRY_INSTANCE_TRIANGLE_CULL_DISABLE_BIT_NV, !enable); }
-        bool cullEnabled() const noexcept { return !(flags & VK_GEOMETRY_INSTANCE_TRIANGLE_CULL_DISABLE_BIT_NV); }
-        void setFrontTriangle(bool ccw) noexcept { setFlag(VK_GEOMETRY_INSTANCE_TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_NV, ccw); }
-        bool frontTriangleCcw() const noexcept { return flags & VK_GEOMETRY_INSTANCE_TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_NV; }
-        void setForceOpaque(bool opaque) noexcept { setFlag(VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_NV, opaque); }
-        void setForceNoOpaque(bool noOpaque) noexcept { setFlag(VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_NV, noOpaque); }
-        bool opaque() const noexcept { return flags & VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_NV; }
-        bool noOpaque() const noexcept { return flags & VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_NV; }
-        void setAccelerationStructure(std::shared_ptr<const AccelerationStructure> accelerationStructure);
+        void setInstanceShaderBindingTableRecordOffset(uint32_t offset) noexcept { instanceShaderBindingTableRecordOffset = offset; }
+        void disableFaceCulling(bool disable) noexcept { setFlag(VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR, disable); }
+        bool faceCullingDisabled() const noexcept { return flags & VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR; }
+        void flipTriangleFacing(bool flip) noexcept { setFlag(VK_GEOMETRY_INSTANCE_TRIANGLE_FLIP_FACING_BIT_KHR, flip); }
+        bool triangleFacingFlipped() const noexcept { return flags & VK_GEOMETRY_INSTANCE_TRIANGLE_FLIP_FACING_BIT_KHR; }
+        void setForceOpaque(bool opaque) noexcept { setFlag(VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR, opaque); }
+        bool getForceOpaque() const noexcept { return flags & VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR; }
+        void setForceNoOpaque(bool noOpaque) noexcept { setFlag(VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_KHR, noOpaque); }
+        bool getForceNoOpaque() const noexcept { return flags & VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_KHR; }
+        void setAccelerationStructure(std::shared_ptr<const AccelerationStructure> accelerationStructure,
+            bool hostOperations = false);
 
     private:
         void setFlag(VkGeometryInstanceFlagBitsKHR bit, bool set) noexcept { if (set) flags |= bit; else flags &= ~bit; }
-    };
-
-    /* Buffer containing an array of VkAccelerationStructureInstanceKHR
-       structures defining acceleration structures. */
-
-    class AccelerationStructureInstanceBuffer : public RayTracingBuffer
-    {
-    public:
-        explicit AccelerationStructureInstanceBuffer(std::shared_ptr<Device> device,
-            uint32_t instanceCount,
-            std::shared_ptr<Allocator> allocator = nullptr,
-            bool persistentlyMapped = false,
-            const Descriptor& optional = Descriptor(),
-            const Sharing& sharing = Sharing());
-        ~AccelerationStructureInstanceBuffer();
-        uint32_t getInstanceCount() const noexcept { return instanceCount; }
-        AccelerationStructureInstance& getInstance(uint32_t instanceIndex) noexcept { return instances[instanceIndex]; }
-        const AccelerationStructureInstance& getInstance(uint32_t instanceIndex) const noexcept { return instances[instanceIndex]; }
-        bool persistentlyMapped() const noexcept { return persistent; }
-        bool update(std::shared_ptr<CommandBuffer> cmdBuffer,
-            uint32_t firstInstance,
-            uint32_t instanceCount);
-
-    private:
-        const uint32_t instanceCount;
-        const bool persistent;
-        std::shared_ptr<SrcTransferBuffer> stagingBuffer;
-        std::vector<AccelerationStructureInstance> instanceArray;
-        AccelerationStructureInstance *instances;
     };
 #endif // VK_NV_ray_tracing
 } // namespace magma
