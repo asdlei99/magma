@@ -397,6 +397,18 @@ std::vector<VkDeviceSize> Device::writeAccelerationStructuresProperties(
     MAGMA_HANDLE_RESULT(result, "failed to write properties of acceleration structures");
     return properties;
 }
+
+bool Device::getAccelerationStructureCompatibility(const uint8_t versionData[2 * VK_UUID_SIZE]) const
+{
+    VkAccelerationStructureVersionInfoKHR accelerationStructureVersionInfo;
+    accelerationStructureVersionInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_VERSION_INFO_KHR;
+    accelerationStructureVersionInfo.pNext = nullptr;
+    accelerationStructureVersionInfo.pVersionData = versionData; // pVersionData must be a valid pointer to an array of 2 x VK_UUID_SIZE uint8_t values
+    VkAccelerationStructureCompatibilityKHR compatibility = VK_ACCELERATION_STRUCTURE_COMPATIBILITY_INCOMPATIBLE_KHR;
+    MAGMA_REQUIRED_DEVICE_EXTENSION(vkGetDeviceAccelerationStructureCompatibilityKHR, VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+    vkGetDeviceAccelerationStructureCompatibilityKHR(MAGMA_HANDLE(device), &accelerationStructureVersionInfo, &compatibility);
+    return (VK_ACCELERATION_STRUCTURE_COMPATIBILITY_COMPATIBLE_KHR == compatibility);
+}
 #endif // VK_KHR_acceleration_structure
 
 #ifdef VK_EXT_device_fault

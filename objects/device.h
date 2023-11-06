@@ -107,6 +107,7 @@ namespace magma
         std::vector<VkDeviceSize> writeAccelerationStructuresProperties(
             const std::vector<std::shared_ptr<const AccelerationStructure>>& accelerationStructures,
             VkQueryType queryType) const;
+        bool getAccelerationStructureCompatibility(const uint8_t versionData[2 * VK_UUID_SIZE]) const;
     #endif // VK_KHR_acceleration_structure
     #ifdef VK_EXT_device_fault
         DeviceFaultInfo getFaultInfo() const;
