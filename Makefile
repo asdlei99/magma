@@ -161,7 +161,6 @@ SRC_OBJS= \
 	renderpass/subpass.o \
 	\
 	shaders/pipelineShaderStage.o \
-	shaders/rayTracingShaderGroup.o \
 	shaders/shaderBindingTable.o \
 	shaders/shaderReflection.o \
 	shaders/specialization.o \

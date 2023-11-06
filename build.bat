@@ -194,7 +194,6 @@ objects\validationCache.cpp ^
 objects\vertexBuffer.cpp ^
 renderpass\subpass.cpp ^
 shaders\pipelineShaderStage.cpp ^
-shaders\rayTracingShaderGroup.cpp ^
 shaders\shaderBindingTable.cpp ^
 shaders\shaderReflection.cpp ^
 shaders\specialization.cpp ^
@@ -361,7 +360,6 @@ validationCache.obj ^
 vertexBuffer.obj ^
 subpass.obj ^
 pipelineShaderStage.obj ^
-rayTracingShaderGroup.obj ^
 shaderBindingTable.obj ^
 shaderReflection.obj ^
 specialization.obj ^
