@@ -55,26 +55,30 @@ namespace magma
         bool bottomLevel() const noexcept;
         bool hostBuild() const noexcept;
         bool deviceBuild() const noexcept;
-        bool build(const std::vector<AccelerationStructureGeometry>& geometries,
+        void build(const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<AccelerationStructureBuildRange>& buildRanges,
-            std::shared_ptr<Buffer> scratchBuffer,
-            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+            void *scratchBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr);
         bool update(const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<AccelerationStructureBuildRange>& buildRanges,
-            std::shared_ptr<Buffer> scratchBuffer,
+            void *scratchBuffer,
             std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
-        bool copy(std::shared_ptr<AccelerationStructure> accelerationStructure,
-            VkCopyAccelerationStructureModeKHR mode,
+        bool clone(std::shared_ptr<AccelerationStructure> dstAccelerationStructure,
             std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
-        bool copyToBuffer(std::shared_ptr<Buffer> buffer,
-            VkCopyAccelerationStructureModeKHR mode,
+        bool compact(std::shared_ptr<AccelerationStructure> dstAccelerationStructure,
             std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
-        bool copyToMemory(void *buffer,
-            VkCopyAccelerationStructureModeKHR mode,
-            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) const noexcept;
-        bool copyFromMemory(const void *buffer,
-            VkCopyAccelerationStructureModeKHR mode,
-            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+        bool copyToBuffer(std::shared_ptr<Buffer> dstBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr,
+            VkCopyAccelerationStructureModeKHR mode = VK_COPY_ACCELERATION_STRUCTURE_MODE_CLONE_KHR) const noexcept;
+        bool copyToMemory(void *dstBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr,
+            VkCopyAccelerationStructureModeKHR mode = VK_COPY_ACCELERATION_STRUCTURE_MODE_CLONE_KHR) const noexcept;
+        bool copyFromBuffer(std::shared_ptr<const Buffer> srcBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr,
+            VkCopyAccelerationStructureModeKHR mode = VK_COPY_ACCELERATION_STRUCTURE_MODE_CLONE_KHR) noexcept;
+        bool copyFromMemory(const void *srcBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation = nullptr,
+            VkCopyAccelerationStructureModeKHR mode = VK_COPY_ACCELERATION_STRUCTURE_MODE_CLONE_KHR) noexcept;
         bool serialize(void *data) const noexcept;
         bool deserialize(const void *data) noexcept;
 
@@ -83,7 +87,7 @@ namespace magma
             VkAccelerationStructureTypeKHR structureType,
             const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<uint32_t>& maxPrimitiveCounts,
-            VkAccelerationStructureCreateFlagsKHR flags,
+            VkAccelerationStructureCreateFlagsKHR createFlags,
             VkAccelerationStructureBuildTypeKHR buildType,
             VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator,
@@ -113,7 +117,7 @@ namespace magma
             VkAccelerationStructureBuildTypeKHR buildType,
             VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator = nullptr,
-            VkAccelerationStructureCreateFlagsKHR flags = 0,
+            VkAccelerationStructureCreateFlagsKHR createFlags = 0,
             const StructureChain& extendedInfo = StructureChain());
     };
 
@@ -129,7 +133,7 @@ namespace magma
             VkAccelerationStructureBuildTypeKHR buildType,
             VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator = nullptr,
-            VkAccelerationStructureCreateFlagsKHR flags = 0,
+            VkAccelerationStructureCreateFlagsKHR createFlags = 0,
             const StructureChain& extendedInfo = StructureChain());
     };
 
@@ -147,13 +151,13 @@ namespace magma
             VkAccelerationStructureBuildTypeKHR buildType,
             VkBuildAccelerationStructureFlagsKHR buildFlags,
             std::shared_ptr<Allocator> allocator = nullptr,
-            VkAccelerationStructureCreateFlagsKHR flags = 0,
+            VkAccelerationStructureCreateFlagsKHR createFlags = 0,
             const StructureChain& extendedInfo = StructureChain());
-        bool build(VkAccelerationStructureTypeKHR type,
+        void build(VkAccelerationStructureTypeKHR structureType_,
             const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<AccelerationStructureBuildRange>& buildRanges,
-            std::shared_ptr<Buffer> scratchBuffer,
-            std::shared_ptr<DeferredOperation> deferredOperation = nullptr) noexcept;
+            void *scratchBuffer,
+            std::shared_ptr<DeferredOperation> deferredOperation /* nullptr */);
     };
 } // namespace magma
 
