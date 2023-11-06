@@ -50,6 +50,8 @@ namespace magma
     class AccelerationStructure : public NonDispatchableResource<AccelerationStructure, VkAccelerationStructureKHR>
     {
     public:
+        struct Header;
+
         ~AccelerationStructure();
         VkAccelerationStructureTypeKHR getType() const noexcept { return structureType; }
         VkAccelerationStructureCreateFlagsKHR getFlags() const noexcept { return flags; }
@@ -112,6 +114,32 @@ namespace magma
         VkDeviceSize buildScratchSize;
         VkDeviceSize updateScratchSize;
         std::unique_ptr<AccelerationStructureStorageBuffer> buffer;
+    };
+
+    /* The defined header structure for the serialized data consists of:
+        * VK_UUID_SIZE bytes of data matching VkPhysicalDeviceIDProperties::driverUUID.
+        * VK_UUID_SIZE bytes of data identifying the compatibility for comparison
+          using vkGetDeviceAccelerationStructureCompatibilityKHR.
+        * A 64-bit integer of the total size matching the value queried using
+          VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR.
+        * A 64-bit integer of the deserialized size to be passed in to
+          VkAccelerationStructureCreateInfoKHR::size.
+        * A 64-bit integer of the count of the number of acceleration structure
+          handles following. This value matches the value queried using
+          VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_BOTTOM_LEVEL_POINTERS_KHR.
+          This will be zero for a bottom-level acceleration structure. For
+          top-level acceleration structures this number is implementation-
+          dependent; the number of and ordering of the handles may not match
+          the instance descriptions which were used to build the acceleration structure. */
+
+    struct AccelerationStructure::Header
+    {
+        uint8_t driverUUID[VK_UUID_SIZE];
+        uint8_t compatibilityUUID[VK_UUID_SIZE];
+        uint64_t serializedSize = 0ull;
+        uint64_t deserializedSize = 0ull;
+        uint64_t handleCount = 0ull;
+        VkAccelerationStructureKHR handles[1];
     };
 
     /* Top-level acceleration structure containing instance
