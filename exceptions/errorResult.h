@@ -182,6 +182,10 @@ namespace magma
     #endif // MAGMA_NO_EXCEPTIONS
 
         void handleResult(VkResult result, const char *message, const source_location& location);
+        inline void handleResult(VkResult result, const std::string& message, const source_location& location)
+        {
+            handleResult(result, message.c_str(), location);
+        }
     } // namespace exception
 } // namespace magma
 
