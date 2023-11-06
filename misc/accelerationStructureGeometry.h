@@ -83,16 +83,5 @@ namespace magma
             VkGeometryFlagsKHR flags = 0,
             const StructureChain& extendedInfo = StructureChain()) noexcept;
     };
-
-    /* Defines build offsets and counts for acceleration structure builds. */
-
-    struct AccelerationStructureBuildRange : VkAccelerationStructureBuildRangeInfoKHR
-    {
-        AccelerationStructureBuildRange() = default;
-        explicit AccelerationStructureBuildRange(uint32_t primitiveCount,
-            uint32_t primitiveOffset = 0,
-            uint32_t firstVertex = 0,
-            uint32_t transformOffset = 0);
-    };
 #endif // VK_KHR_acceleration_structure
 } // namespace magma

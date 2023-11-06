@@ -28,6 +28,15 @@ namespace magma
     class DeferredOperation;
 #endif
 
+    struct AccelerationStructureBuildRange : VkAccelerationStructureBuildRangeInfoKHR
+    {
+        AccelerationStructureBuildRange() = default;
+        constexpr AccelerationStructureBuildRange(uint32_t primitiveCount,
+            uint32_t primitiveOffset = 0,
+            uint32_t firstVertex = 0,
+            uint32_t transformOffset = 0);
+    };
+
     /* Acceleration structures are opaque data structures
        that are built by the implementation to more efficiently
        perform spatial queries on the provided geometric data.
@@ -153,7 +162,7 @@ namespace magma
             std::shared_ptr<Allocator> allocator = nullptr,
             VkAccelerationStructureCreateFlagsKHR createFlags = 0,
             const StructureChain& extendedInfo = StructureChain());
-        void build(VkAccelerationStructureTypeKHR structureType_,
+        void build(VkAccelerationStructureTypeKHR structureType,
             const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<AccelerationStructureBuildRange>& buildRanges,
             void *scratchBuffer,
