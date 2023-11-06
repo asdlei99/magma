@@ -24,6 +24,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "fence.h"
 #include "privateDataSlot.h"
 #include "timelineSemaphore.h"
+#include "accelerationStructure.h"
 #include "resourcePool.h"
 #include "../misc/deviceFeatures.h"
 #include "../allocator/allocator.h"
@@ -360,6 +361,43 @@ std::vector<uint64_t> Device::getCalibratedTimestamps(const std::vector<VkTimeDo
     return timestamps;
 }
 #endif // VK_EXT_calibrated_timestamps
+
+#ifdef VK_KHR_acceleration_structure
+VkDeviceSize Device::queryAccelerationStructureProperty(std::shared_ptr<const AccelerationStructure> accelerationStructure, VkQueryType queryType) const
+{
+    MAGMA_ASSERT((VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_BOTTOM_LEVEL_POINTERS_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SIZE_KHR == queryType));
+    VkDeviceSize property = 0ull;
+    MAGMA_REQUIRED_DEVICE_EXTENSION(vkWriteAccelerationStructuresPropertiesKHR, VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+    const VkResult result = vkWriteAccelerationStructuresPropertiesKHR(MAGMA_HANDLE(device),
+        1, accelerationStructure->getHandleAddress(), queryType, sizeof(VkDeviceSize), &property, sizeof(VkDeviceSize));
+    MAGMA_HANDLE_RESULT(result, "failed to write property of acceleration structure");
+    return property;
+}
+
+std::vector<VkDeviceSize> Device::writeAccelerationStructuresProperties(
+    const std::vector<std::shared_ptr<const AccelerationStructure>>& accelerationStructures, VkQueryType queryType) const
+{
+    MAGMA_ASSERT((VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_BOTTOM_LEVEL_POINTERS_KHR == queryType) ||
+        (VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SIZE_KHR == queryType));
+    std::vector<VkAccelerationStructureKHR> dereferencedAccelerationStructures;
+    dereferencedAccelerationStructures.reserve(accelerationStructures.size());
+    for (auto const& as: accelerationStructures)
+        dereferencedAccelerationStructures.push_back(*as);
+    std::vector<VkDeviceSize> properties(accelerationStructures.size());
+    const size_t dataSize = properties.size() * sizeof(VkDeviceSize);
+    MAGMA_REQUIRED_DEVICE_EXTENSION(vkWriteAccelerationStructuresPropertiesKHR, VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+    const VkResult result = vkWriteAccelerationStructuresPropertiesKHR(MAGMA_HANDLE(device),
+        MAGMA_COUNT(dereferencedAccelerationStructures), dereferencedAccelerationStructures.data(),
+        queryType, dataSize, properties.data(), sizeof(VkDeviceSize));
+    MAGMA_HANDLE_RESULT(result, "failed to write properties of acceleration structures");
+    return properties;
+}
+#endif // VK_KHR_acceleration_structure
 
 #ifdef VK_EXT_device_fault
 DeviceFaultInfo Device::getFaultInfo() const

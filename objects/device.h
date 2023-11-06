@@ -32,6 +32,9 @@ namespace magma
 #ifdef VK_KHR_timeline_semaphore
     class TimelineSemaphore;
 #endif
+#ifdef VK_KHR_acceleration_structure
+    class AccelerationStructure;
+#endif
     class DeviceFeatures;
     class ResourcePool;
 
@@ -98,6 +101,13 @@ namespace magma
         std::vector<uint64_t> getCalibratedTimestamps(const std::vector<VkTimeDomainEXT>& timeDomains,
             uint64_t *maxDeviation = nullptr) const;
     #endif
+    #ifdef VK_KHR_acceleration_structure
+        VkDeviceSize queryAccelerationStructureProperty(std::shared_ptr<const AccelerationStructure> accelerationStructure,
+            VkQueryType queryType) const;
+        std::vector<VkDeviceSize> writeAccelerationStructuresProperties(
+            const std::vector<std::shared_ptr<const AccelerationStructure>>& accelerationStructures,
+            VkQueryType queryType) const;
+    #endif // VK_KHR_acceleration_structure
     #ifdef VK_EXT_device_fault
         DeviceFaultInfo getFaultInfo() const;
     #endif
