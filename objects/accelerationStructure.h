@@ -15,6 +15,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
+
+// VK_KHR_acceleration_structure Manual Page:
+// https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_KHR_acceleration_structure.html
+
 #pragma once
 #ifdef VK_KHR_acceleration_structure
 #include "resource.h"
