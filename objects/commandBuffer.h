@@ -58,6 +58,9 @@ namespace magma
     class AccelerationStructureCompactedSizeQuery;
     struct AccelerationStructureGeometry;
     struct AccelerationStructureBuildRange;
+#endif // VK_KHR_acceleration_structure
+#ifdef VK_KHR_ray_tracing_pipeline
+    class ShaderBindingTable;
 #endif
 
     struct MemoryBarrier;
@@ -513,6 +516,22 @@ namespace magma
             std::shared_ptr<QueryPool> queryPool,
             uint32_t firstQuery = 0);
     #endif // VK_KHR_acceleration_structure
+
+    #ifdef VK_KHR_ray_tracing_pipeline
+        void setRayTracingPipelineStackSize(uint32_t pipelineStackSize) const noexcept;
+        void traceRays(const std::shared_ptr<ShaderBindingTable>& raygenShaderBindingTable,
+            const std::shared_ptr<ShaderBindingTable>& missShaderBindingTable,
+            const std::shared_ptr<ShaderBindingTable>& hitShaderBindingTable,
+            const std::shared_ptr<ShaderBindingTable>& callableShaderBindingTable,
+            uint32_t width,
+            uint32_t height,
+            uint32_t depth) const noexcept;
+        void traceRaysIndirect(const std::shared_ptr<ShaderBindingTable>& raygenShaderBindingTable,
+            const std::shared_ptr<ShaderBindingTable>& missShaderBindingTable,
+            const std::shared_ptr<ShaderBindingTable>& hitShaderBindingTable,
+            const std::shared_ptr<ShaderBindingTable>& callableShaderBindingTable,
+            const std::shared_ptr<Buffer>& indirectTraceRaysBuffer) const noexcept;
+    #endif // VK_KHR_ray_tracing_pipeline
 
     #ifdef VK_EXT_debug_marker
         void beginDebugMarker(const char *name,

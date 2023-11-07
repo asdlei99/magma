@@ -27,13 +27,13 @@ namespace magma
        the acceleration structures that were built for the
        ray tracing pipeline. */
 
-#ifdef VK_NV_ray_tracing
+#ifdef VK_KHR_ray_tracing_pipeline
     class ShaderBindingTable : public Buffer
     {
     public:
         explicit ShaderBindingTable(std::shared_ptr<Device> device,
             const void *shaderGroupHandles,
-            uint32_t groupCount,
+            uint32_t handleCount,
             std::shared_ptr<Allocator> allocator = nullptr,
             const Descriptor& optional = Descriptor(),
             const Sharing& sharing = Sharing());
@@ -47,6 +47,11 @@ namespace magma
             std::shared_ptr<Allocator> allocator = nullptr,
             const Descriptor& optional = Descriptor(),
             const Sharing& sharing = Sharing());
+        const VkStridedDeviceAddressRegionKHR& getDeviceAddressRegion() const noexcept { return deviceAddressRegion; }
+
+    private:
+        const uint32_t handleCount;
+        VkStridedDeviceAddressRegionKHR deviceAddressRegion;
     };
-#endif // VK_NV_ray_tracing
+#endif // VK_KHR_ray_tracing_pipeline
 } // namespace magma

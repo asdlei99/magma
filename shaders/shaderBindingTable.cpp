@@ -25,23 +25,26 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 namespace magma
 {
-#ifdef VK_NV_ray_tracing
-ShaderBindingTable::ShaderBindingTable(std::shared_ptr<Device> device, const void *shaderGroupHandles, uint32_t groupCount,
+#ifdef VK_KHR_ray_tracing_pipeline
+ShaderBindingTable::ShaderBindingTable(std::shared_ptr<Device> device, const void *shaderGroupHandles, uint32_t handleCount,
     std::shared_ptr<Allocator> allocator /* nullptr */,
     const Descriptor& optional /* default */,
     const Sharing& sharing /* default */):
     Buffer(device,
-        device->getPhysicalDevice()->getRayTracingProperties().shaderGroupBaseAlignment * groupCount,
+        device->getPhysicalDevice()->getRayTracingPipelineProperties().shaderGroupHandleSize * handleCount,
         0, // flags
-        // Note that VK_BUFFER_USAGE_RAY_TRACING_BIT_NV = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR in newer SDK revision
-        VK_BUFFER_USAGE_RAY_TRACING_BIT_NV | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        optional, sharing, std::move(allocator))
+        optional, sharing, std::move(allocator)),
+    handleCount(handleCount)
 {
+    const VkPhysicalDeviceRayTracingPipelinePropertiesKHR& rayTracingPipelineProperties = device->getPhysicalDevice()->getRayTracingPipelineProperties();
+    shaderGroupHandles;
+
+    /*
     uint8_t *shaderBindingData = (uint8_t *)getMemory()->map();
     if (shaderBindingData)
     {
-        const VkPhysicalDeviceRayTracingPropertiesNV& rayTracingProperties = device->getPhysicalDevice()->getRayTracingProperties();
         const uint32_t handleSize = rayTracingProperties.shaderGroupHandleSize;
         const uint32_t baseAlignment = rayTracingProperties.shaderGroupBaseAlignment;
         for (uint32_t groupIndex = 0; groupIndex < groupCount; ++groupIndex)
@@ -51,6 +54,13 @@ ShaderBindingTable::ShaderBindingTable(std::shared_ptr<Device> device, const voi
         }
         getMemory()->unmap();
     }
+    */
+
+    // https://github.com/SaschaWillems/Vulkan/blob/5693fc0b6eb93338403dfe1bd02bf81fe9897942/base/VulkanRaytracingSample.cpp#L296
+    // VkStridedDeviceAddressRegionKHR VulkanRaytracingSample::getSbtEntryStridedDeviceAddressRegion
+    deviceAddressRegion.deviceAddress = getDeviceAddress();
+    deviceAddressRegion.stride = rayTracingPipelineProperties.shaderGroupHandleAlignment; // TODO:
+    deviceAddressRegion.size = handleCount * rayTracingPipelineProperties.shaderGroupHandleAlignment; // TODO:
 }
 
 ShaderBindingTable::ShaderBindingTable(std::shared_ptr<Device> device, const std::vector<uint8_t>& shaderGroupHandles, uint32_t groupCount,
@@ -68,5 +78,5 @@ ShaderBindingTable::ShaderBindingTable(std::shared_ptr<const RayTracingPipeline>
     ShaderBindingTable(pipeline->getDevice(), pipeline->getShaderGroupHandles(), pipeline->getShaderGroupCount(),
         std::move(allocator), optional, sharing)
 {}
-#endif // VK_NV_ray_tracing
+#endif // VK_KHR_ray_tracing_pipeline
 } // namespace magma

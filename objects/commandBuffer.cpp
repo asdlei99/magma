@@ -25,6 +25,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "imageView.h"
 #include "fence.h"
 #include "accelerationStructure.h"
+#include "../shaders/shaderBindingTable.h"
 #include "../misc/accelerationStructureGeometry.h"
 #include "../misc/deviceFeatures.h"
 #include "../exceptions/errorResult.h"
@@ -846,4 +847,49 @@ void CommandBuffer::writeAccelerationStructuresProperties(std::vector<std::share
         vkCmdWriteAccelerationStructuresPropertiesKHR(handle, dereferencedAccelerationStructures.size(), dereferencedAccelerationStructures, queryPool->getType(), *queryPool, firstQuery);
 }
 #endif // VK_KHR_acceleration_structure
+
+#ifdef VK_KHR_ray_tracing_pipeline
+void CommandBuffer::setRayTracingPipelineStackSize(uint32_t pipelineStackSize) const noexcept
+{
+    MAGMA_DEVICE_EXTENSION(vkCmdSetRayTracingPipelineStackSizeKHR);
+    if (vkCmdSetRayTracingPipelineStackSizeKHR)
+        vkCmdSetRayTracingPipelineStackSizeKHR(handle, pipelineStackSize);
+}
+
+void CommandBuffer::traceRays(const std::shared_ptr<ShaderBindingTable>& raygenShaderBindingTable,
+    const std::shared_ptr<ShaderBindingTable>& missShaderBindingTable,
+    const std::shared_ptr<ShaderBindingTable>& hitShaderBindingTable,
+    const std::shared_ptr<ShaderBindingTable>& callableShaderBindingTable,
+    uint32_t width, uint32_t height, uint32_t depth) const noexcept
+{
+    MAGMA_DEVICE_EXTENSION(vkCmdTraceRaysKHR);
+    if (vkCmdTraceRaysKHR)
+    {
+        vkCmdTraceRaysKHR(handle,
+            &raygenShaderBindingTable->getDeviceAddressRegion(),
+            &missShaderBindingTable->getDeviceAddressRegion(),
+            &hitShaderBindingTable->getDeviceAddressRegion(),
+            &callableShaderBindingTable->getDeviceAddressRegion(),
+            width, height, depth);
+    }
+}
+
+void CommandBuffer::traceRaysIndirect(const std::shared_ptr<ShaderBindingTable>& raygenShaderBindingTable,
+    const std::shared_ptr<ShaderBindingTable>& missShaderBindingTable,
+    const std::shared_ptr<ShaderBindingTable>& hitShaderBindingTable,
+    const std::shared_ptr<ShaderBindingTable>& callableShaderBindingTable,
+    const std::shared_ptr<Buffer>& indirectTraceRaysBuffer) const noexcept
+{
+    MAGMA_DEVICE_EXTENSION(vkCmdTraceRaysIndirectKHR);
+    if (vkCmdTraceRaysIndirectKHR)
+    {
+        vkCmdTraceRaysIndirectKHR(handle,
+            &raygenShaderBindingTable->getDeviceAddressRegion(),
+            &missShaderBindingTable->getDeviceAddressRegion(),
+            &hitShaderBindingTable->getDeviceAddressRegion(),
+            &callableShaderBindingTable->getDeviceAddressRegion(),
+            indirectTraceRaysCommandBuffer->getDeviceAddress());
+    }
+}
+#endif // VK_KHR_ray_tracing_pipeline
 } // namespace magma
