@@ -136,10 +136,10 @@ namespace magma
     {
         uint8_t driverUUID[VK_UUID_SIZE];
         uint8_t compatibilityUUID[VK_UUID_SIZE];
-        uint64_t serializedSize = 0ull;
+        uint64_t serializedSize = 0ull; // Including header
         uint64_t deserializedSize = 0ull;
-        uint64_t handleCount = 0ull;
-        VkAccelerationStructureKHR handles[1];
+        uint64_t bottomLevelAccelerationStructurePointerCount = 0ull;
+        VkDeviceAddress bottomLevelAccelerationStructurePointers[1]; // Array of D3D12_GPU_VIRTUAL_ADDRESS in Direct3D 12
     };
 
     /* Top-level acceleration structure containing instance
