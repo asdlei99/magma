@@ -211,11 +211,31 @@ std::vector<QueryPool::Result<TransformFeedbackQuery::Result, uint64_t>> Transfo
 }
 #endif // VK_EXT_transform_feedback
 
-#ifdef VK_NV_ray_tracing
+#ifdef VK_KHR_acceleration_structure
 AccelerationStructureCompactedSizeQuery::AccelerationStructureCompactedSizeQuery(std::shared_ptr<Device> device, uint32_t queryCount,
     std::shared_ptr<IAllocator> allocator /* nullptr */,
     const StructureChain& extendedInfo /* default */):
-    IntegerQueryPool(VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_NV, std::move(device), queryCount, 0, std::move(allocator), extendedInfo)
+    IntegerQueryPool(VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR, std::move(device), queryCount, 0, std::move(allocator), extendedInfo)
 {}
-#endif // VK_NV_ray_tracing
+
+AccelerationStructureSerializationSizeQuery::AccelerationStructureSerializationSizeQuery(std::shared_ptr<Device> device, uint32_t queryCount,
+    std::shared_ptr<IAllocator> allocator /* nullptr */,
+    const StructureChain& extendedInfo /* default */):
+    IntegerQueryPool(VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR, std::move(device), queryCount, 0, std::move(allocator), extendedInfo)
+{}
+#endif // VK_KHR_acceleration_structure
+
+#ifdef VK_KHR_ray_tracing_maintenance1
+AccelerationStructureSizeQuery::AccelerationStructureSizeQuery(std::shared_ptr<Device> device, uint32_t queryCount,
+    std::shared_ptr<IAllocator> allocator /* nullptr */,
+    const StructureChain& extendedInfo /* default */):
+    IntegerQueryPool(VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SIZE_KHR, std::move(device), queryCount, 0, std::move(allocator), extendedInfo)
+{}
+
+AccelerationStructureSerializationBottomLevelPointersQuery::AccelerationStructureSerializationBottomLevelPointersQuery(std::shared_ptr<Device> device, uint32_t queryCount,
+    std::shared_ptr<IAllocator> allocator /* nullptr */,
+    const StructureChain& extendedInfo /* default */):
+    IntegerQueryPool(VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_BOTTOM_LEVEL_POINTERS_KHR, std::move(device), queryCount, 0, std::move(allocator), extendedInfo)
+{}
+#endif // VK_KHR_ray_tracing_maintenance1
 } // namespace magma

@@ -219,11 +219,12 @@ namespace magma
     };
 #endif // VK_EXT_transform_feedback
 
+#ifdef VK_KHR_acceleration_structure
+
     /* The acceleration structure object may be compacted in order
        to improve performance. Before copying, an application must
        query the size of the resulting acceleration structure. */
 
-#ifdef VK_NV_ray_tracing
     class AccelerationStructureCompactedSizeQuery : public IntegerQueryPool
     {
     public:
@@ -232,7 +233,45 @@ namespace magma
             std::shared_ptr<IAllocator> allocator = nullptr,
             const StructureChain& extendedInfo = StructureChain());
     };
-#endif // VK_NV_ray_tracing
+
+    class AccelerationStructureSerializationSizeQuery : public IntegerQueryPool
+    {
+    public:
+        explicit AccelerationStructureSerializationSizeQuery(std::shared_ptr<Device> device,
+            uint32_t queryCount,
+            std::shared_ptr<IAllocator> allocator = nullptr,
+            const StructureChain& extendedInfo = StructureChain());
+    };
+#endif // VK_KHR_acceleration_structure
+
+#ifdef VK_KHR_ray_tracing_maintenance1
+
+    /* Query the acceleration structure size on the device timeline.
+       Specifies an acceleration structure size query for use with
+       vkCmdWriteAccelerationStructuresPropertiesKHR or
+       vkWriteAccelerationStructuresPropertiesKHR. */
+
+    class AccelerationStructureSizeQuery : public IntegerQueryPool
+    {
+    public:
+        explicit AccelerationStructureSizeQuery(std::shared_ptr<Device> device,
+            uint32_t queryCount,
+            std::shared_ptr<IAllocator> allocator = nullptr,
+            const StructureChain& extendedInfo = StructureChain());
+    };
+
+    /* Query the number of bottom level acceleration structure pointers
+       for serialization. */
+
+    class AccelerationStructureSerializationBottomLevelPointersQuery : public IntegerQueryPool
+    {
+    public:
+        explicit AccelerationStructureSerializationBottomLevelPointersQuery(std::shared_ptr<Device> device,
+            uint32_t queryCount,
+            std::shared_ptr<IAllocator> allocator = nullptr,
+            const StructureChain& extendedInfo = StructureChain());
+    };
+#endif // VK_KHR_ray_tracing_maintenance1
 } // namespace magma
 
 #include "queryPool.inl"
