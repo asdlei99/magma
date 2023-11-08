@@ -888,7 +888,7 @@ void CommandBuffer::traceRaysIndirect(const std::shared_ptr<ShaderBindingTable>&
             &missShaderBindingTable->getDeviceAddressRegion(),
             &hitShaderBindingTable->getDeviceAddressRegion(),
             &callableShaderBindingTable->getDeviceAddressRegion(),
-            indirectTraceRaysCommandBuffer->getDeviceAddress());
+            indirectTraceRaysBuffer->getDeviceAddress());
     }
 }
 #endif // VK_KHR_ray_tracing_pipeline
