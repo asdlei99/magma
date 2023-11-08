@@ -30,71 +30,34 @@ namespace magma
                 VkDescriptorPoolSize{type, descriptorCount} {}
         };
 
-        struct SamplerPool : DescriptorPool
-        {
-            constexpr SamplerPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_SAMPLER, count) {}
+        #define MAGMA_DEFINE_DESCRIPTOR_POOL(Pool, descriptorType)\
+        struct Pool : DescriptorPool\
+        {\
+            constexpr Pool(const uint32_t count) noexcept:\
+                DescriptorPool(descriptorType, count) {}\
         };
 
-        struct CombinedImageSamplerPool : DescriptorPool
-        {
-            constexpr CombinedImageSamplerPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, count) {}
-        };
-
-        struct SampledImagePool : DescriptorPool
-        {
-            constexpr SampledImagePool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, count) {}
-        };
-
-        struct StorageImagePool : DescriptorPool
-        {
-            constexpr StorageImagePool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, count) {}
-        };
-
-        struct UniformTexelBufferPool : DescriptorPool
-        {
-            constexpr UniformTexelBufferPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, count) {}
-        };
-
-        struct StorageTexelBufferPool : DescriptorPool
-        {
-            constexpr StorageTexelBufferPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, count) {}
-        };
-
-        struct UniformBufferPool : DescriptorPool
-        {
-            constexpr UniformBufferPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, count) {}
-        };
-
-        struct StorageBufferPool : DescriptorPool
-        {
-            constexpr StorageBufferPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, count) {}
-        };
-
-        struct DynamicUniformBufferPool : DescriptorPool
-        {
-            constexpr DynamicUniformBufferPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, count) {}
-        };
-
-        struct DynamicStorageBufferPool : DescriptorPool
-        {
-            constexpr DynamicStorageBufferPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, count) {}
-        };
-
-        struct InputAttachmentPool : DescriptorPool
-        {
-            constexpr InputAttachmentPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, count) {}
-        };
+        MAGMA_DEFINE_DESCRIPTOR_POOL(SamplerPool, VK_DESCRIPTOR_TYPE_SAMPLER)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(CombinedImageSamplerPool, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(SampledImagePool, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(StorageImagePool, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(UniformTexelBufferPool, VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(StorageTexelBufferPool, VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(UniformBufferPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(StorageBufferPool, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(DynamicUniformBufferPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(DynamicStorageBufferPool, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(InputAttachmentPool, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT)
+    #ifdef VK_KHR_acceleration_structure
+        MAGMA_DEFINE_DESCRIPTOR_POOL(AccelerationStructurePool, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR)
+    #endif
+    #ifdef VK_VALVE_mutable_descriptor_type
+        MAGMA_DEFINE_DESCRIPTOR_POOL(MutableDescriptorPool, VK_DESCRIPTOR_TYPE_MUTABLE_VALVE)
+    #endif
+    #ifdef VK_QCOM_image_processing
+        MAGMA_DEFINE_DESCRIPTOR_POOL(SampleWeightImagePool, VK_DESCRIPTOR_TYPE_SAMPLE_WEIGHT_IMAGE_QCOM)
+        MAGMA_DEFINE_DESCRIPTOR_POOL(BlockMatchImagePool, VK_DESCRIPTOR_TYPE_BLOCK_MATCH_IMAGE_QCOM)
+    #endif // VK_QCOM_image_processing
 
     #ifdef VK_EXT_inline_uniform_block
         template<class UniformBlockType>
@@ -104,35 +67,5 @@ namespace magma
                 DescriptorPool(VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT, sizeof(UniformBlockType)) {}
         };
     #endif // VK_EXT_inline_uniform_block
-
-    #ifdef VK_KHR_acceleration_structure
-        struct AccelerationStructurePool : DescriptorPool
-        {
-            constexpr AccelerationStructurePool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, count) {}
-        };
-    #endif // VK_KHR_acceleration_structure
-
-    #ifdef VK_VALVE_mutable_descriptor_type
-        struct MutableDescriptorPool : DescriptorPool
-        {
-            constexpr MutableDescriptorPool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_MUTABLE_VALVE, count) {}
-        };
-    #endif // VK_VALVE_mutable_descriptor_type
-
-    #ifdef VK_QCOM_image_processing
-        struct SampleWeightImagePool : DescriptorPool
-        {
-            constexpr SampleWeightImagePool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_SAMPLE_WEIGHT_IMAGE_QCOM, count) {}
-        };
-
-        struct BlockMatchImagePool : DescriptorPool
-        {
-            constexpr BlockMatchImagePool(const uint32_t count) noexcept:
-                DescriptorPool(VK_DESCRIPTOR_TYPE_BLOCK_MATCH_IMAGE_QCOM, count) {}
-        };
-    #endif // VK_QCOM_image_processing
     } // namespace descriptor
 } // namespace magma
