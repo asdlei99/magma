@@ -494,9 +494,10 @@ namespace magma
             const std::vector<AccelerationStructureGeometry>& geometries,
             const std::vector<uint32_t>& maxPrimitiveCounts,
             VkBuildAccelerationStructureFlagsKHR flags) noexcept;
-        void copyAccelerationStructure(std::shared_ptr<AccelerationStructure> dst,
-            std::shared_ptr<const AccelerationStructure> src,
-            VkCopyAccelerationStructureModeKHR mode) const noexcept;
+        void cloneAccelerationStructure(std::shared_ptr<AccelerationStructure> dst,
+            std::shared_ptr<const AccelerationStructure> src) const noexcept;
+        void compactAccelerationStructure(std::shared_ptr<AccelerationStructure> dst,
+            std::shared_ptr<const AccelerationStructure> src) const noexcept;
         void copyAccelerationStructureToMemory(std::shared_ptr<Buffer> dst,
             std::shared_ptr<const AccelerationStructure> src,
             VkCopyAccelerationStructureModeKHR mode) const noexcept;

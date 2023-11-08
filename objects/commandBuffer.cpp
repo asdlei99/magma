@@ -752,16 +752,27 @@ void CommandBuffer::buildAccelerationStructureIndirect(std::shared_ptr<Accelerat
     }
 }
 
-void CommandBuffer::copyAccelerationStructure(std::shared_ptr<AccelerationStructure> dst, std::shared_ptr<const AccelerationStructure> src, VkCopyAccelerationStructureModeKHR mode) const noexcept
+void CommandBuffer::cloneAccelerationStructure(std::shared_ptr<AccelerationStructure> dst, std::shared_ptr<const AccelerationStructure> src) const noexcept
 {
-    MAGMA_ASSERT(dst);
-    MAGMA_ASSERT(src);
     VkCopyAccelerationStructureInfoKHR copyAccelerationStructureInfo;
     copyAccelerationStructureInfo.sType = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR;
     copyAccelerationStructureInfo.pNext = nullptr;
     copyAccelerationStructureInfo.src = *src;
     copyAccelerationStructureInfo.dst = *dst;
-    copyAccelerationStructureInfo.mode = mode;
+    copyAccelerationStructureInfo.mode = VK_COPY_ACCELERATION_STRUCTURE_MODE_CLONE_KHR;
+    MAGMA_DEVICE_EXTENSION(vkCmdCopyAccelerationStructureKHR);
+    if (vkCmdCopyAccelerationStructureKHR)
+        vkCmdCopyAccelerationStructureKHR(handle, &copyAccelerationStructureInfo);
+}
+
+void CommandBuffer::compactAccelerationStructure(std::shared_ptr<AccelerationStructure> dst, std::shared_ptr<const AccelerationStructure> src) const noexcept
+{
+    VkCopyAccelerationStructureInfoKHR copyAccelerationStructureInfo;
+    copyAccelerationStructureInfo.sType = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR;
+    copyAccelerationStructureInfo.pNext = nullptr;
+    copyAccelerationStructureInfo.src = *src;
+    copyAccelerationStructureInfo.dst = *dst;
+    copyAccelerationStructureInfo.mode = VK_COPY_ACCELERATION_STRUCTURE_MODE_COMPACT_KHR;
     MAGMA_DEVICE_EXTENSION(vkCmdCopyAccelerationStructureKHR);
     if (vkCmdCopyAccelerationStructureKHR)
         vkCmdCopyAccelerationStructureKHR(handle, &copyAccelerationStructureInfo);
