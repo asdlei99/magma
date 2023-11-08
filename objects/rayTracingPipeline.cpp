@@ -20,6 +20,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "rayTracingPipeline.h"
 #include "pipelineLayout.h"
 #include "pipelineCache.h"
+#include "pipelineLibrary.h"
 #include "device.h"
 #include "physicalDevice.h"
 #include "deferredOperation.h"
@@ -39,6 +40,9 @@ RayTracingPipeline::RayTracingPipeline(std::shared_ptr<Device> device_,
     std::shared_ptr<PipelineLayout> layout_,
     const std::vector<VkDynamicState>& dynamicStates,
     std::shared_ptr<IAllocator> allocator /* nullptr */,
+#ifdef VK_KHR_pipeline_library
+    std::shared_ptr<PipelineLibrary> pipelineLibrary /* nullptr */,
+#endif
     std::shared_ptr<PipelineCache> pipelineCache /* nullptr */,
     std::shared_ptr<RayTracingPipeline> basePipeline_ /* nullptr */,
     std::shared_ptr<DeferredOperation> deferredOp /* nullptr */,
@@ -63,8 +67,8 @@ RayTracingPipeline::RayTracingPipeline(std::shared_ptr<Device> device_,
     pipelineInfo.groupCount = shaderGroupCount;
     pipelineInfo.pGroups = shaderGroups.data();
     pipelineInfo.maxPipelineRayRecursionDepth = maxRayRecursionDepth;
-    pipelineInfo.pLibraryInfo = nullptr; // TODO
-    pipelineInfo.pLibraryInterface = nullptr; // TODO
+    pipelineInfo.pLibraryInfo = pipelineLibrary ? &pipelineLibrary->getLibraryInfo() : nullptr;
+    pipelineInfo.pLibraryInterface = pipelineLibrary ? &pipelineLibrary->getRayTracingLibraryInterface() : nullptr;
     pipelineInfo.pDynamicState = dynamicStates.empty() ? nullptr : &pipelineDynamicStateInfo;
     pipelineInfo.layout = MAGMA_HANDLE(layout);
     pipelineInfo.basePipelineHandle = MAGMA_OPTIONAL_HANDLE(basePipeline);
@@ -161,6 +165,7 @@ std::vector<uint8_t> RayTracingPipeline::getCaptureReplayShaderGroupHandles(uint
 
 VkDeviceSize RayTracingPipeline::getShaderGroupStackSize(uint32_t group, VkShaderGroupShaderKHR groupShader) const noexcept
 {
+    MAGMA_ASSERT(groupShader != VK_SHADER_UNUSED_KHR);
     MAGMA_DEVICE_EXTENSION(vkGetRayTracingShaderGroupStackSizeKHR);
     return vkGetRayTracingShaderGroupStackSizeKHR(MAGMA_HANDLE(device), handle, group, groupShader);
 }

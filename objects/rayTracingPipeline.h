@@ -23,6 +23,9 @@ namespace magma
 {
     class PipelineShaderStage;
     class PipelineCache;
+#ifdef VK_KHR_pipeline_library
+    class PipelineLibrary;
+#endif
 #ifdef VK_KHR_deferred_host_operations
     class DeferredOperation;
 #endif
@@ -41,6 +44,9 @@ namespace magma
             std::shared_ptr<PipelineLayout> layout,
             const std::vector<VkDynamicState>& dynamicStates,
             std::shared_ptr<IAllocator> allocator = nullptr,
+        #ifdef VK_KHR_pipeline_library
+            std::shared_ptr<PipelineLibrary> pipelineLibrary = nullptr,
+        #endif
             std::shared_ptr<PipelineCache> pipelineCache = nullptr,
             std::shared_ptr<RayTracingPipeline> basePipeline = nullptr,
             std::shared_ptr<DeferredOperation> deferredOp = nullptr,
