@@ -347,7 +347,6 @@
     <ClInclude Include="..\..\shaders\shaderReflection.h" />
     <ClInclude Include="..\..\shaders\shaderReflectionFactory.h" />
     <ClInclude Include="..\..\shaders\specialization.h" />
-    <ClInclude Include="..\..\shaders\shaderStages.h" />
     <ClInclude Include="..\..\states\colorBlendAttachmentState.h" />
     <ClInclude Include="..\..\states\colorBlendState.h" />
     <ClInclude Include="..\..\states\colorBlendStateAdvanced.h" />

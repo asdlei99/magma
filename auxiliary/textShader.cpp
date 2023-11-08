@@ -28,7 +28,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/descriptorSetLayout.h"
 #include "../objects/pipelineLayout.h"
 #include "../objects/graphicsPipeline.h"
-#include "../shaders/shaderStages.h"
+#include "../shaders/pipelineShaderStage.h"
 #include "../shaders/shaderReflection.h"
 #include "../descriptors/bufferDescriptor.h"
 #include "../descriptors/descriptorSetTable.h"

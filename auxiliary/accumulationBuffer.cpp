@@ -32,7 +32,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/graphicsPipeline.h"
 #include "../objects/pipelineLayout.h"
 #include "../objects/commandBuffer.h"
-#include "../shaders/shaderStages.h"
+#include "../shaders/pipelineShaderStage.h"
 #include "../shaders/shaderReflection.h"
 #include "../states/vertexInputStructure.h"
 #include "../states/inputAssemblyState.h"

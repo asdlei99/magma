@@ -360,9 +360,6 @@
     <ClInclude Include="..\..\shaders\pipelineShaderStage.h">
       <Filter>Header Files\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\shaders\shaderStages.h">
-      <Filter>Header Files\shaders</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\shaders\rayTracingShaderGroup.h">
       <Filter>Header Files\shaders</Filter>
     </ClInclude>

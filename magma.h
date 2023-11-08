@@ -104,7 +104,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "shaders/shaderBindingTable.h"
 #include "shaders/shaderReflection.h"
 #include "shaders/shaderReflectionFactory.h"
-#include "shaders/shaderStages.h"
 #include "shaders/specialization.h"
 
 #include "renderpass/attachment.h"
