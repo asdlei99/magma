@@ -86,13 +86,13 @@ namespace magma
     };
 #endif // VK_EXT_mesh_shader
 
-#ifdef VK_NV_ray_tracing
+#ifdef VK_KHR_ray_tracing_pipeline
     class RaygenShaderStage : public PipelineShaderStage
     {
     public:
         explicit RaygenShaderStage(std::shared_ptr<ShaderModule> module, const char *const entrypoint,
             std::shared_ptr<Specialization> specialization = nullptr, VkPipelineShaderStageCreateFlags flags = 0) noexcept:
-            PipelineShaderStage(VK_SHADER_STAGE_RAYGEN_BIT_NV, std::move(module), entrypoint, std::move(specialization), flags) {}
+            PipelineShaderStage(VK_SHADER_STAGE_RAYGEN_BIT_KHR , std::move(module), entrypoint, std::move(specialization), flags) {}
     };
 
     class AnyHitShaderStage : public PipelineShaderStage
@@ -100,7 +100,7 @@ namespace magma
     public:
         explicit AnyHitShaderStage(std::shared_ptr<ShaderModule> module, const char *const entrypoint,
             std::shared_ptr<Specialization> specialization = nullptr, VkPipelineShaderStageCreateFlags flags = 0) noexcept:
-            PipelineShaderStage(VK_SHADER_STAGE_ANY_HIT_BIT_NV, std::move(module), entrypoint, std::move(specialization), flags) {}
+            PipelineShaderStage(VK_SHADER_STAGE_ANY_HIT_BIT_KHR, std::move(module), entrypoint, std::move(specialization), flags) {}
     };
 
     class ClosestHitShaderStage : public PipelineShaderStage
@@ -108,7 +108,7 @@ namespace magma
     public:
         explicit ClosestHitShaderStage(std::shared_ptr<ShaderModule> module, const char *const entrypoint,
             std::shared_ptr<Specialization> specialization = nullptr, VkPipelineShaderStageCreateFlags flags = 0) noexcept:
-            PipelineShaderStage(VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV, std::move(module), entrypoint, std::move(specialization), flags) {}
+            PipelineShaderStage(VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR, std::move(module), entrypoint, std::move(specialization), flags) {}
     };
 
     class MissShaderStage : public PipelineShaderStage
@@ -116,7 +116,7 @@ namespace magma
     public:
         explicit MissShaderStage(std::shared_ptr<ShaderModule> module, const char *const entrypoint,
             std::shared_ptr<Specialization> specialization = nullptr, VkPipelineShaderStageCreateFlags flags = 0) noexcept:
-            PipelineShaderStage(VK_SHADER_STAGE_MISS_BIT_NV, std::move(module), entrypoint, std::move(specialization), flags) {}
+            PipelineShaderStage(VK_SHADER_STAGE_MISS_BIT_KHR, std::move(module), entrypoint, std::move(specialization), flags) {}
     };
 
     class IntersectionShaderStage : public PipelineShaderStage
@@ -124,7 +124,7 @@ namespace magma
     public:
         explicit IntersectionShaderStage(std::shared_ptr<ShaderModule> module, const char *const entrypoint,
             std::shared_ptr<Specialization> specialization = nullptr, VkPipelineShaderStageCreateFlags flags = 0) noexcept:
-            PipelineShaderStage(VK_SHADER_STAGE_INTERSECTION_BIT_NV, std::move(module), entrypoint, std::move(specialization), flags) {}
+            PipelineShaderStage(VK_SHADER_STAGE_INTERSECTION_BIT_KHR, std::move(module), entrypoint, std::move(specialization), flags) {}
     };
 
     class CallableShaderStage : public PipelineShaderStage
@@ -132,7 +132,7 @@ namespace magma
     public:
         explicit CallableShaderStage(std::shared_ptr<ShaderModule> module, const char *const entrypoint,
             std::shared_ptr<Specialization> specialization = nullptr, VkPipelineShaderStageCreateFlags flags = 0) noexcept:
-            PipelineShaderStage(VK_SHADER_STAGE_CALLABLE_BIT_NV, std::move(module), entrypoint, std::move(specialization), flags) {}
+            PipelineShaderStage(VK_SHADER_STAGE_CALLABLE_BIT_KHR, std::move(module), entrypoint, std::move(specialization), flags) {}
     };
-#endif // VK_NV_ray_tracing
+#endif // VK_KHR_ray_tracing_pipeline
 } // namespace magma
