@@ -166,6 +166,7 @@ objects\physicalDeviceGroup.cpp ^
 objects\pipeline.cpp ^
 objects\pipelineCache.cpp ^
 objects\pipelineLayout.cpp ^
+objects\pipelineLibrary.cpp ^
 objects\primaryCommandBuffer.cpp ^
 objects\privateDataSlot.cpp ^
 objects\queryPool.cpp ^
@@ -332,6 +333,7 @@ physicalDeviceGroup.obj ^
 pipeline.obj ^
 pipelineCache.obj ^
 pipelineLayout.obj ^
+pipelineLibrary.obj ^
 primaryCommandBuffer.obj ^
 privateDataSlot.obj ^
 queryPool.obj ^

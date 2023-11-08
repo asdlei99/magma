@@ -789,6 +789,9 @@
     <ClInclude Include="..\..\states\vertexAttributeType.h">
       <Filter>Header Files\states</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\objects\pipelineLibrary.h">
+      <Filter>Header Files\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\allocator\allocationCallbacks.cpp">
@@ -1234,6 +1237,9 @@
     </ClCompile>
     <ClCompile Include="..\..\descriptors\bufferDescriptor.cpp">
       <Filter>Source Files\descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\objects\pipelineLibrary.cpp">
+      <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
