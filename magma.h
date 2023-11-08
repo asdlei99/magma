@@ -138,7 +138,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #include "states/vertexInputStructure.h"
 #include "states/viewportState.h"
 
-#include "descriptors/accelerationStructure.h"
+#include "descriptors/accelerationStructureDescriptor.h"
 #include "descriptors/binding.h"
 #include "descriptors/bufferDescriptor.h"
 #include "descriptors/bufferDescriptorArray.h"

@@ -20,7 +20,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 namespace magma
 {
-#if defined(VK_KHR_acceleration_structure) || defined(VK_NV_ray_tracing)
+#ifdef VK_KHR_acceleration_structure
     class AccelerationStructure;
 #endif
 
@@ -31,14 +31,8 @@ namespace magma
            are used for ray traversal. Shaders have read-only access
            to the memory. */
 
-    #if defined(VK_KHR_acceleration_structure) || defined(VK_NV_ray_tracing)
-
-        class AccelerationStructure : public
-        #ifdef VK_KHR_acceleration_structure
-            Descriptor<VkWriteDescriptorSetAccelerationStructureKHR>
-        #else
-            Descriptor<VkWriteDescriptorSetAccelerationStructureNV>
-        #endif
+    #ifdef VK_KHR_acceleration_structure
+        class AccelerationStructure : public Descriptor<VkWriteDescriptorSetAccelerationStructureKHR>
         {
         public:
             AccelerationStructure(uint32_t binding) noexcept;
@@ -48,12 +42,8 @@ namespace magma
             AccelerationStructure& operator=(std::shared_ptr<const magma::AccelerationStructure>) noexcept;
 
         private:
-        #ifdef VK_KHR_acceleration_structure
             VkAccelerationStructureKHR handle = VK_NULL_HANDLE;
-        #else
-            VkAccelerationStructureNV handle = VK_NULL_HANDLE;
-        #endif
         };
-    #endif // VK_KHR_acceleration_structure || VK_NV_ray_tracing
+    #endif // VK_KHR_acceleration_structure
     } // namespace descriptor
 } // namespace magma

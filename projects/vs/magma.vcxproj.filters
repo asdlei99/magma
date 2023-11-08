@@ -705,9 +705,6 @@
     <ClInclude Include="..\..\descriptors\inlineUniformBlock.h">
       <Filter>Header Files\descriptors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\descriptors\accelerationStructure.h">
-      <Filter>Header Files\descriptors</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\descriptors\imageDescriptorArray.h">
       <Filter>Header Files\descriptors</Filter>
     </ClInclude>
@@ -791,6 +788,9 @@
     </ClInclude>
     <ClInclude Include="..\..\objects\pipelineLibrary.h">
       <Filter>Header Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\descriptors\accelerationStructureDescriptor.h">
+      <Filter>Header Files\descriptors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

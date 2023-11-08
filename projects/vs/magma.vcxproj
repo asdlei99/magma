@@ -192,7 +192,7 @@
     <ClInclude Include="..\..\core\threadSafeUnorderedSet.h" />
     <ClInclude Include="..\..\core\refCountChecker.h" />
     <ClInclude Include="..\..\core\zeroMemory.h" />
-    <ClInclude Include="..\..\descriptors\accelerationStructure.h" />
+    <ClInclude Include="..\..\descriptors\accelerationStructureDescriptor.h" />
     <ClInclude Include="..\..\descriptors\array\descriptor.h" />
     <ClInclude Include="..\..\descriptors\array\imageDescriptor.h" />
     <ClInclude Include="..\..\descriptors\bufferDescriptor.h" />

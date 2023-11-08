@@ -17,26 +17,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 #include "pch.h"
 #pragma hdrstop
-#include "accelerationStructure.h"
+#include "accelerationStructureDescriptor.h"
 #include "../objects/accelerationStructure.h"
 
 namespace magma
 {
 namespace descriptor
 {
-#if defined(VK_KHR_acceleration_structure) || defined(VK_NV_ray_tracing)
+#ifdef VK_KHR_acceleration_structure
 AccelerationStructure::AccelerationStructure(uint32_t binding) noexcept:
-#ifdef VK_KHR_acceleration_structure
     Descriptor<VkWriteDescriptorSetAccelerationStructureKHR>(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, binding)
-#else
-    Descriptor<VkWriteDescriptorSetAccelerationStructureNV>(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV, binding)
-#endif
 {
-#ifdef VK_KHR_acceleration_structure
     descriptor.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR;
-#else
-    descriptor.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
-#endif
     descriptor.pNext = nullptr;
     descriptor.accelerationStructureCount = 1;
     descriptor.pAccelerationStructures = &handle;
@@ -65,26 +57,11 @@ void AccelerationStructure::write(VkDescriptorSet dstSet, VkWriteDescriptorSet& 
 
 AccelerationStructure& AccelerationStructure::operator=(std::shared_ptr<const magma::AccelerationStructure> accelerationStructure) noexcept
 {
-#ifdef VK_KHR_acceleration_structure
-    // TODO: refactor this when VK_KHR_acceleration_structure support will be implemented!
-    VkAccelerationStructureKHR handleKHR;
-    #ifdef MAGMA_X64
-    handleKHR = reinterpret_cast<VkAccelerationStructureKHR>((VkAccelerationStructureNV)*accelerationStructure);
-    #else
-    handleKHR = static_cast<VkAccelerationStructureKHR>((VkAccelerationStructureNV)*accelerationStructure);
-    #endif
-    if (handleKHR != handle)
-    {
-        handle = handleKHR;
-        updated = true;
-    }
-#else
-    if (handle != *accelerationStructure)
+    if (*accelerationStructure != handle)
     {
         handle = *accelerationStructure;
         updated = true;
     }
-#endif
     return *this;
 }
 #endif // VK_KHR_acceleration_structure || VK_NV_ray_tracing
