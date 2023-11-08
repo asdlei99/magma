@@ -903,4 +903,13 @@ void CommandBuffer::traceRaysIndirect(const std::shared_ptr<ShaderBindingTable>&
     }
 }
 #endif // VK_KHR_ray_tracing_pipeline
+
+#ifdef VK_KHR_ray_tracing_maintenance1
+void CommandBuffer::traceRaysIndirect(const std::shared_ptr<Buffer>& indirectTraceRaysBuffer) const noexcept
+{
+    MAGMA_DEVICE_EXTENSION(vkCmdTraceRaysIndirect2KHR);
+    if (vkCmdTraceRaysIndirect2KHR)
+        vkCmdTraceRaysIndirect2KHR(handle, indirectTraceRaysBuffer->getDeviceAddress());
+}
+#endif // VK_KHR_ray_tracing_maintenance1
 } // namespace magma

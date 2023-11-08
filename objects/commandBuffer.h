@@ -55,7 +55,6 @@ namespace magma
     class Geometry;
 #ifdef VK_KHR_acceleration_structure
     class AccelerationStructure;
-    class AccelerationStructureCompactedSizeQuery;
     struct AccelerationStructureGeometry;
     struct AccelerationStructureBuildRange;
 #endif // VK_KHR_acceleration_structure
@@ -533,6 +532,9 @@ namespace magma
             const std::shared_ptr<ShaderBindingTable>& callableShaderBindingTable,
             const std::shared_ptr<Buffer>& indirectTraceRaysBuffer) const noexcept;
     #endif // VK_KHR_ray_tracing_pipeline
+    #ifdef VK_KHR_ray_tracing_maintenance1
+        void traceRaysIndirect(const std::shared_ptr<Buffer>& indirectTraceRaysBuffer) const noexcept;
+    #endif
 
     #ifdef VK_EXT_debug_marker
         void beginDebugMarker(const char *name,
